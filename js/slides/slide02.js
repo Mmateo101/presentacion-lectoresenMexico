@@ -148,7 +148,7 @@
         { left: "1040px", top: "918px", width: "800px", fontSize: "37px", lineHeight: 1.1, color: C.amberD }, "hand");
 
       // ================= Estado inicial: doble página en blanco =================
-      tl.set([pageL, pageR, hA.g, hB.g, eA.g, eB.g], { autoAlpha: 0 }, 0);
+      gsap.set([pageL, pageR, hA.g, hB.g, eA.g, eB.g], { autoAlpha: 0 });
       S.step();
 
       // ================= Paso 1: Héctor =================
@@ -172,7 +172,7 @@
         t.to(hA.hector.g, { scaleX: 0.85, duration: 0.2 }, ">0.2");
         // la escuela: la maestra le da un libro, leen en voz alta, van a la biblioteca
         t.fromTo(hB.g, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, ">0.1");
-        t.set([hB.bookOpen, hB.v1, hB.v2, hB.v3, ...hB.sp], { autoAlpha: 0 }, 0);
+        gsap.set([hB.bookOpen, hB.v1, hB.v2, hB.v3, ...hB.sp], { autoAlpha: 0 });
         walk(t, hB.teacher, 230, 330, { dur: 0.9, pos: ">" });
         arm(t, hB.teacher, 1, -60, ">", 0.4);
         t.to(hB.book, { x: 90, y: 18, rotation: 20, duration: 0.6, ease: "power2.inOut" }, ">");
@@ -208,8 +208,7 @@
         const t = gsap.timeline();
         L.bloom(t, pageR, 0, 1.2);
         t.fromTo(eA.g, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, 0.3);
-        t.set([eA.momBook], { autoAlpha: 1 }, 0);
-        t.set([...eA.sp, eA.kidBook], { autoAlpha: 0 }, 0);
+        gsap.set([...eA.sp, eA.kidBook], { autoAlpha: 0 });
         t.fromTo(eA.lamp._glow, { opacity: 0.1 }, { opacity: 0.6, duration: 0.8, repeat: 1, yoyo: true }, 0.6);
         // mamá lee el cuento: las hojas pasan
         arm(t, eA.mom, 1, -70, 0.9, 0.5);
@@ -264,7 +263,7 @@
       const H = mk("hector", 470, C.blueM, "short");
       const E = mk("eduardo", 1430, C.amberM, "curly");
       const quien = L.text(el, "¿Quién leerá más de adulto?", { left: "0", width: "1920px", top: "56px", textAlign: "center", fontSize: "84px", color: C.ink }, "h-title");
-      tl.set([adults, quien], { autoAlpha: 0 }, 0);
+      gsap.set([adults, quien], { autoAlpha: 0 });
       {
         const t = gsap.timeline();
         t.to([hA.g, hB.g, eA.g, eB.g], { autoAlpha: 0.1, duration: 0.8 }, 0);
@@ -337,8 +336,8 @@
       const d2 = L.s("circle", { cx: 136, cy: 86, r: 6, fill: C.crimson }, spark);
       const closing = L.text(mx, "¿Cómo afecta esta desigualdad a nuestros hábitos de lectura?",
         { left: "0", width: "1920px", top: "975px", textAlign: "center", fontSize: "48px", color: C.plum, fontStyle: "italic" }, "h-title");
-      tl.set([mx, like, c1, c2, c3, closing], { autoAlpha: 0 }, 0);
-      tl.set(crowd, { autoAlpha: 0 }, 0);
+      gsap.set([mx, like, c1, c2, c3, closing], { autoAlpha: 0 });
+      gsap.set(crowd, { autoAlpha: 0 });
       {
         const t = gsap.timeline();
         t.to(el, { "--spine": 0, duration: 0.8 }, 0);
@@ -376,7 +375,7 @@
       {
         const t = gsap.timeline();
         L.pop(t, c3, 0, { from: { x: 60, y: 0, rotation: 2 }, to: { x: 0, rotation: 0 } });
-        t.set(d2, { autoAlpha: 0 }, 0);
+        gsap.set(d2, { autoAlpha: 0 });
         L.counts(t, c3, 0.3, 1.8);
         L.draw(t, fall, 0.3, { duration: 1.6, ease: "power1.in" });
         t.fromTo(d2, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, transformOrigin: "50% 50%", duration: 0.3 }, ">");

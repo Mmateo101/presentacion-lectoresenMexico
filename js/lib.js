@@ -255,8 +255,8 @@
       word.style.position = "relative";
       const m = L.h("span", {
         style: {
-          position: "absolute", left: "-6%", right: "-6%", top: "52%", height: "46%", zIndex: -1,
-          background: color, opacity: 0.32, borderRadius: "40% 12% 46% 10% / 60% 30% 70% 30%",
+          position: "absolute", left: "-6%", right: "-6%", top: "50%", height: "48%", zIndex: 0, mixBlendMode: "multiply",
+          background: color, opacity: 0.38, borderRadius: "40% 12% 46% 10% / 60% 30% 70% 30%",
           transformOrigin: "0 50%", transform: "scaleX(0) rotate(-1.5deg)", filter: "url(#wc2)",
         },
       }, word);
