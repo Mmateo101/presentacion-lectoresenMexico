@@ -1,58 +1,115 @@
-/* Diapositiva 12 · Conclusiones: separadores que salen del libro */
+/* Diapositiva 12 · Conclusiones: un librero de toda la hoja */
 (function () {
   const { C } = L;
   const { person, mood, Props } = Chars;
 
+  // Las cuatro conclusiones (lenguaje de asociación, con los datos que las respaldan)
+  const CONCL = [
+    ["El acceso en el hogar pesa más que el acceso en la escuela.", "Con estímulos solo en casa lee 46.4%; solo en la escuela, 27.0%."],
+    ["El acceso en el hogar y el de la escuela van de la mano.", "Ji-cuadrada: χ² = 2414.77 > 27.14. La escuela suele reforzar el acceso que ya existía en casa."],
+    ["Terminar la primaria o la secundaria da una proporción de lectores parecida.", "24.7% vs. 26.6% (p = 0.14); el salto aparece a partir de la media superior."],
+    ["Entre más libros había en casa, más varía cuántos libros se leen.", "La desviación estándar pasa de 4.72 (ningún libro) a 10.72 (más de 100)."],
+  ];
+  // zona del librero donde aparece cada conclusión: [x0, x1, filas]
+  const ZONES = [[60, 960, [1, 2]], [960, 1860, [2, 3]], [960, 1860, [1, 2]], [60, 960, [2, 3]]];
+
   Deck.add({
     transition: "pageTurn",
-    notes: "",
+    notes: "Cuatro conclusiones. Todas son asociaciones con 96% de confianza; no implican causalidad.",
     build(el, S) {
       const tl = S.tl;
-      const head = L.head(el, "Conclusiones");
-      L.pop(tl, head, 0, { from: { y: -20 } });
-
-      // ---- Libro casi cerrado ----
       const stage = L.h("div", { class: "layer" }, el);
-      const PAGE_TOP = 800;
       const svg = L.svg(stage);
-      const bookG = L.s("g", {}, svg);
-      L.s("ellipse", { cx: 960, cy: 985, rx: 720, ry: 30, fill: "rgba(60,40,20,.12)" }, bookG);
-      L.s("path", { d: `M300,${PAGE_TOP} Q960,${PAGE_TOP - 40} 1620,${PAGE_TOP} L1640,880 Q960,850 280,880 Z`, fill: "#FBF6EA", stroke: C.ink, "stroke-width": 3 }, bookG);
-      for (let i = 1; i < 6; i++) L.s("path", { d: `M${300 - i * 3},${PAGE_TOP + i * 13} Q960,${PAGE_TOP - 40 + i * 12} ${1620 + i * 3},${PAGE_TOP + i * 13}`, fill: "none", stroke: "#D8CDB8", "stroke-width": 2 }, bookG);
-      L.s("path", { d: "M260,880 Q960,846 1660,880 L1680,960 Q960,930 240,960 Z", fill: "#6A4179", stroke: C.ink, "stroke-width": 3.5 }, bookG);
-      L.s("path", { d: "M300,900 Q960,870 1620,900", fill: "none", stroke: "#D8B66A", "stroke-width": 3 }, bookG);
+      const WOOD = "#9C6B43", WOOD_D = "#6E4627";
+      const ROW_TOP = [36, 292, 548, 804], ROW_H = 238; // cada fila: libros apoyados en su tabla
+      // armazón del librero
+      L.s("rect", { x: 20, y: 20, width: 1880, height: 1040, rx: 10, fill: "#E9D6BC", stroke: WOOD_D, "stroke-width": 6 }, svg);
+      L.s("rect", { x: 20, y: 20, width: 34, height: 1040, fill: WOOD, stroke: WOOD_D, "stroke-width": 4 }, svg);
+      L.s("rect", { x: 1866, y: 20, width: 34, height: 1040, fill: WOOD, stroke: WOOD_D, "stroke-width": 4 }, svg);
+      const booksG = L.s("g", {}, svg);
+      ROW_TOP.forEach((t) => L.s("rect", { x: 20, y: t + ROW_H, width: 1880, height: 18, fill: WOOD, stroke: WOOD_D, "stroke-width": 3 }, svg));
 
-      const concl = [
-        "El acceso en la infancia se asocia sobre todo con volverse lector: con acceso alto en casa lee 59.7%; con acceso bajo, 28.1%.",
-        "El hogar pesa más que la escuela: con estímulos solo en casa lee 46.4%; solo en la escuela, 27.0%.",
-        "La escuela compensa solo en parte (+5 a +10 puntos) y suele reforzar el acceso del hogar.",
-        "En cuántos libros se leen, la diferencia es pequeña (menos de un libro al año), pero la variabilidad es enorme.",
-      ];
-      const cols = [C.amberM, C.blueM, C.plum, "#7FA77A"];
-      const W = 380, H = 600, TAB = 80;
-      const marks = concl.map((t, i) => {
-        const x = 205 + i * 400;
-        // ventana que recorta: lo que está "dentro" del libro no se ve
-        const win = L.h("div", { class: "abs", style: { left: x + "px", top: PAGE_TOP - H - 20 + "px", width: W + "px", height: H + 20 + "px", overflow: "hidden" } }, stage);
-        const card = L.h("div", { style: { position: "absolute", left: 0, top: "20px", width: W + "px", height: H + "px", background: "#fffdf8", border: `3px solid ${C.ink}`, borderRadius: "14px 14px 0 0", boxShadow: "4px 6px 0 rgba(43,42,51,.08)" } }, win);
-        L.h("div", { style: { height: TAB + "px", background: cols[i], borderBottom: `3px solid ${C.ink}`, borderRadius: "10px 10px 0 0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--f-head)", fontWeight: 700, fontSize: "40px", color: "#fff" } }, card, String(i + 1));
-        const txt = L.h("div", { style: { padding: "24px 26px", fontSize: "35px", lineHeight: 1.28 } }, card, t);
-        L.h("div", { style: { position: "absolute", left: "50%", bottom: "-2px", width: "56px", marginLeft: "-28px", height: "40px", background: cols[i], clipPath: "polygon(0 0,100% 0,100% 100%,50% 60%,0 100%)" } }, card);
-        gsap.set(card, { y: H - TAB + 6 });
-        return { win, card, txt };
+      // libros: cada uno es un grupo (lomo + bandas + letra opcional)
+      const PAL = [C.blueM, C.amberM, C.plum, C.blueD, C.amberD, "#7FA77A", C.crimson, "#4E2E5B", "#C97B3A", "#3D6E8F", "#A8A398", "#D9A441"];
+      const r = L.rng(12);
+      const books = [];
+      const WORD = "CONCLUSIONES";
+      ROW_TOP.forEach((top, row) => {
+        const base = top + ROW_H;
+        let x = 62;
+        // fila 0: el título pintado en los lomos, centrado
+        const wordStart = row === 0 ? 960 - (WORD.length * 84) / 2 : Infinity;
+        let li = 0;
+        while (x < 1856) {
+          const isLetter = row === 0 && x >= wordStart - 40 && li < WORD.length && x + 84 <= 1856 && x >= wordStart;
+          if (row === 0 && li < WORD.length && x < wordStart && x + 60 > wordStart) { x = wordStart; continue; }
+          const w = isLetter ? 80 : 36 + Math.floor(r() * 40);
+          if (x + w > 1856) break;
+          const h = isLetter ? 214 : 150 + Math.floor(r() * 75);
+          const col = isLetter ? ["#4E2E5B", C.plum][li % 2] : PAL[Math.floor(r() * PAL.length)];
+          const g = L.s("g", {}, booksG);
+          gsap.set(g, { x, y: base - h });
+          const lean = !isLetter && r() < 0.06;
+          L.s("rect", { x: 0, y: 0, width: w, height: h, rx: 4, fill: col, stroke: C.ink, "stroke-width": 2.5 }, g);
+          L.s("rect", { x: 4, y: 14, width: w - 8, height: 6, fill: "rgba(255,255,255,.55)" }, g);
+          L.s("rect", { x: 4, y: h - 22, width: w - 8, height: 6, fill: "rgba(255,255,255,.55)" }, g);
+          if (isLetter) {
+            L.s("text", { x: w / 2, y: h / 2 + 20, "text-anchor": "middle", "font-family": "Fraunces", "font-weight": 700, "font-size": 56, fill: "#F2D48A" }, g, WORD[li]);
+            li++;
+          } else if (w > 56 && r() < 0.5) {
+            L.s("rect", { x: w / 2 - 8, y: h * 0.35, width: 16, height: h * 0.3, rx: 3, fill: "rgba(255,255,255,.35)" }, g);
+          }
+          if (lean) gsap.set(g, { rotation: -6, transformOrigin: "0% 100%" });
+          books.push({ g, row, cx: x + w / 2, x, y: base - h, letter: isLetter });
+          x += w + (isLetter ? 4 : 2);
+        }
       });
-      tl.fromTo(bookG, { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.2);
-      tl.fromTo(marks.map((m) => m.card), { y: H + 10 }, { y: H - TAB + 6, duration: 0.5, ease: "back.out(2)", stagger: 0.12 }, ">-0.2");
+      const letterBooks = books.filter((b) => b.letter);
 
-      marks.forEach((m) => {
+      // ---- Entrada: el librero se llena; el título brilla en los lomos ----
+      tl.fromTo(books.map((b) => b.g), { y: "-=60", autoAlpha: 0 }, { y: "+=60", autoAlpha: 1, duration: 0.45, ease: "bounce.out", stagger: { amount: 1.4, from: "random" } }, 0.2);
+      tl.fromTo(letterBooks.map((b) => b.g.querySelector("text")), { attr: { fill: "#F2D48A" } }, { attr: { fill: "#FFF3C4" }, duration: 0.25, yoyo: true, repeat: 1, stagger: 0.07 }, ">");
+
+      // ---- Cada conclusión: caen los libros de una zona y aparece el texto ----
+      const panels = CONCL.map(([t, d], i) => {
+        const [x0, x1, rows] = ZONES[i];
+        const y0 = ROW_TOP[rows[0]] + 8, y1 = ROW_TOP[rows[1]] + ROW_H;
+        const p = L.h("div", { class: "abs", style: { left: x0 + 40 + "px", top: y0 + "px", width: x1 - x0 - 80 + "px", height: y1 - y0 + "px", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 44px", background: "rgba(251,248,241,.95)", borderRadius: "18px", boxShadow: "0 12px 30px rgba(80,50,20,.25)" } }, stage);
+        const tt = L.h("div", { class: "h-title", style: { fontSize: "54px", lineHeight: 1.15, color: C.ink } }, p, `${L.ins(i + 1)}${t}`);
+        const dd = L.h("div", { style: { fontSize: "31px", lineHeight: 1.3, marginTop: "18px", color: C.ink2, fontWeight: 600 } }, p, d);
+        const zone = books.filter((b) => rows.includes(b.row) && b.cx > x0 && b.cx < x1);
+        return { p, tt, dd, zone };
+      });
+      gsap.set(panels.map((p) => p.p), { autoAlpha: 0 });
+      const fall = (zone, pos) => tl.to(zone.map((b) => b.g), {
+        y: (k) => 1150 + (k % 5) * 30, x: (k) => zone[k].x + ((k % 3) - 1) * 60, rotation: (k) => ((k * 37) % 120) - 60,
+        duration: 0.8, ease: "power2.in", stagger: { amount: 0.5, from: "random" },
+      }, pos);
+      const restore = (zone, pos) => tl.to(zone.map((b) => b.g), { x: (k) => zone[k].x, y: (k) => zone[k].y, rotation: 0, duration: 0.6, ease: "bounce.out", stagger: { amount: 0.5, from: "random" } }, pos);
+      const dropText = (p, pos) => {
+        const chars = [...p.tt.querySelectorAll(".ch, .ins"), ...p.dd.querySelectorAll(".ch")];
+        tl.to(chars, { y: () => 700 + Math.random() * 300, rotation: () => (Math.random() - 0.5) * 240, autoAlpha: 0, duration: 0.9, ease: "power2.in", stagger: { amount: 0.4, from: "random" } }, pos);
+        tl.to(p.p, { backgroundColor: "rgba(251,248,241,0)", boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.4 }, "<");
+      };
+      panels.forEach((p) => { p.tt._chars = L.splitChars(p.tt); L.splitChars(p.dd); });
+      panels.forEach((p, i) => {
         S.step();
-        tl.to(m.card, { y: -4, duration: 0.9, ease: "power3.out" }, ">");
-        tl.to(m.card, { y: 0, duration: 0.3, ease: "power2.inOut" }, ">");
-        tl.fromTo(m.txt, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, "<-0.4");
+        if (i > 0) {
+          dropText(panels[i - 1], ">");
+          restore(panels[i - 1].zone, ">-0.3");
+        }
+        fall(p.zone, i ? ">-0.2" : ">");
+        tl.fromTo(p.p, { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }, ">-0.2");
+        gsap.set([p.tt], { autoAlpha: 0 });
+        L.write(tl, p.tt, { pos: ">", dur: 1.4 });
+        tl.fromTo(p.dd, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5 }, ">");
       });
+      // al final, la última conclusión también se cae y vuelven sus libros
+      S.step();
+      dropText(panels[3], ">");
+      restore(panels[3].zone, ">-0.3");
 
       // ---- Paso final: Héctor y Eduardo, lectores en la misma biblioteca ----
-      S.step();
       const lib = L.h("div", { class: "layer" }, el);
       const ls = L.svg(lib);
       const wash = L.wash(ls, { cx: 960, cy: 520, rx: 900, ry: 420, color: C.plumL, opacity: 0.35, seed: 31, layers: 1 });
