@@ -143,5 +143,42 @@
       tl.fromTo(sLab, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.1");
       tl.fromTo([chiLab, glLab], { autoAlpha: 0, x: -12 }, { autoAlpha: 1, x: 0, duration: 0.4, stagger: 0.15 }, ">-0.1");
     },
+
+    /* ---------- Transición a Conclusiones: todo cae, una brocha pinta el fondo del librero y se vuelve mueble ---------- */
+    out(from, to, fx) {
+      const tl = gsap.timeline();
+      const kids = [...from.children];
+      const saved = kids.map((k) => ({ k, x: gsap.getProperty(k, "x"), y: gsap.getProperty(k, "y"), r: gsap.getProperty(k, "rotation") }));
+      gsap.set(to, { autoAlpha: 0 });
+      // 1 · todo lo de la diapositiva se cae
+      tl.to(kids, { y: (i) => 1250 + (i % 3) * 80, rotation: (i) => ((i * 47) % 50) - 25, duration: 0.85, ease: "power2.in", stagger: { amount: 0.35, from: "random" } }, 0);
+      // 2 · brochazos del color del fondo del librero, de arriba a abajo, de ida y vuelta
+      const svg = L.svg(fx, { style: "position:absolute;left:0;top:0" });
+      const PAINT = "#E9D6BC";
+      // un solo grupo con el filtro de acuarela, del tamaño de la hoja (si no, el filtro recorta cada trazo)
+      const paint = L.s("g", { filter: "url(#wc2)" }, svg);
+      L.s("rect", { x: -40, y: -40, width: 2000, height: 1160, fill: "none" }, paint);
+      const strokes = [0, 1, 2, 3, 4, 5, 6].map((i) => {
+        const y = 40 + i * 168, w = (k) => (Math.sin(i * 1.7 + k) * 18).toFixed(0);
+        const d = i % 2
+          ? `M2040,${y} C1500,${+y + +w(1)} 900,${y - w(2)} 420,${+y + +w(3)} S-60,${y} -140,${y}`
+          : `M-140,${y} C420,${+y + +w(1)} 1020,${y - w(2)} 1500,${+y + +w(3)} S1980,${y} 2060,${y}`;
+        return L.s("path", { d, fill: "none", stroke: PAINT, "stroke-width": 250, "stroke-linecap": "round" }, paint);
+      });
+      L.draw(tl, strokes, 0.45, { duration: 0.42, stagger: 0.2, ease: "power1.inOut" });
+      // 3 · el fondo pintado se "va hacia atrás" y se vuelve el librero (los libros llegan con la entrada de Conclusiones)
+      const T = 0.45 + 6 * 0.2 + 0.45;
+      tl.set(from, { autoAlpha: 0 }, T)
+        .set(to, { autoAlpha: 1 }, T)
+        .fromTo(to, { scale: 1.18, transformOrigin: "50% 50%" }, { scale: 1, duration: 1.1, ease: "power3.out" }, T)
+        .to(svg, { opacity: 0, scale: 1.05, transformOrigin: "50% 50%", duration: 0.7, ease: "power1.out" }, T + 0.1);
+      return {
+        tl,
+        cleanup() {
+          svg.remove();
+          saved.forEach((o) => gsap.set(o.k, { x: o.x, y: o.y, rotation: o.r }));
+        },
+      };
+    },
   });
 })();
