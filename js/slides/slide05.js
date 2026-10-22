@@ -21,7 +21,7 @@
       const cdmx = MX.states.find((s) => s.id === "MX-CMX").city;
       const cities = MX.states.map((st) => {
         const g = L.s("g", { transform: `translate(${st.city[0]},${st.city[1]})` }, map);
-        const ring = L.s("circle", { r: 9, fill: "none", stroke: C.plum, "stroke-width": 2.5 }, g);
+        const ring = L.s("circle", { r: 9, fill: "none", stroke: C.plum, "stroke-width": 2.5, style: "opacity:0" }, g);
         const dot = L.s("circle", { r: 7.5, fill: C.plum, stroke: "#fff", "stroke-width": 2 }, g);
         return { g, ring, dot, d: Math.hypot(st.city[0] - cdmx[0], st.city[1] - cdmx[1]) };
       }).sort((a, b) => a.d - b.d);
@@ -33,7 +33,7 @@
       cities.forEach((c, i) => {
         const t = 2.4 + c.d / 420;
         tl.fromTo(c.dot, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, t);
-        tl.fromTo(c.ring, { scale: 0.8, opacity: 1, transformOrigin: "50% 50%" }, { scale: 3.2, opacity: 0, duration: 0.9, ease: "power2.out" }, t);
+        tl.fromTo(c.ring, { scale: 0.8, opacity: 1, transformOrigin: "50% 50%" }, { scale: 3.2, opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t);
       });
 
       // ---- Paso 2: el mapa a la izquierda; contadores ----
