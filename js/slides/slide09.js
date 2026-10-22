@@ -48,7 +48,7 @@
         const lab = L.h("div", { class: "abs hand", style: { left: midX - 190 + "px", width: "380px", top: midY - (sig ? 100 : 140) + "px", textAlign: "center", fontSize: "33px", lineHeight: 1.05, color: col } }, s1, `${a}<br>${b}`);
         return { arw, eq, lab };
       });
-      const n2 = L.h("div", { class: "abs hand", style: { left: "0", top: "1010px", width: "1920px", textAlign: "center", fontSize: "40px", color: P.a, lineHeight: 1.1 } }, s1, `${L.ins(4)}Terminar la secundaria no cambia la proporción de lectores; el salto empieza en la media superior.`);
+      const n2 = L.h("div", { class: "abs hand", style: { left: "0", top: "1010px", width: "1920px", textAlign: "center", fontSize: "40px", color: P.a, lineHeight: 1.1 } }, s1, `${L.ins(2)}Terminar la secundaria no cambia la proporción de lectores; el salto empieza en la media superior.`);
       gsap.set([ar, n2, ...arrows.map((a) => a.lab), ...arrows.map((a) => a.arw.g), ...arrows.filter((a) => a.eq).map((a) => a.eq)], { autoAlpha: 0 });
       tl.set(ar, { autoAlpha: 1 }, ">");
       arrows.forEach((a, i) => {
@@ -66,7 +66,7 @@
       const sv2 = L.svg(s2);
       const [li, ls] = D.icSuperiorPrimaria;
       const hi = Charts.hinterval(sv2, { x: 130, y: 190, w: 1140, h: 290, xDomain: [0.34, 0.45], xTicks: [0.34, 0.36, 0.38, 0.4, 0.42, 0.44], fmt: (v) => v.toFixed(2), li, ls, color: P.a, wash: P.l, xTitle: "Diferencia de proporciones", yLabel: "Diferencia" });
-      const l3 = L.h("div", { class: "abs hand", style: { left: "1320px", top: "250px", width: "520px", fontSize: "42px", color: P.a, lineHeight: 1.1 } }, s2, `${L.ins(5)}Entre 37 y 42 puntos más lectores con estudios superiores`);
+      const l3 = L.h("div", { class: "abs hand", style: { left: "1320px", top: "250px", width: "520px", fontSize: "42px", color: P.a, lineHeight: 1.1 } }, s2, `${L.ins(3)}Entre 37 y 42 puntos más lectores con estudios superiores`);
       gsap.set([s2, t3, l3], { autoAlpha: 0 });
       tl.to(s1, { autoAlpha: 0, y: -60, duration: 0.6, ease: "power2.in" }, ">");
       tl.set(s2, { autoAlpha: 1 }, ">");
@@ -82,7 +82,7 @@
         colors: [C.amberL, C.amberM, C.amberD], legendTitle: "Acceso en el hogar", legend: ["Bajo (0–1)", "Medio (2)", "Alto (3–4)"],
         yTitle: "% de lectores", m: { l: 110, r: 380, t: 20, b: 70 },
       });
-      const n4 = L.h("div", { class: "abs hand", style: { left: "1500px", top: "750px", width: "360px", fontSize: "38px", color: C.amberD, lineHeight: 1.08 } }, s2, `${L.ins(6)}Con la misma escolaridad, el acceso alto en casa suma entre 19 y 24 puntos de lectores.`);
+      const n4 = L.h("div", { class: "abs hand", style: { left: "1500px", top: "750px", width: "360px", fontSize: "38px", color: C.amberD, lineHeight: 1.08 } }, s2, `${L.ins(4)}Con la misma escolaridad, el acceso alto en casa suma entre 19 y 24 puntos de lectores.`);
       gsap.set([sv3, n4], { autoAlpha: 0 });
       tl.set(sv3, { autoAlpha: 1 }, ">");
       gr.play(tl, ">");

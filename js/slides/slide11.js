@@ -19,11 +19,14 @@
   const O = D.contingencia, RT = D.totalesFila, CT = D.totalesColumna, N = D.totalTabla;
   const E = O.map((row, i) => row.map((_, j) => (RT[i] * CT[j]) / N));
   const Q = O.map((row, i) => row.map((o, j) => ((o - E[i][j]) ** 2) / E[i][j]));
+  /* Fracción tipográfica: numerador sobre denominador con una raya */
+  const frac = (num, den, size) => `<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;${size ? `font-size:${size}px;` : ""}"><span style="padding:0 6px 3px">${num}</span><span style="border-top:3px solid currentColor;padding:3px 6px 0;align-self:stretch;text-align:center">${den}</span></span>`;
   const f1 = (v) => v.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
   Deck.add({
     accent: PAL.a,
     transition: "watercolor",
+    washColors: [PAL.l, PAL.m, "#E3F0E5", PAL.a, PAL.l],
     notes: "H₀: el índice del hogar y el de la escuela son independientes. Frecuencias esperadas: (total del renglón × total de la columna) / n; la menor es 184.8 ≥ 5, así que se cumple el supuesto. χ² = Σ(O − E)²/E = 2414.77 con (5−1)(5−1) = 16 gl; valor frontera 27.14 (α = 0.04); p < 2.2×10⁻¹⁶. La prueba ji-cuadrada no da un intervalo de confianza. Con n = 10,384 la prueba indica dependencia, no qué tan fuerte es.",
     build(el, S) {
       const tl = S.tl;
@@ -97,72 +100,54 @@
       // =============== Paso 1 · Frecuencias observadas ===============
       const t1 = title(140, "Paso 1 · Frecuencias observadas");
       const T1 = mkTable({ Y0: 270, M: O, fmt: L.fmt.int, max: 1390, totals: true, CW: 160, CH: 72 });
-      const n1 = L.h("div", { class: "abs", style: { left: 0, width: "1920px", top: "730px", textAlign: "center", fontSize: "30px", fontWeight: 700, color: C.ink2 } }, el, "10,384 personas con ambos índices · cada celda cuenta cuántas tienen ese par (hogar, escuela)");
-      gsap.set([t1, n1], { autoAlpha: 0 });
+      gsap.set(t1, { autoAlpha: 0 });
       L.pop(tl, t1, ">", { from: { y: -10 } });
       T1.play(">-0.1");
-      L.pop(tl, n1, ">", { from: { y: 10 } });
 
       // =============== Paso 2 · Frecuencias esperadas ===============
       S.step();
       const R1 = mkRect(0, "Paso 1 · Frecuencias observadas");
       const m1 = mini(R1.y, O, 1390);
-      const s1 = sumText(R1.y, `<span>n = 10,384</span><span style="color:${C.ink2};font-weight:700">tabla 5 × 5 de índice hogar × índice escuela</span>`);
-      tl.to([t1, n1, T1.g], { autoAlpha: 0, duration: 0.35 }, ">");
+      const s1 = sumText(R1.y, `<span>n = 10,384</span><span style="color:${C.ink2};font-weight:700">índice hogar × índice escuela</span>`);
+      tl.to([t1, T1.g], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R1, "<0.1");
       tl.fromTo(m1, { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">-0.2");
       tl.fromTo(s1, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, "<");
 
       const t2 = title(262, "Paso 2 · Frecuencias esperadas");
-      const fm2 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "322px", textAlign: "center", fontSize: "38px" } }, el,
-        `E = <span style="color:${C.amberD}">total del renglón</span> × <span style="color:${C.blueD}">total de la columna</span> ÷ n`);
-      const T2 = mkTable({ Y0: 440, M: E, fmt: f1, max: 1390, totals: true, CW: 160, CH: 64, size: 25 });
-      const ex2 = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "845px", textAlign: "center", fontSize: "38px", color: C.crimson } }, el,
-        "Ejemplo: 2,970 × 1,493 ÷ 10,384 = 427.0 &nbsp;(se observaron 993)");
-      const rg2 = T2.ring(0, 0);
-      gsap.set([t2, fm2, ex2, rg2], { autoAlpha: 0 });
+      const T2 = mkTable({ Y0: 360, M: E, fmt: f1, max: 1390, totals: true, CW: 160, CH: 70, size: 26 });
+      gsap.set(t2, { autoAlpha: 0 });
       L.pop(tl, t2, ">0.1", { from: { y: -10 } });
-      tl.fromTo(fm2, { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, ">-0.1");
-      T2.play(">");
-      tl.fromTo(rg2, { autoAlpha: 0, scale: 1.4, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">0.2");
-      L.pop(tl, ex2, "<", { from: { y: 10 } });
+      T2.play(">-0.1");
 
       // =============== Paso 3 · Diferencia al cuadrado ===============
       S.step();
       const R2 = mkRect(1, "Paso 2 · Frecuencias esperadas");
       const m2 = mini(R2.y, E, 1390);
-      const s2 = sumText(R2.y, `<span>E = renglón × columna ÷ n</span><span style="color:${C.ink2};font-weight:700">mínima esperada = 184.8 ≥ 5</span>`);
-      tl.to([t2, fm2, ex2, T2.g], { autoAlpha: 0, duration: 0.35 }, ">");
+      tl.to([t2, T2.g], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R2, "<0.1");
       tl.fromTo(m2, { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">-0.2");
-      tl.fromTo(s2, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, "<");
 
       const t3 = title(398, "Paso 3 · Diferencia al cuadrado");
-      const fm3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "456px", textAlign: "center", fontSize: "42px" } }, el,
-        `χ² = Σ <span style="color:${PAL.a}">(O − E)² ÷ E</span>`);
-      const sm3 = L.h("div", { class: "abs", style: { left: 0, width: "1920px", top: "516px", textAlign: "center", fontSize: "24px", fontWeight: 700, color: C.ink2 } }, el,
+      const fm3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "450px", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "44px" } }, el,
+        `χ² = Σ&nbsp;${frac(`<span style="color:${PAL.a}">(O − E)²</span>`, `<span style="color:${PAL.a}">E</span>`)}`);
+      const sm3 = L.h("div", { class: "abs", style: { left: 0, width: "1920px", top: "568px", textAlign: "center", fontSize: "24px", fontWeight: 700, color: C.ink2 } }, el,
         "se distribuye como ji-cuadrada con (5 − 1)(5 − 1) = 16 grados de libertad");
-      const T3 = mkTable({ Y0: 600, M: Q, fmt: f1, max: 750, totals: false, CW: 160, CH: 58, size: 25 });
-      const ex3 = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "905px", textAlign: "center", fontSize: "36px", color: C.crimson } }, el,
-        "Ejemplo: (993 − 427.0)² ÷ 427.0 = 750.1");
-      const tot3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "960px", textAlign: "center", fontSize: "46px", color: PAL.d } }, el,
-        "Suma de las 25 celdas: χ² = 2414.77");
-      const rg3 = T3.ring(0, 0);
-      gsap.set([t3, fm3, sm3, ex3, tot3, rg3], { autoAlpha: 0 });
+      const T3 = mkTable({ Y0: 650, M: Q, fmt: f1, max: 750, totals: false, CW: 160, CH: 58, size: 25 });
+      const tot3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "960px", textAlign: "center", fontSize: "50px", color: PAL.d } }, el, "χ² = 2414.77");
+      gsap.set([t3, fm3, sm3, tot3], { autoAlpha: 0 });
       L.pop(tl, t3, ">0.1", { from: { y: -10 } });
       tl.fromTo(fm3, { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, ">-0.1");
       tl.fromTo(sm3, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, ">");
       T3.play(">");
-      tl.fromTo(rg3, { autoAlpha: 0, scale: 1.4, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">0.2");
-      L.pop(tl, ex3, "<", { from: { y: 10 } });
       tl.fromTo(tot3, { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, ">0.3");
 
       // =============== Paso 4 · Prueba de hipótesis (gráfica) ===============
       S.step();
       const R3 = mkRect(2, "Paso 3 · Diferencia al cuadrado");
       const m3 = mini(R3.y, Q, 750);
-      const s3 = sumText(R3.y, `<span>χ² = Σ (O − E)² ÷ E = <span style="color:${PAL.d}">2414.77</span></span>`);
-      tl.to([t3, fm3, sm3, ex3, tot3, T3.g], { autoAlpha: 0, duration: 0.35 }, ">");
+      const s3 = sumText(R3.y, `<span style="display:flex;align-items:center">χ² = Σ&nbsp;${frac("(O − E)²", "E", 30)}&nbsp;= <span style="color:${PAL.d}">&nbsp;2414.77</span></span>`);
+      tl.to([t3, fm3, sm3, tot3, T3.g], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R3, "<0.1");
       tl.fromTo(m3, { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">-0.2");
       tl.fromTo(s3, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, "<");
@@ -206,15 +191,11 @@
       const s4 = sumText(R4.y, `<span class="h-title" style="font-size:38px">χ² = 2414.77 &gt; 27.14 &nbsp;·&nbsp; p &lt; 2.2×10⁻¹⁶</span>`, 720);
       const R5 = mkRect(4, "Conclusión");
       const s5 = sumText(R5.y, `<span class="stamp" style="position:static;font-size:34px;transform:rotate(-3deg)">Se rechaza H₀</span><span class="h-title" style="font-size:40px;color:${PAL.d}">No son independientes</span>`, 720);
-      const ins = L.h("div", { class: "abs hand", style: { left: "110px", width: "1700px", top: "815px", fontSize: "40px", color: PAL.d, lineHeight: 1.2 } }, el,
-        `<div>${L.ins(1)}El acceso en el hogar y en la escuela van de la mano: la escuela tiende a reforzar el acceso que ya existía en casa.</div><div style="margin-top:14px">${L.ins(2)}Sin estímulos en casa, 33.4% tampoco los tuvo en la escuela; con los cuatro en casa, solo 2.2%.</div>`);
-      gsap.set(ins, { autoAlpha: 0 });
       tl.to([t4, hyp, csv], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R4, "<0.1");
       tl.fromTo(s4, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
       showRect(R5, ">0.3");
       tl.fromTo(s5, { autoAlpha: 0, scale: 1.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power4.in" }, ">-0.1");
-      L.write(tl, ins, { pos: ">0.3", dur: 2.0 });
     },
   });
 })();

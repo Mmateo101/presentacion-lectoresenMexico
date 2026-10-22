@@ -168,7 +168,7 @@
       const R4 = mkRect(3, "Conclusión");
       const sum4 = L.h("div", { class: "abs", style: { left: "720px", top: R4.y + "px", height: RECT.h + "px", display: "flex", alignItems: "center", gap: "34px" } }, el,
         `<span class="stamp" style="position:static;font-size:34px;transform:rotate(-3deg)">Se rechaza H₀</span><span class="h-title" style="font-size:40px;color:${P.d}">El hogar tiene más impacto que la escuela</span>`);
-      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "700px", textAlign: "center", fontSize: "46px", color: P.d } }, el, `${L.ins(3)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
+      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "700px", textAlign: "center", fontSize: "46px", color: P.d } }, el, `${L.ins(1)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
       gsap.set([sum3, sum4, ins], { autoAlpha: 0 });
       tl.to([t3, sub, gph], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R3, "<0.1");

@@ -37,9 +37,10 @@
     },
 
     /* Acuarelas que florecen sobre la página y se secan dejando la nueva */
-    watercolor(from, to, fx) {
+    watercolor(from, to, fx, ctx) {
       const svg = L.svg(fx, { style: "position:absolute;left:0;top:0" });
-      const cols = [C.blueL, C.amberL, C.plumL, C.blueM, C.amberM];
+      // la diapositiva destino puede pedir sus propios colores (p. ej. el color de su resultado)
+      const cols = (ctx && ctx.to.def.washColors) || [C.blueL, C.amberL, C.plumL, C.blueM, C.amberM];
       const r = L.rng(77);
       const ws = [];
       for (let i = 0; i < 9; i++) {
