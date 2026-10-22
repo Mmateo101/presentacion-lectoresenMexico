@@ -16,11 +16,12 @@
     } else if (k === 2) {
       S("path", { d: "M6,32 L18,20 L30,32 V54 H6 Z", fill: C.amberL });
       S("path", { d: "M34,54 V28 H58 V54 Z M40,28 L46,18 L52,28", fill: C.blueL });
-    } else if (k === 3) {
-      S("path", { d: "M4,24 L32,12 L60,24 L32,36 Z", fill: C.plumL }); S("path", { d: "M16,30 V44 q16,10 32,0 V30" }); S("path", { d: "M58,25 V42" });
-    } else {
-      S("rect", { x: 8, y: 40, width: 30, height: 9, fill: C.blueM }); S("rect", { x: 11, y: 31, width: 26, height: 9, fill: C.amberM }); S("rect", { x: 8, y: 22, width: 30, height: 9, fill: C.plumL });
-      S("path", { d: "M46,52 V18 M40,24 L46,16 L52,24 M40,46 L46,54 L52,46" });
+    } else if (k === 3) { // casa con libros
+      S("path", { d: "M6,30 L32,8 L58,30 V58 H6 Z", fill: C.amberL });
+      S("rect", { x: 16, y: 34, width: 8, height: 20, fill: C.plumL }); S("rect", { x: 26, y: 34, width: 8, height: 20, fill: C.blueM }); S("rect", { x: 36, y: 38, width: 8, height: 16, fill: C.amberM });
+    } else { // dos barras con su media
+      S("rect", { x: 10, y: 30, width: 16, height: 26, fill: C.amberM }); S("rect", { x: 36, y: 18, width: 16, height: 38, fill: C.blueM });
+      S("path", { d: "M4,58 H60" }); S("path", { d: "M6,24 H58", "stroke-dasharray": "5 5" });
     }
     return s;
   }
@@ -86,19 +87,30 @@
       }
 
       // ---- Paso 2: el objetivo se ensancha arriba; objetivos específicos ----
-      const objs = [
-        "Medir el acceso a la lectura en la infancia con dos índices: hogar y escuela.",
-        "Estimar la proporción de lectores según el nivel de acceso.",
-        "Comparar si el hogar o la escuela se asocia más con volverse lector, y si ambos están relacionados.",
-        "Explorar el papel de la escolaridad como indicador del nivel socioeconómico.",
-        "Estimar las diferencias en la cantidad de libros y su variabilidad.",
+      // dos grupos: la decisión de leer (a) y la cantidad de libros (b)
+      const groups = [
+        ["a) Leer o no leer libros", [
+          "Construir un índice de acceso a la lectura en el hogar y otro en la escuela.",
+          "Evaluar si el acceso en el hogar y el de la escuela son independientes.",
+          "Comparar la proporción de lectores con estímulos solo en casa vs. solo en la escuela.",
+        ]],
+        ["b) Cantidad de libros leídos", [
+          "Analizar cómo se relaciona el número de libros en casa con los libros leídos.",
+          "Comparar la media de libros leídos según el nivel de acceso.",
+        ]],
       ];
-      const list = L.h("div", { class: "abs", style: { left: "110px", top: "348px", width: "1700px" } }, el);
-      const lLab = L.h("div", { style: Object.assign({ marginBottom: "14px" }, LAB) }, list, "Objetivos específicos");
-      const items = objs.map((t, i) => {
-        const it = L.h("div", { style: { position: "relative", paddingLeft: "84px", minHeight: "52px", fontSize: "30px", lineHeight: 1.25, marginBottom: "14px" } }, list, t);
-        it._ic = icon(it, i);
-        return it;
+      const list = L.h("div", { class: "abs", style: { left: "110px", top: "340px", width: "1700px" } }, el);
+      const lLab = L.h("div", { style: Object.assign({ marginBottom: "10px" }, LAB) }, list, "Objetivos específicos");
+      const subs = [];
+      const items = [];
+      groups.forEach(([gt, objs]) => {
+        subs.push(L.h("div", { class: "h-title", style: { fontSize: "27px", color: C.ink2, margin: "6px 0 8px" } }, list, gt));
+        objs.forEach((t) => {
+          const it = L.h("div", { style: { position: "relative", paddingLeft: "84px", minHeight: "50px", fontSize: "29px", lineHeight: 1.25, marginBottom: "8px", display: "flex", alignItems: "center" } }, list, t);
+          it._ic = icon(it, items.length);
+          it._sub = subs.length - 1;
+          items.push(it);
+        });
       });
       gsap.set(list, { autoAlpha: 0 });
       S.step();
@@ -109,7 +121,8 @@
       tl.set(list, { autoAlpha: 1 }, ">-0.2");
       L.pop(tl, lLab, "<");
       items.forEach((it, i) => {
-        tl.fromTo(it, { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, i ? ">-0.25" : ">");
+        if (i === 0 || items[i - 1]._sub !== it._sub) L.pop(tl, subs[it._sub], i ? ">-0.1" : ">", { from: { x: -20 } });
+        tl.fromTo(it, { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, ">-0.25");
         tl.fromTo(it._ic, { scale: 0, rotation: -30, transformOrigin: "50% 50%" }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.5)" }, "<0.1");
       });
 
