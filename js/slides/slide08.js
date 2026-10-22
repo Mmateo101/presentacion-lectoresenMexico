@@ -10,7 +10,8 @@
 
   Deck.add({
     accent: P.a,
-    transition: "pageTurn",
+    transition: "watercolor",
+    washColors: [P.l, P.m, P.l, P.a, P.m], // explosiones del color de este resultado
     notes: "Grupos mutuamente excluyentes: solo escuela (hogar = 0, escuela ≥ 1; n = 1,977) y solo hogar (escuela = 0, hogar ≥ 1; n = 500). H₀: p_hogar = p_escuela; α = 0.04. Diferencia 19.4 puntos, IC 96% [14.3, 24.6], z ≈ 8.41, p < 2.2×10⁻¹⁶.",
     build(el, S) {
       const tl = S.tl;
@@ -33,6 +34,18 @@
       const showRect = (r, pos) => {
         tl.fromTo(r.box, { autoAlpha: 0, scaleX: 0.15, transformOrigin: "0% 50%" }, { autoAlpha: 1, scaleX: 1, duration: 0.55, ease: "power3.out" }, pos);
         tl.fromTo(r.lab, { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
+      };
+
+      /* Al final los rectángulos se estiran verticalmente para llenar la hoja */
+      const expand = (list, pos) => {
+        const n = list.length, H = (1005 - RECT.top - (n - 1) * RECT.gap) / n;
+        list.forEach((r, i) => {
+          const ny = RECT.top + i * (H + RECT.gap), dy = ny + H / 2 - (r.y + RECT.h / 2);
+          const v = { duration: 0.8, ease: "power3.inOut" };
+          tl.to(r.box, Object.assign({ attr: { y: ny, height: H } }, v), i ? "<" : pos);
+          [r.lab, ...(r.fit || [])].forEach((e) => tl.to(e, Object.assign({ top: ny, height: H }, v), "<"));
+          (r.move || []).forEach((e) => tl.to(e, Object.assign({ y: "+=" + dy }, v), "<"));
+        });
       };
 
       // =============== Paso 1 · Separar las poblaciones (centrado) ===============
@@ -167,15 +180,16 @@
         `19.4 puntos &nbsp;·&nbsp; z = 8.41 &gt; 2.054 &nbsp;·&nbsp; p &lt; 2.2×10⁻¹⁶`);
       const R4 = mkRect(3, "Conclusión");
       const sum4 = L.h("div", { class: "abs", style: { left: "720px", top: R4.y + "px", height: RECT.h + "px", display: "flex", alignItems: "center", gap: "34px" } }, el,
-        `<span class="stamp" style="position:static;font-size:34px;transform:rotate(-3deg)">Se rechaza H₀</span><span class="h-title" style="font-size:40px;color:${P.d}">El hogar tiene más impacto que la escuela</span>`);
-      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "700px", textAlign: "center", fontSize: "46px", color: P.d } }, el, `${L.ins(1)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
-      gsap.set([sum3, sum4, ins], { autoAlpha: 0 });
+        `<span class="stamp" style="position:static;font-size:34px;transform:rotate(-3deg)">Se rechaza H₀</span><span class="h-title" style="font-size:36px;color:${P.d}">El hogar tiene más impacto que la escuela</span>`);
+      gsap.set([sum3, sum4], { autoAlpha: 0 });
       tl.to([t3, sub, gph], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R3, "<0.1");
       tl.fromTo(sum3, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
       showRect(R4, ">0.3");
       tl.fromTo(sum4, { autoAlpha: 0, scale: 1.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power4.in" }, ">-0.1");
-      L.write(tl, ins, { pos: ">0.3", dur: 1.4 });
+      Object.assign(R1, { move: [[...esc, ...hog].map((d) => d.c), rE, rH] });
+      R2.fit = [sum2]; R3.fit = [sum3]; R4.fit = [sum4];
+      expand([R1, R2, R3, R4], ">0.5");
     },
   });
 })();

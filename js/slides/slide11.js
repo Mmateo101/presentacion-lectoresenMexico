@@ -97,6 +97,18 @@
         return d;
       };
 
+      /* Al final los rectángulos se estiran verticalmente para llenar la hoja */
+      const expand = (list, pos) => {
+        const n = list.length, H = (1005 - RECT.top - (n - 1) * RECT.gap) / n;
+        list.forEach((r, i) => {
+          const ny = RECT.top + i * (H + RECT.gap), dy = ny + H / 2 - (r.y + RECT.h / 2);
+          const v = { duration: 0.8, ease: "power3.inOut" };
+          tl.to(r.box, Object.assign({ attr: { y: ny, height: H } }, v), i ? "<" : pos);
+          [r.lab, ...(r.fit || [])].forEach((e) => tl.to(e, Object.assign({ top: ny, height: H }, v), "<"));
+          (r.move || []).forEach((e) => tl.to(e, Object.assign({ y: "+=" + dy }, v), "<"));
+        });
+      };
+
       // =============== Paso 1 · Frecuencias observadas ===============
       const t1 = title(140, "Paso 1 · Frecuencias observadas");
       const T1 = mkTable({ Y0: 270, M: O, fmt: L.fmt.int, max: 1390, totals: true, CW: 160, CH: 72 });
@@ -196,6 +208,8 @@
       tl.fromTo(s4, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
       showRect(R5, ">0.3");
       tl.fromTo(s5, { autoAlpha: 0, scale: 1.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power4.in" }, ">-0.1");
+      Object.assign(R1, { move: [m1], fit: [s1] }); R2.move = [m2]; Object.assign(R3, { move: [m3], fit: [s3] }); R4.fit = [s4]; R5.fit = [s5];
+      expand([R1, R2, R3, R4, R5], ">0.5");
     },
   });
 })();

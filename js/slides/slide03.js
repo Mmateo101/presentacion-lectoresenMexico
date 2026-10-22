@@ -76,15 +76,16 @@
         });
       });
       // enciende / apaga un grupo de fichas moradas
-      const tilesOn = (key, pos) => tileSets[key].forEach((t, i) => {
-        tl.to(t, { backgroundColor: C.plum, color: "#fff", paddingLeft: 6, paddingRight: 6, marginLeft: 1, marginRight: 1, scale: 1.35, duration: 0.1, ease: "power2.out" }, i ? `<0.08` : pos);
+      // las fichas moradas se "teclean" una por una
+      const tilesOn = (key, pos, gap = 0.08) => tileSets[key].forEach((t, i) => {
+        tl.to(t, { backgroundColor: C.plum, color: "#fff", paddingLeft: 6, paddingRight: 6, marginLeft: 1, marginRight: 1, scale: 1.35, duration: 0.1, ease: "power2.out" }, i ? `<${gap}` : pos);
         tl.to(t, { scale: 1, duration: 0.2, ease: "back.out(3)" }, "<0.1");
       });
       const tilesOff = (key, pos) => tl.to(tileSets[key], { backgroundColor: "rgba(122,78,140,0)", color: C.ink, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0, duration: 0.4, stagger: 0.03 }, pos);
       gsap.set(tileSets.acc.concat(tileSets.hab), { backgroundColor: "rgba(122,78,140,0)", paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 });
       gsap.set(qChars, { opacity: 0 });
       tl.to(qChars, { opacity: 1, duration: 0.01, stagger: 0.022 }, tEnd + 1.2);
-      tilesOn("acc", ">0.2");
+      tilesOn("acc", ">0.3", 0.2);
 
       // ---- Nube de palabras (estilo "welcome"): preguntas cortas, tamaños y tipografías mezcladas ----
       const cloud = L.h("div", { class: "layer" }, el);

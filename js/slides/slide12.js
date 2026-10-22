@@ -64,6 +64,8 @@
         }
       });
       const letterBooks = books.filter((b) => b.letter);
+      books.forEach((b) => { b.rot = gsap.getProperty(b.g, "rotation"); });
+      el._shelf = { stage, books }; // para la transición de salida
 
       // ---- Entrada: el librero se llena; el título brilla en los lomos ----
       tl.fromTo(books.map((b) => b.g), { y: "-=60", autoAlpha: 0 }, { y: "+=60", autoAlpha: 1, duration: 0.45, ease: "bounce.out", stagger: { amount: 1.4, from: "random" } }, 0.2);
@@ -105,6 +107,32 @@
       S.step();
       dropText(panels[3], ">");
       restore(panels[3].zone, ">-0.3");
+    },
+
+    /* ---------- Transición a líneas de investigación: caen los libros, luego el librero, y queda la hoja ---------- */
+    out(from, to, fx) {
+      const { stage, books } = from._shelf;
+      const tl = gsap.timeline();
+      gsap.set(from, { zIndex: 2 });
+      gsap.set(to, { zIndex: 1 });
+      // 1 · todos los libros se caen (de arriba hacia abajo, con giro)
+      tl.to(books.map((b) => b.g), {
+        y: (k) => 1250 + (k % 7) * 40, x: (k) => books[k].x + ((k % 5) - 2) * 50, rotation: (k) => ((k * 53) % 200) - 100,
+        duration: 0.9, ease: "power2.in", stagger: { amount: 0.8, from: "start", axis: "y", grid: "auto" },
+      }, 0);
+      // 2 · se cae el librero completo
+      tl.to(stage, { y: 1300, rotation: 7, transformOrigin: "50% 100%", duration: 1.0, ease: "power3.in" }, 0.9);
+      // 3 · el fondo se vuelve la hoja de cuaderno
+      tl.set(from, { backgroundImage: "none" }, 0.9)
+        .to(from, { backgroundColor: "rgba(251,248,241,0)", duration: 0.7 }, 0.9);
+      return {
+        tl,
+        cleanup() {
+          gsap.set(stage, { clearProps: "transform" });
+          books.forEach((b) => gsap.set(b.g, { x: b.x, y: b.y, rotation: b.rot }));
+          gsap.set(from, { clearProps: "backgroundColor,backgroundImage" });
+        },
+      };
     },
   });
 })();
