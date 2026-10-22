@@ -30,7 +30,7 @@
     notes: "H₀: el índice del hogar y el de la escuela son independientes. Frecuencias esperadas: (total del renglón × total de la columna) / n; la menor es 184.8 ≥ 5, así que se cumple el supuesto. χ² = Σ(O − E)²/E = 2414.77 con (5−1)(5−1) = 16 gl; valor frontera 27.14 (α = 0.04); p < 2.2×10⁻¹⁶. La prueba ji-cuadrada no da un intervalo de confianza. Con n = 10,384 la prueba indica dependencia, no qué tan fuerte es.",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el, "Resultado 2");
+      L.kicker(el, "Resultado 1");
       const head = L.head(el, "Independencia entre índice hogar y escuela");
       L.pop(tl, head, 0, { from: { y: -20 } });
       const svg = L.svg(el);

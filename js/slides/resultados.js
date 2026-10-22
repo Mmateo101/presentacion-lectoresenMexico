@@ -2,14 +2,13 @@
 (function () {
   const { C } = L;
   const ITEMS = [
-    "Proporción de lectores según el índice de acceso",
     "Independencia entre índice hogar y escuela",
     "Diferencia de proporciones: solo escuela vs. solo hogar",
-    "Escolaridad: primaria vs. secundaria",
+    "Proporción de lectores por escolaridad",
     "Diferencia de medias de libros: acceso alto vs. bajo",
     "Libros en casa y cuántos libros se leen",
   ];
-  const COLS = L.RES.map((r) => r.a); // mismos colores que cada resultado
+  const COLS = L.RES.slice(1).map((r) => r.a); // mismos colores que cada resultado
 
   Deck.add({
     transition: "pageTurn",
@@ -22,7 +21,7 @@
       const title = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "90px", textAlign: "center", fontSize: "130px", color: C.plum } }, el, "Resultados");
       const orn = L.s("path", { d: "M610,300 C760,300 820,282 920,296 S960,318 980,300 S1040,282 1100,296 S1160,300 1310,300", fill: "none", stroke: C.plum, "stroke-width": 3 }, svg);
       const rows = ITEMS.map((t, i) => {
-        const r = L.h("div", { class: "abs", style: { left: "290px", top: 340 + i * 112 + "px", width: "1340px", height: "96px", display: "flex", alignItems: "center", gap: "32px", background: "#FFFDF8", borderRadius: "10px 52px 52px 10px", boxShadow: "0 8px 22px rgba(120,90,50,.12)", borderLeft: `14px solid ${COLS[i]}`, padding: "0 30px" } }, el);
+        const r = L.h("div", { class: "abs", style: { left: "290px", top: 360 + i * 124 + "px", width: "1340px", height: "100px", display: "flex", alignItems: "center", gap: "32px", background: "#FFFDF8", borderRadius: "10px 52px 52px 10px", boxShadow: "0 8px 22px rgba(120,90,50,.12)", borderLeft: `14px solid ${COLS[i]}`, padding: "0 30px" } }, el);
         L.h("div", { class: "h-title", style: { flex: "none", width: "72px", height: "72px", borderRadius: "50%", background: COLS[i], color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px" } }, r, String(i + 1));
         L.h("div", { class: "h-title", style: { fontSize: "40px", lineHeight: 1.1, color: C.ink } }, r, t);
         return r;

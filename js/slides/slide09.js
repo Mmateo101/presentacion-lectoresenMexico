@@ -12,7 +12,7 @@
     notes: "Pruebas z entre niveles consecutivos (α = 0.04, valor frontera 2.054): Primaria → Secundaria +1.9 pts, z = 1.47, p = 0.14 (no significativa); Secundaria → Media superior +14.3 pts, z = 11.76; Media superior → Superior +23.6 pts, z = 19.48. Superior – Primaria o menos: IC 96% [0.369, 0.422]. La escolaridad es un indicador indirecto del nivel socioeconómico (el MOLEC no mide ingreso).",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el, "Resultado 4");
+      L.kicker(el, "Resultado 3");
       const head = L.head(el, "Proporción de lectores por escolaridad");
       L.pop(tl, head, 0, { from: { y: -20 } });
 

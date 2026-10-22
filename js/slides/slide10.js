@@ -40,7 +40,7 @@
     notes: "Lectores con acceso alto vs. bajo en el hogar: IC 96% para la diferencia de medias [0.43, 1.13] libros (t de Welch, varianzas distintas). Nos apoyamos en el Teorema del Límite Central (más de 1,400 lectores por grupo).",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el, "Resultado 5");
+      L.kicker(el, "Resultado 4");
       const head = L.head(el, "Diferencia de medias de libros: acceso alto vs. bajo");
       L.pop(tl, head, 0, { from: { y: -20 } });
       const t1 = L.h("div", { class: "abs h-title", style: { left: "110px", top: "170px", width: "1100px", fontSize: "38px", lineHeight: 1.2 } }, el, "Libros leídos al año: acceso alto – bajo en el hogar");
@@ -72,7 +72,7 @@
     notes: "Diagramas de caja de libros leídos (lectores) según los libros que había en casa. Para el grupo de más de 100 libros: intervalo de confianza de la varianza con ji-cuadrada, n − 1 gl, α = 0.04 (reporte de la Etapa 3: n = 335, s² = 116.91, IC 96% [100.32, 137.93]). Supone normalidad; los datos están muy sesgados, así que se interpreta con cautela.",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el, "Resultado 6");
+      L.kicker(el, "Resultado 5");
       const head = L.head(el, "Libros en casa y cuántos libros se leen");
       L.pop(tl, head, 0, { from: { y: -20 } });
       const sv = L.svg(el);

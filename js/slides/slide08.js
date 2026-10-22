@@ -15,7 +15,7 @@
     notes: "Grupos mutuamente excluyentes: solo escuela (hogar = 0, escuela ≥ 1; n = 1,977) y solo hogar (escuela = 0, hogar ≥ 1; n = 500). H₀: p_hogar = p_escuela; α = 0.04. Diferencia 19.4 puntos, IC 96% [14.3, 24.6], z ≈ 8.41, p < 2.2×10⁻¹⁶.",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el, "Resultado 3");
+      L.kicker(el, "Resultado 2");
       const head = L.head(el, "Prueba de diferencia entre solo escuela y solo hogar");
       L.pop(tl, head, 0, { from: { y: -20 } });
       const svg = L.svg(el);
