@@ -56,46 +56,18 @@
       tl.fromTo(edu.g, { autoAlpha: 0, x: 40 }, { autoAlpha: 1, x: 120, duration: 0.7 }, ">-0.2");
       tl.fromTo(hec.g, { autoAlpha: 0, x: 1870 }, { autoAlpha: 1, x: 1790, duration: 0.7 }, "<");
 
-      // ---- Paso 3: fórmula, fichas al frasco y estantes ----
+      // ---- Paso 3: fórmula; se voltean las preguntas con "Sí" ----
       S.step();
-      const formula = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "735px", textAlign: "center", fontSize: "42px" } }, el, "Índice = número de respuestas 'Sí' (de 0 a 4)");
-      const jsvg = L.svg(el);
-      const jar = (cx, col) => {
-        const g = L.s("g", {}, jsvg);
-        gsap.set(g, { x: cx, y: 545 });
-        L.s("path", { d: "M-60,10 h120 v130 q0,22 -22,22 h-76 q-22,0 -22,-22 Z", fill: "rgba(255,255,255,.6)", stroke: C.ink, "stroke-width": 3.5 }, g);
-        L.s("rect", { x: -66, y: -2, width: 132, height: 16, rx: 5, fill: col, stroke: C.ink, "stroke-width": 3 }, g);
-        const toks = [0, 1, 2, 3].map((k) => L.s("circle", { cx: -30 + (k % 2) * 60 + (k > 1 ? 12 : 0), cy: 140 - Math.floor(k / 2) * 46, r: 20, fill: col, stroke: C.ink, "stroke-width": 2.5 }, g));
-        return { g, toks };
-      };
-      const jH = jar(575, C.amberM), jE = jar(1345, C.blueM);
+      const formula = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "600px", textAlign: "center", fontSize: "48px" } }, el, "Índice = número de respuestas 'Sí' (de 0 a 4)");
       const yesH = [0, 1, 3]; // ejemplo: 3 de 4 en el hogar
       const yesE = [0, 1, 2, 3]; // 4 de 4 en la escuela
-      const shelves = L.h("div", { class: "layer" }, el);
-      const shelfDefs = [["Bajo (0–1)", 1], ["Medio (2)", 2], ["Alto (3–4)", 3]];
-      const sEls = shelfDefs.map(([t, lv], i) => {
-        const s = L.h("div", { class: "abs", style: { left: 190 + i * 530 + "px", top: "830px", width: "480px", height: "190px" } }, shelves);
-        L.h("div", { style: { position: "absolute", left: 0, right: 0, bottom: "30px", height: "14px", background: "#8A6A48", borderRadius: "7px", boxShadow: "0 6px 0 rgba(0,0,0,.08)" } }, s);
-        L.h("div", { style: { position: "absolute", left: 0, right: 0, bottom: "-16px", textAlign: "center", fontFamily: "var(--f-hand)", fontSize: "40px", fontWeight: 700, color: [C.ink2, C.ink, C.plum][i] } }, s, t);
-        return s;
-      });
-      gsap.set([formula, jH.g, jE.g, shelves, ...jH.toks, ...jE.toks], { autoAlpha: 0 });
+      gsap.set(formula, { autoAlpha: 0 });
       L.write(tl, formula, { pos: ">", dur: 1.4 });
-      tl.fromTo([jH.g, jE.g], { autoAlpha: 0, scale: 0.6, transformOrigin: "50% 100%" }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "<");
-      const flipDrop = (idxs, base, j) => idxs.forEach((k) => {
-        const c = cards[base + k];
-        tl.to(c, { rotationY: 180, duration: 0.45, ease: "power2.inOut" }, ">-0.15");
-        const t = j.toks[idxs.indexOf(k)];
-        tl.fromTo(t, { autoAlpha: 0, y: -220 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "bounce.out" }, ">-0.1");
-      });
-      flipDrop(yesH, 0, jH);
-      flipDrop(yesE, 4, jE);
+      // las preguntas con "Sí" se voltean (cada una suma 1 al índice)
+      const flip = (idxs, base) => idxs.forEach((k) => tl.to(cards[base + k], { rotationY: 180, duration: 0.45, ease: "power2.inOut" }, ">-0.15"));
+      flip(yesH, 0);
+      flip(yesE, 4);
       tl.to(cards[2], { opacity: 0.45, duration: 0.3 }, "<");
-      tl.set(shelves, { autoAlpha: 1 }, ">");
-      tl.fromTo(sEls, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.15 }, "<");
-      tl.to(jH.g, { x: 1400, y: 814, duration: 0.9, ease: "power3.inOut" }, ">");
-      tl.to(jE.g, { x: 1580, y: 814, duration: 0.9, ease: "power3.inOut" }, "<0.15");
-      tl.to(sEls[2], { scale: 1.05, duration: 0.25, yoyo: true, repeat: 1 }, ">");
 
       // ---- Paso 4: las dos gráficas de barras ----
       S.step();
@@ -115,7 +87,7 @@
       const aE = L.handArrow(ann, 1440, 280, 1585, 330, { color: C.blueD, bend: -0.25 });
       const note = L.h("div", { class: "abs hand", style: { left: "0", width: "1920px", top: "990px", textAlign: "center", fontSize: "40px", color: C.plum } }, el, "Los estímulos van juntos: el índice no se comporta como una binomial");
       gsap.set([chart, ann, nH, nE, note], { autoAlpha: 0 });
-      tl.to([...cards, boxH, boxE, formula, jH.g, jE.g, shelves], { autoAlpha: 0, y: "-=40", duration: 0.6, stagger: 0.02, ease: "power2.in" }, ">");
+      tl.to([...cards, boxH, boxE, formula], { autoAlpha: 0, y: "-=40", duration: 0.6, stagger: 0.02, ease: "power2.in" }, ">");
       tl.to(edu.g, { x: 95, y: 1010, scale: 0.75, duration: 0.9, ease: "power3.inOut" }, "<0.2");
       tl.to(hec.g, { x: 1820, y: 1010, scale: 0.75, duration: 0.9, ease: "power3.inOut" }, "<");
       tl.set([chart, ann], { autoAlpha: 1 }, ">-0.3");
