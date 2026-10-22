@@ -69,7 +69,7 @@
     accent: P6.a,
     transition: "watercolor",
     washColors: [P6.l, P6.m, P6.l, P6.a, P6.m], // explosiones del color de este resultado
-    notes: "Diagramas de caja de libros leídos (lectores) según los libros que había en casa. Para el grupo de más de 100 libros: intervalo de confianza de la varianza con ji-cuadrada, n − 1 gl, α = 0.04 (datos: n = 342, s² = 115.0, IC 96% [98.84, 135.44], 341 gl). Supone normalidad; los datos están muy sesgados, así que se interpreta con cautela.",
+    notes: "Diagramas de caja de libros leídos (lectores) según los libros que había en casa. Para el grupo de más de 100 libros: intervalo de confianza de la varianza con bootstrap BCa (R = 2000 remuestreos, set.seed(101), 96%), porque los libros leídos no siguen una distribución normal: n = 342, s² = 115.0, IC [71.70, 194.45]. Es asimétrico: la varianza podría ser bastante mayor que la muestral.",
     build(el, S) {
       const tl = S.tl;
       L.kicker(el, "Resultado 5");
@@ -128,13 +128,13 @@
       // ---- Abajo: intervalo de confianza de la varianza (ji-cuadrada) ----
       const vr = D.varianzaMas100;
       const t3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "598px", textAlign: "center", fontSize: "40px" } }, el, "Varianza de los libros leídos · más de 100 libros en casa");
-      const t3b = L.h("div", { class: "abs", style: { left: 0, width: "1920px", top: "650px", textAlign: "center", fontSize: "30px", fontWeight: 800, color: P6.a } }, el, "Intervalo de confianza del 96% para σ²");
+      const t3b = L.h("div", { class: "abs", style: { left: 0, width: "1920px", top: "650px", textAlign: "center", fontSize: "30px", fontWeight: 800, color: P6.a } }, el, "Intervalo de confianza del 96% para σ² · bootstrap BCa");
       const sv2 = L.svg(el);
-      const hv = Charts.hinterval(sv2, { x: 160, y: 690, w: 1600, h: 370, m: { l: 150, r: 70, t: 30, b: 100 }, xDomain: [90, 145], xTicks: [90, 100, 110, 120, 130, 140], fmt: (x) => x.toFixed(0), li: vr.li, ls: vr.ls, point: vr.s2, color: P6.a, wash: P6.l, xTitle: "Varianza (libros²)", liLabel: vr.li.toFixed(2), lsLabel: vr.ls.toFixed(2) });
+      const hv = Charts.hinterval(sv2, { x: 160, y: 690, w: 1600, h: 370, m: { l: 150, r: 70, t: 30, b: 100 }, xDomain: [60, 210], xTicks: [60, 80, 100, 120, 140, 160, 180, 200], fmt: (x) => x.toFixed(0), li: vr.li, ls: vr.ls, point: vr.s2, color: P6.a, wash: P6.l, xTitle: "Varianza (libros²)", liLabel: vr.li.toFixed(2), lsLabel: vr.ls.toFixed(2) });
       const sLab = Charts.T(hv.g, hv.x(vr.s2), hv.cy - 30, `s² = ${vr.s2.toFixed(2)}`, { "text-anchor": "middle", "font-weight": 800, "font-size": 26, fill: C.ink });
-      // distribución usada: ji-cuadrada, con sus grados de libertad en chiquito
-      const chiLab = Charts.T(hv.g, -80, hv.cy + 8, "χ²", { "text-anchor": "middle", "font-family": "Fraunces", "font-style": "italic", "font-weight": 700, "font-size": 56, fill: P6.d });
-      const glLab = Charts.T(hv.g, -80, hv.cy + 40, `${vr.gl} gl`, { "text-anchor": "middle", "font-weight": 700, "font-size": 20, fill: C.ink2 });
+      // método usado: bootstrap BCa, con el número de remuestreos en chiquito
+      const chiLab = Charts.T(hv.g, -80, hv.cy + 6, "BCa", { "text-anchor": "middle", "font-family": "Fraunces", "font-style": "italic", "font-weight": 700, "font-size": 40, fill: P6.d });
+      const glLab = Charts.T(hv.g, -80, hv.cy + 36, `${vr.R.toLocaleString("en-US")} remuestreos`, { "text-anchor": "middle", "font-weight": 700, "font-size": 18, fill: C.ink2 });
       gsap.set([t3, t3b, sv2, sLab, chiLab, glLab], { autoAlpha: 0 });
       L.write(tl, t3, { pos: ">0.1", dur: 1.0 });
       L.pop(tl, t3b, ">", { from: { y: 8 } });
