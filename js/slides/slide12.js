@@ -4,7 +4,7 @@
 
   // Las cuatro conclusiones (lenguaje de asociación, con los datos que las respaldan)
   const CONCL = [
-    ["El acceso en el hogar pesa más que el acceso en la escuela."],
+    ["El acceso en el hogar podría afectar más que el acceso en la escuela."],
     ["El acceso en el hogar y el de la escuela van de la mano."],
     ["Terminar la primaria o la secundaria da una proporción de lectores parecida."],
     ["Entre más libros había en casa, más varía cuántos libros se leen."],
