@@ -180,7 +180,7 @@
         `19.4 puntos &nbsp;·&nbsp; z = 8.41 &gt; 2.054 &nbsp;·&nbsp; p &lt; 2.2×10⁻¹⁶`);
       const R4 = mkRect(3, "Conclusión");
       const sum4 = L.h("div", { class: "abs", style: { left: "720px", top: R4.y + "px", height: RECT.h + "px", display: "flex", alignItems: "center", gap: "34px" } }, el,
-        `<span class="stamp" style="position:static;font-size:34px;transform:rotate(-3deg)">Se rechaza H₀</span><span class="h-title" style="font-size:36px;color:${P.d}">El hogar tiene más impacto que la escuela</span>`);
+        `<span class="h-title" style="font-size:40px;color:${P.d}">El hogar tiene más impacto que la escuela</span>`);
       gsap.set([sum3, sum4], { autoAlpha: 0 });
       tl.to([t3, sub, gph], { autoAlpha: 0, duration: 0.35 }, ">");
       showRect(R3, "<0.1");
