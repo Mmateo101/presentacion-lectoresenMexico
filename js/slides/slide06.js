@@ -43,14 +43,19 @@
     return d + "Z";
   }
 
-  // Variables del cuestionario (Etapa 1, Tabla 1) y cuáles se quedan
-  const VARS = [
-    ["p1 · sabe leer y escribir", 0], ["p3_1 · leyó libros", 1], ["p3_2 · revistas", 0], ["p3_3 · periódicos", 0],
-    ["p3_4 · historietas", 0], ["p3_5 · páginas de internet", 0], ["p4 · número de libros", 1], ["p5–p9 · sobre los libros", 0],
-    ["p10–p15 · revistas", 0], ["p16–p21 · periódicos", 0], ["p22–p23 · historietas", 0], ["p24–p25 · internet", 0],
-    ["p26–p31 · características", 0], ["p32 · motivo de no lectura", 0], ["p33 · bibliotecas y librerías", 0], ["p34a–d · estímulos en casa", 1],
-    ["p34d1 · libros en casa", 1], ["p35 · asistió a la primaria", 1], ["p36a–d · estímulos en la escuela", 1], ["nivel · escolaridad", 1],
-    ["edad", 1], ["sexo", 0], ["entidad", 0], ["año", 1],
+  // Secciones del cuestionario MOLEC (Etapa 1, Tabla 1) con sus variables; 1 = la usamos
+  const SECTIONS = [
+    ["I · Preguntas generales", "p1–p3", [["p1", 0], ["p2", 0], ["p3_1", 1], ["p3_2", 0], ["p3_3", 0], ["p3_4", 0], ["p3_5", 0]]],
+    ["II · Libros", "p4–p9", [["p4", 1], ["p5", 0], ["p6", 0], ["p7", 0], ["p8", 0], ["p9", 0]]],
+    ["III · Revistas", "p10–p15", [["p10–p15", 0]]],
+    ["IV · Periódicos", "p16–p21", [["p16–p21", 0]]],
+    ["V · Historietas", "p22–p23", [["p22–p23", 0]]],
+    ["VI · Internet, foros o blogs", "p24–p25", [["p24–p25", 0]]],
+    ["VII · Características de la lectura", "p26–p31", [["p26–p31", 0]]],
+    ["VIII · Razones para no leer", "p32", [["p32", 0]]],
+    ["IX · Asistencia a establecimientos", "p33a–d", [["p33", 0]]],
+    ["X · Estímulos en la infancia", "p34–p36", [["p34a", 1], ["p34b", 1], ["p34c", 1], ["p34c1", 0], ["p34d", 1], ["p34d1", 1], ["p35", 1], ["p36a", 1], ["p36b", 1], ["p36c", 1], ["p36d", 1]]],
+    ["Datos de la persona", "nivel, edad, sexo, entidad, año", [["nivel", 1], ["edad", 1], ["sexo", 0], ["entidad", 0], ["año", 1]]],
   ];
 
   Deck.add({
@@ -105,31 +110,32 @@
       const m4 = msg("124 personas que no fueron a la primaria: 0 estímulos escolares", C.blueD, 912);
       m4.style.fontSize = "33px";
 
-      // ---- Variables (derecha) ----
+      // ---- Variables (derecha): las secciones del cuestionario ----
       const vHead = L.h("div", { class: "abs h-title", style: { left: "900px", top: "190px", fontSize: "38px" } }, el, `${L.num(108)} variables por año`);
-      const chips = VARS.map(([t, keep], i) => {
-        const c = L.h("div", { class: "abs", style: { left: 900 + (i % 3) * 312 + "px", top: 258 + Math.floor(i / 3) * 76 + "px", width: "298px", height: "62px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", fontSize: "21px", fontWeight: 700, lineHeight: 1.1, border: `2px solid ${C.ink}`, borderRadius: "12px", background: "#fffdf8", padding: "0 8px" } }, el, t);
-        c._keep = keep;
-        return c;
+      const secs = SECTIONS.map(([title, range, vars], i) => {
+        const keepS = vars.some((v) => v[1]);
+        const c = L.h("div", { class: "abs", style: { left: 900 + (i % 2) * 460 + "px", top: 252 + Math.floor(i / 2) * 106 + "px", width: "445px", height: "92px", overflow: "hidden", border: `2px solid ${C.ink}`, borderRadius: "14px", background: "#fffdf8", padding: "10px 16px" } }, el);
+        L.h("div", { class: "h-title", style: { fontSize: "25px", lineHeight: 1.1, whiteSpace: "nowrap" } }, c, title);
+        const sub = L.h("div", { style: { fontSize: "19px", color: C.ink2, fontWeight: 700, marginTop: "6px" } }, c, range);
+        const row = L.h("div", { style: { display: "flex", flexWrap: "wrap", marginTop: "8px" } }, c);
+        const chips = vars.map(([v, keep]) => {
+          const ch = L.h("span", { style: { display: "inline-block", whiteSpace: "nowrap", overflow: "hidden", fontSize: "21px", fontWeight: 800, padding: "4px 12px", marginRight: "8px", marginBottom: "8px", borderRadius: "999px", border: `2px solid ${C.ink}`, background: keep ? C.plumL : C.band } }, row, v);
+          ch._keep = keep;
+          return ch;
+        });
+        return { c, sub, chips, keepS };
       });
-      const kept = chips.filter((c) => c._keep), drop = chips.filter((c) => !c._keep);
-      const keepMsg = L.h("div", { class: "abs hand", style: { left: "900px", top: "190px", fontSize: "44px", color: C.plum } }, el, "Solo nos enfocamos en estas variables");
-      const why = L.h("div", { class: "abs hand", style: { left: "900px", top: "690px", width: "900px", fontSize: "34px", color: C.ink2, lineHeight: 1.2 } }, el,
-        "p33: puede ser causa o consecuencia de leer<br>p8 y p32: solo las contestan algunas personas<br>entidad: 32 categorías difíciles de comparar");
-
-      // ---- Base final ----
-      const fin = L.h("div", { class: "card", style: { left: "250px", top: "250px", width: "1420px", height: "640px", padding: "36px 48px", textAlign: "center" } }, el);
-      L.h("div", { class: "h-title", style: { fontSize: "56px" } }, fin, "Base final: 11,685 personas");
-      const finVars = [["lee", "p3_1", C.plumL], ["libros", "p4", C.plumL], ["ind_hogar", "p34a–d", C.amberL], ["ind_escuela", "p36a–d", C.blueL], ["libros_casa", "p34d1", C.amberL], ["escolaridad", "nivel", "#D7E8C8"], ["edad", "edad", "#E4E0D8"], ["año", "2019–2024", "#E4E0D8"]];
-      const grid = L.h("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "22px", marginTop: "40px" } }, fin);
-      const fChips = finVars.map(([n, src, bgc]) => L.h("div", { style: { border: `2.5px solid ${C.ink}`, borderRadius: "14px", background: bgc, padding: "16px 8px" } }, grid,
-        `<div class="h-title" style="font-size:36px">${n}</div><div style="font-size:22px;font-weight:700;color:${C.ink2}">${src}</div>`));
-      const t1 = L.h("div", { class: "tag", style: { left: "330px", top: "760px", color: C.amberD } }, el, "Índice del hogar: 658 faltantes (5.6%)");
-      const t2 = L.h("div", { class: "tag", style: { left: "1000px", top: "760px", color: C.blueD } }, el, "Índice de la escuela: 858 faltantes (7.3%)");
-      fin.dataset.role = "final";
+      // ancho natural de cada ficha (para poder encogerla después)
+      secs.forEach((s) => s.chips.forEach((ch) => { ch.style.width = ch.offsetWidth + "px"; }));
+      gsap.set(secs.flatMap((s) => s.chips), { autoAlpha: 0 });
+      const keptS = secs.filter((s) => s.keepS), dropS = secs.filter((s) => !s.keepS);
+      const KH = [100, 100, 150, 100];   // alto de cada sección abierta
+      const keepMsg = L.h("div", { class: "abs hand", style: { left: "900px", top: "186px", fontSize: "44px", color: C.plum } }, el, "Solo nos enfocamos en estas variables");
+      const finT = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "220px", textAlign: "center", fontSize: "60px" } }, el, "Base final: 11,685 personas");
+      finT.dataset.role = "final";
 
       // ================= Entrada: la máquina se arma con todo adentro =================
-      gsap.set([lab1, m1, m2, m4, keepMsg, why, fin, t1, t2, ...qs, ...badges], { autoAlpha: 0 });
+      gsap.set([lab1, m1, m2, m4, keepMsg, finT, ...qs, ...badges], { autoAlpha: 0 });
       L.draw(tl, body, 0.2, { duration: 1.2 });
       tl.fromTo([pipes, chute, bin, divider], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, stagger: 0.1 }, "<0.6");
       tl.fromTo(gears, { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)", stagger: 0.1 }, "<");
@@ -139,7 +145,7 @@
       tl.fromTo(dots, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, stagger: { amount: 1.2, grid: [ROWS, COLS], from: "start" } }, "<0.3");
       tl.fromTo(vHead, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, "<");
       L.counts(tl, vHead, "<", 1.2);
-      tl.fromTo(chips, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.04, ease: "back.out(2)" }, "<0.2");
+      tl.fromTo(secs.map((s) => s.c), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.06, ease: "back.out(2)" }, "<0.2");
 
       const spin = (pos, turns = 1) => tl.to(gears, { rotation: `+=${360 * turns}`, duration: 1.2, ease: "power1.inOut" }, pos);
 
@@ -162,37 +168,47 @@
       tl.to(missing, { attr: { fill: "#fffdf8", stroke: C.crimson, "stroke-width": 3 }, duration: 0.4, stagger: 0.04 }, ">0.2");
       tl.to(qs, { autoAlpha: 0, y: -14, duration: 0.4 }, ">0.3");
 
-      // ================= 3: solo nos quedamos con estas variables =================
+      // ================= 3: las secciones sin variables útiles caen; las demás se abren =================
       S.step();
       spin(">", 2);
       tl.to(vHead, { autoAlpha: 0, duration: 0.3 }, "<");
-      drop.forEach((c, i) => {
-        tl.to(c, { x: 1680 - (parseFloat(c.style.left) + 149), y: 1120 - parseFloat(c.style.top), rotation: (i % 2 ? 1 : -1) * (20 + i * 3), scale: 0.4, autoAlpha: 0, duration: 0.8, ease: "power2.in" }, i ? "<0.07" : "<0.2");
+      dropS.forEach((s, i) => {
+        tl.to(s.c, { x: 1690 - (parseFloat(s.c.style.left) + 222), y: 1130 - parseFloat(s.c.style.top), rotation: (i % 2 ? 1 : -1) * (18 + i * 4), scale: 0.35, autoAlpha: 0, duration: 0.75, ease: "power2.in" }, i ? "<0.06" : "<0.2");
       });
-      kept.forEach((c, i) => {
-        tl.to(c, { x: 900 + (i % 2) * 312 - parseFloat(c.style.left), y: 268 + Math.floor(i / 2) * 76 - parseFloat(c.style.top), background: C.plumL, duration: 0.8, ease: "power3.inOut" }, i ? "<0.05" : ">-0.2");
+      let top = 252;
+      keptS.forEach((s, i) => {
+        tl.to(s.c, { left: 900, top, width: 910, height: KH[i], duration: 0.8, ease: "power3.inOut" }, i ? "<0.05" : ">-0.2");
+        tl.to(s.sub, { autoAlpha: 0, height: 0, marginTop: 0, duration: 0.4 }, "<");
+        top += KH[i] + 14;
       });
+      tl.fromTo(keptS.flatMap((s) => s.chips), { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.03, ease: "back.out(2)" }, ">-0.1");
+      // se van las variables de esas secciones que no usamos
+      const unused = keptS.flatMap((s) => s.chips.filter((c) => !c._keep));
+      tl.to(unused, { y: 40, rotation: 20, autoAlpha: 0, duration: 0.45, stagger: 0.05, ease: "power2.in" }, ">0.5");
+      tl.to(unused, { width: 0, paddingLeft: 0, paddingRight: 0, marginRight: 0, borderWidth: 0, duration: 0.4, ease: "power2.inOut" }, ">-0.1");
       L.pop(tl, keepMsg, "<", { from: { y: -10 } });
-      L.pop(tl, why, ">", { from: { x: 30, y: 0 }, to: { x: 0 } });
 
       // ================= 4: sin primaria → 0 estímulos escolares =================
       S.step();
+      const secX = keptS.find((s) => s.chips.some((c) => c.textContent === "p35"));
       tl.to(m2, { autoAlpha: 0, duration: 0.3 }, ">");
       L.pop(tl, m4, ">", { from: { y: 10 } });
       tl.to(noPrim, { attr: { fill: C.blueD }, opacity: 1, duration: 0.3 }, "<");
       tl.fromTo(badges, { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4, stagger: 0.15, ease: "back.out(3)" }, ">");
-      tl.to(kept.find((c) => c.textContent.startsWith("p36")), { scale: 1.08, duration: 0.25, yoyo: true, repeat: 3 }, "<");
+      tl.to(secX.chips.filter((c) => /p35|p36/.test(c.textContent)), { background: C.blueL, scale: 1.12, duration: 0.25, yoyo: true, repeat: 3 }, "<");
 
       // ================= 5: la máquina entrega la base final =================
       S.step();
       spin(">", 2);
-      tl.to([why, keepMsg, m4, ctr.wrap, lab1, divider, ...years], { autoAlpha: 0, duration: 0.4 }, "<");
+      tl.to([keepMsg, m4, ctr.wrap, lab1, divider, ...years], { autoAlpha: 0, duration: 0.4 }, "<");
       tl.to(dots, { x: (i, t) => 960 - +t.getAttribute("cx"), y: (i, t) => 560 - +t.getAttribute("cy"), scale: 0.3, autoAlpha: 0, duration: 0.9, ease: "power3.in", stagger: { amount: 0.4, from: "random" } }, "<0.1");
       tl.to(badges, { autoAlpha: 0, duration: 0.3 }, "<");
-      tl.to(kept, { x: (i, t) => 960 - (parseFloat(t.style.left) + 149), y: (i, t) => 560 - parseFloat(t.style.top), scale: 0.3, autoAlpha: 0, duration: 0.9, ease: "power3.in", stagger: 0.04 }, "<");
-      tl.fromTo(fin, { autoAlpha: 0, scale: 0.3 }, { autoAlpha: 1, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, ">-0.1");
-      tl.fromTo(fChips, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.08 }, ">-0.2");
-      tl.fromTo([t1, t2], { autoAlpha: 0, y: 20, rotation: -3 }, { autoAlpha: 1, y: 0, rotation: -1, duration: 0.5, stagger: 0.2, ease: "back.out(2)" }, ">");
+      let ft = 340;
+      keptS.forEach((s, i) => {
+        tl.to(s.c, { left: 260, top: ft, width: 1400, height: KH[i], duration: 0.9, ease: "power3.inOut" }, i ? "<0.06" : "<0.5");
+        ft += KH[i] + 18;
+      });
+      tl.fromTo(finT, { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, ">-0.3");
     },
 
     /* ---------- Súper transición 6 → 7: la máquina imprime la siguiente página ---------- */
@@ -215,14 +231,14 @@
         .to(from, { keyframes: [{ x: -6, y: 2 }, { x: 6, y: -2 }, { x: -4, y: 3 }, { x: 5, y: -1 }, { x: -3, y: 2 }, { x: 0, y: 0 }], duration: 1.2, ease: "none" }, 0.3)
         .fromTo(puffs, { scale: 0.2, autoAlpha: 0, transformOrigin: "50% 50%" }, { scale: 2.2, autoAlpha: 0.9, y: -60, duration: 0.9, stagger: 0.08, ease: "power2.out" }, 0.2)
         .to(puffs, { autoAlpha: 0, duration: 0.5, stagger: 0.05 }, 1.0)
-        .to(fin, { scale: 1.06, boxShadow: "0 0 0 8px rgba(122,78,140,.45), 0 20px 60px rgba(122,78,140,.4)", duration: 0.4, yoyo: true, repeat: 1 }, 0.9);
+        .to(fin, { scale: 1.08, color: C.plum, duration: 0.4, yoyo: true, repeat: 1 }, 0.9);
       // 2 · estallido de fichas (las variables se transforman)
       tl.fromTo(bits, { autoAlpha: 0, x: 0, y: 0, rotation: 0 }, { autoAlpha: 1, x: () => (r() - 0.5) * 1800, y: () => (r() - 0.6) * 1100, rotation: () => (r() - 0.5) * 720, duration: 1.1, ease: "power3.out" }, 1.6)
         .to(bits, { autoAlpha: 0, duration: 0.4 }, 2.4);
       // 3 · de la máquina sale la nueva hoja, gira y llena la pantalla
       tl.to(from, { scale: 1.6, autoAlpha: 0, duration: 1.2, ease: "power2.in" }, 1.6)
         .fromTo(to, { autoAlpha: 1, scale: 0.06, y: 20, rotation: -540, rotationX: 50 }, { scale: 1, y: 0, rotation: 0, rotationX: 0, duration: 1.6, ease: "power3.inOut" }, 1.7);
-      return { tl, cleanup() { svg.remove(); gsap.set(gears, { rotation: 0 }); gsap.set(fin, { clearProps: "boxShadow,scale" }); } };
+      return { tl, cleanup() { svg.remove(); gsap.set(gears, { rotation: 0 }); gsap.set(fin, { clearProps: "color,scale" }); } };
     },
   });
 })();

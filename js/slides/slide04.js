@@ -4,51 +4,88 @@
 
   /* Íconos a mano (64×64) */
   function icon(parent, k) {
-    const s = L.s("svg", { width: 70, height: 70, viewBox: "0 0 64 64", style: "position:absolute;left:0;top:-6px;overflow:visible" }, parent);
+    const s = L.s("svg", { width: 62, height: 62, viewBox: "0 0 64 64", style: "position:absolute;left:0;top:-8px;overflow:visible" }, parent);
     const st = { fill: "none", stroke: C.ink, "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round" };
     const S = (tag, a) => L.s(tag, Object.assign({}, st, a), s);
-    if (k === 0) { // dos frascos: hogar y escuela
+    if (k === 0) {
       S("path", { d: "M8,22 h18 v30 q0,6 -6,6 h-6 q-6,0 -6,-6 Z", fill: C.amberL });
       S("path", { d: "M38,22 h18 v30 q0,6 -6,6 h-6 q-6,0 -6,-6 Z", fill: C.blueL });
       S("circle", { cx: 17, cy: 48, r: 4, fill: C.amberM }); S("circle", { cx: 47, cy: 48, r: 4, fill: C.blueM }); S("circle", { cx: 47, cy: 38, r: 4, fill: C.blueM });
-    } else if (k === 1) { // porcentaje
+    } else if (k === 1) {
       S("circle", { cx: 18, cy: 18, r: 8, fill: C.plumL }); S("circle", { cx: 46, cy: 46, r: 8, fill: C.plumL }); S("path", { d: "M50,10 L14,54" });
-    } else if (k === 2) { // casa vs escuela
+    } else if (k === 2) {
       S("path", { d: "M6,32 L18,20 L30,32 V54 H6 Z", fill: C.amberL });
       S("path", { d: "M34,54 V28 H58 V54 Z M40,28 L46,18 L52,28", fill: C.blueL });
-      S("path", { d: "M26,12 q6,-6 12,0", stroke: C.plum });
-    } else if (k === 3) { // birrete
+    } else if (k === 3) {
       S("path", { d: "M4,24 L32,12 L60,24 L32,36 Z", fill: C.plumL }); S("path", { d: "M16,30 V44 q16,10 32,0 V30" }); S("path", { d: "M58,25 V42" });
-    } else { // libros y dispersión
+    } else {
       S("rect", { x: 8, y: 40, width: 30, height: 9, fill: C.blueM }); S("rect", { x: 11, y: 31, width: 26, height: 9, fill: C.amberM }); S("rect", { x: 8, y: 22, width: 30, height: 9, fill: C.plumL });
       S("path", { d: "M46,52 V18 M40,24 L46,16 L52,24 M40,46 L46,54 L52,46" });
     }
     return s;
   }
 
+  /* Máquina de escribir dibujada a mano; devuelve piezas animables */
+  function typewriter(parent, x, y) {
+    const g = L.s("g", {}, parent);
+    gsap.set(g, { x, y });
+    const st = { stroke: C.ink, "stroke-width": 4, "stroke-linejoin": "round", "stroke-linecap": "round" };
+    const carriage = L.s("g", {}, g);
+    L.s("rect", Object.assign({ x: -300, y: -40, width: 600, height: 46, rx: 22, fill: "#5E6B7D" }, st), carriage);
+    L.s("circle", Object.assign({ cx: -318, cy: -17, r: 22, fill: "#8A97A8" }, st), carriage);
+    L.s("circle", Object.assign({ cx: 318, cy: -17, r: 22, fill: "#8A97A8" }, st), carriage);
+    L.s("path", Object.assign({ d: "M-360,-17 h-50 l-10,-30", fill: "none" }, st), carriage); // palanca
+    L.s("path", Object.assign({ d: "M-330,10 L330,10 L380,190 Q380,214 356,214 L-356,214 Q-380,214 -380,190 Z", fill: C.plum }, st), g);
+    L.s("path", { d: "M-300,40 H300", stroke: "#D8B66A", "stroke-width": 3 }, g);
+    const keys = [];
+    [[12, -230, 70], [11, -210, 112], [10, -190, 154]].forEach(([n, x0, yy]) => {
+      for (let i = 0; i < n; i++) {
+        const k = L.s("circle", Object.assign({ cx: x0 + i * 42, cy: yy, r: 15, fill: "#FBF8F1" }, st, { "stroke-width": 3 }), g);
+        keys.push(k);
+      }
+    });
+    L.s("rect", Object.assign({ x: -150, y: 180, width: 300, height: 22, rx: 11, fill: "#FBF8F1" }, st, { "stroke-width": 3 }), g);
+    return { g, carriage, keys };
+  }
+
   Deck.add({
     transition: "pageTurn",
-    notes: "Supuestos: n·p ≥ 5 en todos los grupos; frecuencias esperadas ≥ 5; para medias usamos el Teorema del Límite Central porque el número de libros está muy sesgado (sesgo ≈ 7.3).",
+    notes: "Supuestos: n·p ≥ 5 en todos los grupos; frecuencias esperadas ≥ 5; para medias usamos el Teorema del Límite Central porque el número de libros está muy sesgado (sesgo ≈ 7.3). Herramientas: α = 0.04; IC de proporciones (z), diferencia de medias (t de Welch) y varianza (χ²); pruebas z de diferencia de proporciones y ji-cuadrada; R (Quarto / R Markdown).",
     build(el, S) {
       const tl = S.tl;
       const head = L.head(el, "Objetivos y metodología");
       L.pop(tl, head, 0, { from: { y: -20 } });
+      const LAB = { fontWeight: 800, letterSpacing: ".18em", textTransform: "uppercase", fontSize: "24px", color: C.plum };
 
-      // ---- Paso 1: objetivo general como epígrafe ----
-      const ep = L.h("div", { class: "abs", style: { left: "230px", width: "1460px", top: "300px", textAlign: "center" } }, el);
-      const epLab = L.h("div", { style: { fontFamily: "var(--f-body)", fontWeight: 800, letterSpacing: ".18em", textTransform: "uppercase", fontSize: "24px", color: C.plum, marginBottom: "22px" } }, ep, "Objetivo general");
-      const orn = L.s("svg", { width: 600, height: 30, viewBox: "0 0 600 30", style: "display:block;margin:0 auto 18px" }, ep);
-      const ornP = L.s("path", { d: "M10,15 C120,15 170,2 250,12 S290,26 300,15 S330,2 350,12 S480,15 590,15", fill: "none", stroke: C.plum, "stroke-width": 2.5 }, orn);
-      const epT = L.h("div", { style: { fontFamily: "var(--f-head)", fontStyle: "italic", fontSize: "48px", lineHeight: 1.3, color: C.ink } }, ep,
+      // ---- Paso 1: una máquina de escribir teclea el objetivo general ----
+      const sv = L.svg(el);
+      const tw = typewriter(sv, 960, 780);
+      const paper = L.h("div", { class: "abs", style: { left: "210px", top: "180px", width: "1500px", padding: "30px 46px 34px", background: "#FFFDF8 var(--grain)", border: `2px solid #D8CDB8`, borderRadius: "6px", boxShadow: "0 12px 30px rgba(120,90,50,.15)" } }, el);
+      const pLab = L.h("div", { style: Object.assign({ marginBottom: "14px" }, LAB) }, paper, "Objetivo general");
+      const pTxt = L.h("div", { style: { fontFamily: "'Courier New', Courier, monospace", fontSize: "38px", lineHeight: 1.32, color: C.ink } }, paper,
         "Analizar cómo la desigualdad en el acceso a la lectura en el hogar y en la escuela durante la infancia se relaciona con la decisión de leer libros y con el número de libros leídos por los adultos alfabetos de México (MOLEC 2019–2024).");
-      gsap.set(ep, { autoAlpha: 0 });
+      const chars = L.splitChars(pTxt);
+      gsap.set([paper, tw.g], { autoAlpha: 0 });
+      gsap.set(chars, { opacity: 0 });
       S.step();
-      tl.set(ep, { autoAlpha: 1 }, ">");
-      L.pop(tl, epLab, ">", { from: { y: 10 } });
-      L.draw(tl, ornP, "<", { duration: 1 });
-      tl.fromTo(epT, { autoAlpha: 0, y: 20, filter: "blur(4px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.4, ease: "power2.out" }, "<0.2");
+      tl.fromTo(tw.g, { autoAlpha: 0, y: 960 }, { autoAlpha: 1, y: 780, duration: 0.7, ease: "back.out(1.4)" }, ">");
+      tl.fromTo(paper, { autoAlpha: 0, clipPath: "inset(100% 0% 0% 0%)", y: 120 }, { autoAlpha: 1, clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 0.8, ease: "power2.out" }, ">-0.1");
+      tl.addLabel("type", ">");
+      const per = 0.026;
+      tl.to(chars, { opacity: 1, duration: 0.01, stagger: per }, "type");
+      const T = chars.length * per;
+      // las teclas brincan y el carro avanza; "ding" al cambiar de renglón
+      const kr = L.rng(8);
+      for (let t = 0; t < T; t += 0.09) {
+        tl.to(tw.keys[Math.floor(kr() * tw.keys.length)], { y: 6, duration: 0.045, yoyo: true, repeat: 1 }, `type+=${t.toFixed(3)}`);
+      }
+      const lines = 4;
+      for (let i = 0; i < lines; i++) {
+        tl.fromTo(tw.carriage, { x: 150 }, { x: -150, duration: T / lines - 0.15, ease: "steps(30)" }, `type+=${(T / lines) * i}`);
+        tl.to(tw.carriage, { x: 150, duration: 0.15, ease: "power2.out" }, ">");
+      }
 
-      // ---- Paso 2: objetivos específicos ----
+      // ---- Paso 2: el objetivo se ensancha arriba; objetivos específicos ----
       const objs = [
         "Medir el acceso a la lectura en la infancia con dos índices: hogar y escuela.",
         "Estimar la proporción de lectores según el nivel de acceso.",
@@ -56,67 +93,52 @@
         "Explorar el papel de la escolaridad como indicador del nivel socioeconómico.",
         "Estimar las diferencias en la cantidad de libros y su variabilidad.",
       ];
-      const list = L.h("div", { class: "abs", style: { left: "380px", top: "350px", width: "1160px" } }, el);
-      const lLab = L.h("div", { style: { fontWeight: 800, letterSpacing: ".18em", textTransform: "uppercase", fontSize: "24px", color: C.plum, marginBottom: "18px" } }, list, "Objetivos específicos");
-      const items = objs.map((t) => {
-        const it = L.h("div", { style: { position: "relative", paddingLeft: "96px", minHeight: "70px", fontSize: "32px", lineHeight: 1.28, marginBottom: "24px" } }, list, t);
-        it._ic = icon(it, objs.indexOf(t));
+      const list = L.h("div", { class: "abs", style: { left: "110px", top: "348px", width: "1700px" } }, el);
+      const lLab = L.h("div", { style: Object.assign({ marginBottom: "14px" }, LAB) }, list, "Objetivos específicos");
+      const items = objs.map((t, i) => {
+        const it = L.h("div", { style: { position: "relative", paddingLeft: "84px", minHeight: "52px", fontSize: "30px", lineHeight: 1.25, marginBottom: "14px" } }, list, t);
+        it._ic = icon(it, i);
         return it;
       });
       gsap.set(list, { autoAlpha: 0 });
       S.step();
-      tl.to(ep, { y: -175, scale: 0.6, transformOrigin: "50% 0%", duration: 1, ease: "power3.inOut" }, ">");
-      tl.set(list, { autoAlpha: 1 }, ">-0.3");
+      tl.to(tw.g, { y: 1300, autoAlpha: 0, duration: 0.7, ease: "power2.in" }, ">");
+      tl.to(paper, { left: 110, top: 128, width: 1700, padding: "16px 30px 18px", boxShadow: "0 4px 12px rgba(120,90,50,.10)", duration: 0.9, ease: "power3.inOut" }, "<0.2");
+      tl.to(pTxt, { fontSize: "27px", lineHeight: 1.3, duration: 0.9, ease: "power3.inOut" }, "<");
+      tl.to(pLab, { marginBottom: "6px", fontSize: "20px", duration: 0.9 }, "<");
+      tl.set(list, { autoAlpha: 1 }, ">-0.2");
       L.pop(tl, lLab, "<");
       items.forEach((it, i) => {
-        tl.fromTo(it, { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 0.55, ease: "power2.out" }, i ? ">-0.25" : ">");
-        tl.fromTo(it._ic, { scale: 0, rotation: -30, transformOrigin: "50% 50%" }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.5)" }, "<0.1");
+        tl.fromTo(it, { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power2.out" }, i ? ">-0.25" : ">");
+        tl.fromTo(it._ic, { scale: 0, rotation: -30, transformOrigin: "50% 50%" }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.5)" }, "<0.1");
       });
 
-      // ---- Paso 3: metodología como cinta con 4 estaciones ----
+      // ---- Paso 3: metodología debajo, solo la línea del tiempo ----
+      const metLab = L.h("div", { class: "abs", style: Object.assign({ left: "110px", top: "780px" }, LAB) }, el, "Metodología");
       const path = L.svg(el);
-      const rib = L.s("path", { d: "M990,450 C1150,420 1250,480 1400,450 S1650,420 1800,450", fill: "none", stroke: C.plum, "stroke-width": 22, "stroke-linecap": "round", opacity: 0.85 }, path);
-      const ribEnd = L.s("path", { d: "M1800,428 L1840,428 L1824,450 L1840,472 L1800,472 Z", fill: C.plum, opacity: 0.85 }, path);
-      const metLab = L.h("div", { class: "abs", style: { left: "990px", top: "330px", fontWeight: 800, letterSpacing: ".18em", textTransform: "uppercase", fontSize: "24px", color: C.plum } }, el, "Metodología");
+      const Y = 860;
+      const rib = L.s("path", { d: `M180,${Y} C500,${Y - 30} 700,${Y + 30} 960,${Y} S1450,${Y - 30} 1740,${Y}`, fill: "none", stroke: C.plum, "stroke-width": 20, "stroke-linecap": "round", opacity: 0.85 }, path);
+      const ribEnd = L.s("path", { d: `M1740,${Y - 22} L1785,${Y - 22} L1768,${Y} L1785,${Y + 22} L1740,${Y + 22} Z`, fill: C.plum, opacity: 0.85 }, path);
       const etapas = ["Etapa 1 · Contexto y pregunta", "Etapa 2 · Preparación y análisis descriptivo", "Etapa 3 · Análisis inferencial", "Etapa 4 · Conclusiones"];
-      const sx = [1020, 1270, 1520, 1770];
+      const sx = [260, 740, 1220, 1690];
       const st = etapas.map((t, i) => {
-        const y = 450 + (i % 2 ? 4 : -6);
-        const c = L.s("circle", { cx: sx[i], cy: y, r: 26, fill: "#fffdf8", stroke: C.ink, "stroke-width": 4 }, path);
-        const n = L.s("text", { x: sx[i], y: y + 10, "text-anchor": "middle", "font-family": "Fraunces", "font-weight": 700, "font-size": 28, fill: C.ink }, path, String(i + 1));
-        const lab = L.h("div", { class: "abs", style: { left: sx[i] - 115 + "px", top: "495px", width: "230px", textAlign: "center", fontSize: "24px", lineHeight: 1.2, fontWeight: 600 } }, el, t);
+        const c = L.s("circle", { cx: sx[i], cy: Y, r: 28, fill: "#fffdf8", stroke: C.ink, "stroke-width": 4 }, path);
+        const n = L.s("text", { x: sx[i], y: Y + 10, "text-anchor": "middle", "font-family": "Fraunces", "font-weight": 700, "font-size": 30, fill: C.ink }, path, String(i + 1));
+        const lab = L.h("div", { class: "abs", style: { left: sx[i] - 190 + "px", top: Y + 42 + "px", width: "380px", textAlign: "center", fontSize: "28px", lineHeight: 1.2, fontWeight: 700 } }, el, t);
         return { c, n, lab };
       });
       gsap.set([path, metLab, ...st.map((s) => s.lab)], { autoAlpha: 0 });
       S.step();
-      tl.to(list, { x: -300, scale: 0.72, transformOrigin: "0% 0%", duration: 1, ease: "power3.inOut" }, ">");
-      tl.to(ep, { y: -195, scale: 0.5, duration: 1, ease: "power3.inOut" }, "<");
-      tl.set(path, { autoAlpha: 1 }, ">-0.2");
-      L.pop(tl, metLab, "<");
+      tl.set(path, { autoAlpha: 1 }, ">");
+      L.pop(tl, metLab, "<", { from: { y: 10 } });
       tl.addLabel("rib", "<");
       L.draw(tl, rib, "rib", { duration: 1.6, ease: "power1.inOut" });
       tl.fromTo(ribEnd, { autoAlpha: 0 }, { autoAlpha: 0.85, duration: 0.3 }, ">-0.1");
       st.forEach((s, i) => {
-        tl.fromTo([s.c, s.n], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, `rib+=${0.2 + i * 0.42}`);
+        tl.fromTo([s.c, s.n], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, `rib+=${0.15 + i * 0.42}`);
         tl.to(s.c, { attr: { fill: [C.amberL, C.blueL, C.plumL, "#D7E8C8"][i] }, duration: 0.4 }, ">");
         tl.fromTo(s.lab, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, "<");
       });
-
-      // ---- Paso 4: caja de herramientas ----
-      const tools = [
-        ["α", "Nivel de significancia: α = 0.04 (96% de confianza)"],
-        ["IC", "Intervalos de confianza: proporciones (z), diferencia de medias (t de Welch), varianza (χ²)"],
-        ["H₀", "Pruebas de hipótesis: diferencia de proporciones (z), ji-cuadrada de independencia"],
-        ["R", "Software: R (Quarto / R Markdown)"],
-      ];
-      const cards = tools.map(([sym, t], i) => {
-        const c = L.h("div", { class: "card", style: { left: 990 + (i % 2) * 425 + "px", top: 640 + Math.floor(i / 2) * 200 + "px", width: "405px", height: "180px", fontSize: "24px", padding: "20px 22px 20px 92px", lineHeight: 1.28 } }, el, t);
-        L.h("div", { style: { position: "absolute", left: "18px", top: "20px", width: "58px", height: "58px", borderRadius: "50%", background: [C.plumL, C.amberL, C.blueL, "#D7E8C8"][i], border: `2.5px solid ${C.ink}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--f-head)", fontWeight: 700, fontSize: "26px" } }, c, sym);
-        return c;
-      });
-      gsap.set(cards, { autoAlpha: 0 });
-      S.step();
-      tl.fromTo(cards, { autoAlpha: 0, rotationX: -90, transformOrigin: "50% 0%", transformPerspective: 900 }, { autoAlpha: 1, rotationX: 0, duration: 0.8, ease: "back.out(1.4)", stagger: 0.18 }, ">");
     },
   });
 })();
