@@ -50,6 +50,35 @@
       const w3 = L.wash(svg, { cx: 1900, cy: 40, rx: 400, ry: 280, color: C.amberL, opacity: 0.6, seed: 12 });
       const w4 = L.wash(svg, { cx: 1920, cy: 1050, rx: 380, ry: 260, color: C.amberM, opacity: 0.26, seed: 15, filter: "wc2" });
 
+      // manchas vivas: aparecen, se desplazan y se desvanecen en otros colores mientras la portada está quieta
+      const live = L.s("g", {}, svg);
+      svg.insertBefore(live, svg.firstChild);
+      const LIVE = [C.blueL, C.amberL, C.plumL, C.blueM, C.amberM, "#CFE3D2", "#F0CFDC", "#C7E3E5"];
+      const spots = [0, 1, 2, 3, 4, 5].map((i) => {
+        const o = L.s("g", {}, live);
+        const w = L.wash(o, { cx: 0, cy: 0, rx: 300 + (i % 3) * 60, ry: 220 + (i % 2) * 50, color: LIVE[i], opacity: 0.45, seed: 30 + i, layers: 1, filter: i % 2 ? "wc1" : "wc2" });
+        gsap.set(w, { autoAlpha: 0 });
+        return { o, w };
+      });
+      const place = (sp) => { // sobre todo en los márgenes, para no tapar el texto
+        const R = Math.random, side = R() < 0.6;
+        const x = side ? (R() < 0.5 ? R() * 380 : 1540 + R() * 380) : R() * 1920;
+        const y = side ? R() * 1080 : (R() < 0.5 ? R() * 160 : 920 + R() * 160);
+        sp.o.setAttribute("transform", `translate(${x.toFixed(0)},${y.toFixed(0)})`);
+        const c = LIVE[Math.floor(R() * LIVE.length)];
+        sp.w.querySelectorAll("path").forEach((p) => p.setAttribute("fill", c));
+      };
+      S.ambient(() => spots.map((sp, i) => {
+        place(sp);
+        const dx = (i % 2 ? 1 : -1) * 90, dy = (i % 3 ? -1 : 1) * 50;
+        const t = gsap.timeline({ repeat: -1, delay: i * 1.4, onRepeat: () => place(sp) });
+        t.fromTo(sp.w, { autoAlpha: 0, scale: 0.4, x: 0, y: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1.05, x: dx, y: dy, duration: 4, ease: "sine.out" })
+          .to(sp.w, { autoAlpha: 0, scale: 1.25, x: dx * 2, y: dy * 2, duration: 3.5, ease: "sine.in" });
+        return t;
+      }));
+      // las manchas de las esquinas también respiran
+      S.ambient(() => [w1, w2, w3, w4].map((w, i) => gsap.to(w, { x: (i % 2 ? -1 : 1) * 40, y: (i < 2 ? 1 : -1) * 30, scale: 1.08, duration: 5 + i, yoyo: true, repeat: -1, ease: "sine.inOut", delay: 2 })));
+
       const wrap = L.h("div", { class: "abs cover-text", style: { left: "170px", right: "170px", top: "70px", textAlign: "center" } }, el);
       const logo = L.h("img", { src: "assets/tec_logo.png", alt: "Tecnológico de Monterrey", style: { height: "92px", display: "block", margin: "0 auto 46px" } }, wrap);
       logo.onerror = () => { logo.style.visibility = "hidden"; };

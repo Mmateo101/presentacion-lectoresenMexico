@@ -57,6 +57,7 @@
     { a: "#B5507A", l: "#F0CFDC", m: "#D488A8", d: "#7A2E50" }, // 3 rosa
     { a: "#2E7D86", l: "#C7E3E5", m: "#6FB0B7", d: "#1D545A" }, // 4 verde azulado
     { a: "#4B5AA8", l: "#D3D8F0", m: "#8C97CF", d: "#2E3870" }, // 5 índigo
+  { a: "#B0662B", l: "#F3D9BF", m: "#D99A62", d: "#7A4119" }, // 6 ámbar
   ];
 
   const L = {

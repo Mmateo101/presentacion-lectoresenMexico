@@ -195,7 +195,7 @@
       const bookEl = L.h("div", { class: "layer" }, el);
       const face = (parent, bg, back) => L.h("div", { style: { position: "absolute", inset: 0, backfaceVisibility: "hidden", overflow: "hidden", background: bg, transform: back ? "rotateY(180deg)" : "none" } }, parent);
       const paperBg = (t) => `${t} var(--grain)`;
-      // hojas (empiezan del lado izquierdo y pasan a la derecha)
+      // hojas (empiezan del lado derecho y pasan a la izquierda, como al terminar un libro)
       const pages = [];
       for (let i = 0; i < 7; i++) {
         const pg = L.h("div", { style: { position: "absolute", left: X0 + "px", top: Y0 + "px", width: PW + "px", height: PH + "px", transformStyle: "preserve-3d", transformOrigin: "0% 50%", zIndex: 30 - i } }, bookEl);
@@ -208,15 +208,15 @@
         pg._sh = L.h("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(60,40,20,.28), rgba(60,40,20,0) 45%, rgba(255,255,255,.15))", opacity: 0, backfaceVisibility: "hidden" } }, f);
         pages.push(pg);
       }
-      // tapa delantera: abierta del lado izquierdo; al final se cierra sobre el libro
+      // contratapa: abierta del lado derecho; al final se cierra hacia la izquierda y su piel queda al frente
       const bc = L.h("div", { style: { position: "absolute", left: X0 - M + "px", top: Y0 - M + "px", width: CW + "px", height: CH + "px", transformStyle: "preserve-3d", transformOrigin: "0% 50%", zIndex: 5 } }, bookEl);
-      const bcF = face(bc, "none");
+      const bcF = face(bc, "none", true);
       const bcLea = window.Leather(bcF, { inset: 0 });
       const mp = L.h("div", { class: "abs", style: { left: (CW - 600) / 2 + "px", top: (CH - 615) / 2 + "px", width: "600px", height: "615px", background: "#FBF8F1 var(--grain)", borderRadius: "16px", overflow: "hidden", boxShadow: "0 0 0 4px #D8B66A, 0 0 0 10px rgba(216,182,106,.35), 0 18px 40px rgba(0,0,0,.35)" } }, bcF);
       const mpv = L.svg(mp, { viewBox: "0 0 800 820", preserveAspectRatio: "none", style: "position:absolute;left:0;top:0;width:100%;height:100%" });
       L.wash(mpv, { cx: 60, cy: 80, rx: 260, ry: 200, color: C.blueL, opacity: 0.55, seed: 4 });
       L.wash(mpv, { cx: 760, cy: 760, rx: 260, ry: 200, color: C.amberL, opacity: 0.6, seed: 12 });
-      const bcB = face(bc, "#EADCF0", true);
+      const bcB = face(bc, "#EADCF0");
       Object.assign(bcB.style, { backgroundImage: "radial-gradient(circle at 30% 30%, rgba(122,78,140,.18) 0 7px, transparent 8px), radial-gradient(circle at 70% 70%, rgba(229,154,79,.16) 0 5px, transparent 6px), var(--grain)", backgroundSize: "60px 60px, 46px 46px, auto", borderRadius: "10px 18px 18px 10px" });
 
       // portada final (misma tapa, a pantalla completa)
@@ -256,29 +256,29 @@
       ].map((o) => postit(cover, o));
 
       gsap.set([desk, board, cover, logo, gr, pq, eq, ...NOTES.map((n) => n.note)], { autoAlpha: 0 });
-      gsap.set(pages, { rotationY: -180, transformPerspective: 3200, opacity: 0 });
-      gsap.set(bc, { rotationY: -180, transformPerspective: 3200, opacity: 0 });
+      gsap.set(pages, { rotationY: 0, transformPerspective: 3200, opacity: 0 });
+      gsap.set(bc, { rotationY: 0, transformPerspective: 3200, opacity: 0 });
 
       tl.addLabel("close", ">");
       tl.to(desk, { autoAlpha: 1, duration: 0.4 }, "close")
         .to(page, { scale: SC, transformOrigin: "50% 50%", duration: 1.0, ease: "power2.inOut" }, "close")
         .to(board, { autoAlpha: 1, duration: 0.5 }, "close+=0.4")
         .to([bc, ...pages], { opacity: 1, duration: 0.3 }, "close+=0.9");
-      // las hojas pasan de izquierda a derecha (hacia el principio del libro)
+      // las hojas pasan de derecha a izquierda (hacia el final del libro)
       pages.forEach((pg, i) => {
         const t0 = 1.35 + i * 0.22;
-        tl.to(pg, { rotationY: 0, duration: 0.72, ease: "power2.inOut" }, `close+=${t0}`)
-          .to(pg, { keyframes: [{ skewY: 5, duration: 0.36 }, { skewY: 0, duration: 0.36 }], ease: "sine.inOut" }, `close+=${t0}`)
+        tl.to(pg, { rotationY: -180, duration: 0.72, ease: "power2.inOut" }, `close+=${t0}`)
+          .to(pg, { keyframes: [{ skewY: -5, duration: 0.36 }, { skewY: 0, duration: 0.36 }], ease: "sine.inOut" }, `close+=${t0}`)
           .to(pg._sh, { keyframes: [{ opacity: 1, duration: 0.36 }, { opacity: 0, duration: 0.36 }] }, `close+=${t0}`)
           .set(pg, { zIndex: 40 + i }, `close+=${t0 + 0.36}`);
       });
       const tc = 1.35 + 6 * 0.22 + 0.8;
       tl.set(page, { autoAlpha: 0 }, `close+=${tc}`)
         .set(bc, { zIndex: 100 }, `close+=${tc}`)
-        .to(bc, { rotationY: 0, duration: 1.1, ease: "power2.inOut" }, `close+=${tc}`);
-      // la tapa cerrada crece hasta ser la portada
+        .to(bc, { rotationY: -180, duration: 1.1, ease: "power2.inOut" }, `close+=${tc}`);
+      // el libro cerrado crece hasta ser la portada (girada 180°, su caja visible va de left − width a left)
       const tz = tc + 1.3;
-      tl.to(bc, { left: 0, top: 0, width: 1920, height: 1080, duration: 1.1, ease: "power3.inOut" }, `close+=${tz}`)
+      tl.to(bc, { left: 1920, top: 0, width: 1920, height: 1080, duration: 1.1, ease: "power3.inOut" }, `close+=${tz}`)
         .to(bcLea, { borderRadius: 0, duration: 1.1 }, `close+=${tz}`)
         .to(mp, { left: 560, top: 130, width: 800, height: 820, duration: 1.1, ease: "power3.inOut" }, `close+=${tz}`)
         .to([board, desk], { autoAlpha: 0, duration: 0.5 }, `close+=${tz}`)

@@ -1,4 +1,4 @@
-/* Diapositiva 4 · Objetivos y metodología */
+/* Diapositiva 4 · Objetivos */
 (function () {
   const { C } = L;
 
@@ -53,7 +53,7 @@
     notes: "Supuestos: n·p ≥ 5 en todos los grupos; frecuencias esperadas ≥ 5; para medias usamos el Teorema del Límite Central porque el número de libros está muy sesgado (sesgo ≈ 7.3). Herramientas: α = 0.04; IC de proporciones (z) y diferencia de medias (t de Welch); pruebas z de diferencia de proporciones y ji-cuadrada; R (Quarto / R Markdown).",
     build(el, S) {
       const tl = S.tl;
-      const head = L.head(el, "Objetivos y metodología");
+      const head = L.head(el, "Objetivos");
       L.pop(tl, head, 0, { from: { y: -20 } });
       const LAB = { fontWeight: 800, letterSpacing: ".18em", textTransform: "uppercase", fontSize: "24px", color: C.plum };
 

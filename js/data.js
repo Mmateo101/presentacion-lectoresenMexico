@@ -90,6 +90,9 @@ window.DATA = {
     { cat: "Más de 100", n: 342, media: 7.29, mediana: 4, sd: 10.72, q1: 2, q3: 8 },
   ],
 
+  // Intervalo de la varianza de libros leídos, grupo "Más de 100" (reporte de la Etapa 3)
+  varianzaMas100: { n: 335, gl: 334, s2: 116.91, li: 100.32, ls: 137.93 },
+
   // 6.6 Ji-cuadrada hogar × escuela (filas: hogar 0–4; columnas: escuela 0–4)
   contingencia: [
     [993, 477, 509, 362, 629],
