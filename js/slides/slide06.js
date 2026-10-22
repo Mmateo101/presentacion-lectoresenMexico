@@ -130,34 +130,31 @@
       const finT = L.h("div", { class: "abs h-title", style: { left: "190px", top: "330px", fontSize: "40px" } }, el, "Base final: 11,685 personas");
 
       // ---- La bandeja: aquí se ve qué sale de la máquina ----
-      const trayLab = L.h("div", { class: "abs", style: { left: "150px", top: "866px", fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", fontSize: "20px", color: C.plum } }, el, "Lo que sale de la máquina");
-      const slotX = [150, 520, 960, 1380];
-      const slot = (i, html, col) => L.h("div", { class: "abs", style: { left: slotX[i] + "px", top: "915px", width: ["330px", "400px", "380px", "380px"][i], fontSize: "25px", fontWeight: 700, lineHeight: 1.18, color: col, borderTop: `3px solid ${col}`, paddingTop: "10px" } }, el, html);
-      const s1 = slot(0, "281 personas que no saben leer", C.crimson);
-      const s2 = slot(1, "Respuestas 'No recuerda' y 'No sabe' (quedan como faltantes)", C.crimson);
-      const s3 = slot(2, "Variables que no usamos: secciones III–IX y otras 14", C.ink2);
-      const s4 = slot(3, "124 sin primaria: 0 estímulos escolares (se quedan)", C.blueD);
+      // ---- Debajo de la máquina: un mensaje grande por paso (lo que sale) ----
+      const big = (html, col) => L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "918px", textAlign: "center", fontSize: "56px", lineHeight: 1.05, color: col } }, el, html);
+      const s1 = big("– 281 personas que no saben leer", C.crimson);
+      const s2 = big("'No recuerda' y 'No sabe' → datos faltantes", C.crimson);
+      const s3 = big("Fuera: secciones III–IX y otras 14 variables", C.ink);
+      const s4 = big("124 personas sin primaria → 0 estímulos escolares", C.blueD);
       const via = (x, y, tx, ty) => [{ x: CH[0] - x, y: CH[1] - 20 - y, duration: 0.5, ease: "power2.in" }, { x: tx - x, y: ty - y, duration: 0.45, ease: "power2.out" }];
 
       // ================= Entrada: puntitos, total, los años (2–3 s) y las variables =================
-      gsap.set([lab1, keepMsg, finT, s1, s2, s3, s4, trayLab, ...badges], { autoAlpha: 0 });
+      gsap.set([lab1, keepMsg, finT, s1, s2, s3, s4, ...badges], { autoAlpha: 0 });
       L.draw(tl, body, 0.2, { duration: 1.0 });
       tl.fromTo([pipes, chute], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4, stagger: 0.1 }, "<0.5");
       tl.fromTo(gears, { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)", stagger: 0.1 }, "<");
       tl.fromTo(dots, { y: -200, autoAlpha: 0 }, { y: 0, autoAlpha: 0.75, duration: 0.5, ease: "bounce.out", stagger: { amount: 1.0, from: "random" } }, "<0.1");
       tl.fromTo([pill, ctr.wrap], { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, ">-0.3");
       tl.fromTo(lab0, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, "<0.2");
-      tl.to([pill, ctr.wrap, lab0], { autoAlpha: 0.12, duration: 0.3 }, ">0.2"); // deja ver todas las columnas
-      tl.fromTo(years, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.05 }, "<");
+      // los años: todos se encienden a la vez (cada uno pinta sus columnas) y luego se van
+      tl.fromTo(years, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.06 }, ">0.1");
       years.forEach((y, i) => {
         const col = dots.filter((d) => Math.floor(d._c / 8) === i);
-        tl.to(col, { attr: { fill: YC[i] }, opacity: 1, duration: 0.2 }, `>${i ? -0.05 : 0.1}`);
-        tl.to(y, { background: YC[i], color: "#fff", scale: 1.08, duration: 0.2 }, "<");
-        tl.to(col, { attr: { fill: C.ink }, opacity: 0.75, duration: 0.25 }, ">0.2");
-        tl.to(y, { background: "#fffdf8", color: C.ink, scale: 1, duration: 0.25 }, "<");
+        tl.to(col, { attr: { fill: YC[i] }, opacity: 1, duration: 0.35 }, i ? "<" : ">");
+        tl.to(y, { background: YC[i], color: "#fff", duration: 0.35 }, "<");
       });
-      tl.to(years, { autoAlpha: 0, y: -10, duration: 0.4, stagger: 0.04 }, ">0.1");
-      tl.to([pill, ctr.wrap, lab0], { autoAlpha: 1, duration: 0.3 }, "<");
+      tl.to(dots, { attr: { fill: C.ink }, opacity: 0.75, duration: 0.4 }, ">1.8");
+      tl.to(years, { autoAlpha: 0, y: -10, duration: 0.4, stagger: 0.04 }, "<");
       tl.fromTo(vHead, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, ">-0.1");
       L.counts(tl, vHead, "<", 1.0);
       tl.fromTo(secs.map((s) => s.c), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.05, ease: "back.out(2)" }, "<0.1");
@@ -167,31 +164,32 @@
       // ================= 1: salen quienes no saben leer =================
       S.step();
       spin(">");
-      tl.fromTo(trayLab, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, "<");
       tl.to(illit, { attr: { fill: C.crimson }, opacity: 1, duration: 0.3 }, "<");
-      illit.forEach((d, k) => tl.to(d, { keyframes: via(+d.getAttribute("cx"), +d.getAttribute("cy"), 175 + k * 20, 900) }, k ? "<0.08" : ">0.2"));
+      illit.forEach((d, k) => tl.to(d, { keyframes: [...via(+d.getAttribute("cx"), +d.getAttribute("cy"), 960, 1000), { autoAlpha: 0, duration: 0.1 }] }, k ? "<0.08" : ">0.2"));
       ctr.flip(tl, ">-0.3");
       tl.to(lab0, { autoAlpha: 0, duration: 0.3 }, "<");
       tl.fromTo(lab1, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, ">-0.1");
-      tl.fromTo(s1, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.4 }, "<");
+      tl.fromTo(s1, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "<");
 
       // ================= 2: "No recuerda" y "No sabe" → faltantes =================
       S.step();
+      tl.to(s1, { autoAlpha: 0, y: 30, duration: 0.35 }, ">");
       spin(">");
       const qs = missing.slice(0, 6).map((d) => L.s("text", { x: +d.getAttribute("cx"), y: +d.getAttribute("cy") + 9, "text-anchor": "middle", "font-family": "Caveat", "font-weight": 700, "font-size": 30, fill: C.crimson }, svg, "?"));
       gsap.set(qs, { autoAlpha: 0 });
       tl.to(missing, { attr: { fill: "#fffdf8", stroke: C.crimson, "stroke-width": 2.5 }, opacity: 1, duration: 0.4, stagger: 0.03 }, "<");
       tl.fromTo(qs, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.05, ease: "back.out(3)" }, ">-0.2");
-      qs.forEach((q, k) => tl.to(q, { keyframes: via(+q.getAttribute("x"), +q.getAttribute("y"), 590 + k * 26, 905) }, k ? "<0.07" : ">0.1"));
-      tl.fromTo(s2, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.2");
+      qs.forEach((q, k) => tl.to(q, { keyframes: [...via(+q.getAttribute("x"), +q.getAttribute("y"), 960, 1000), { autoAlpha: 0, duration: 0.1 }] }, k ? "<0.07" : ">0.1"));
+      tl.fromTo(s2, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, ">-0.3");
 
       // ================= 3: caen las secciones sin variables útiles; las demás se abren y sueltan lo que sobra =================
       S.step();
+      tl.to(s2, { autoAlpha: 0, y: 30, duration: 0.35 }, ">");
       spin(">", 2);
       tl.to(vHead, { autoAlpha: 0, duration: 0.3 }, "<");
       dropS.forEach((s, i) => {
         const x0 = parseFloat(s.c.style.left) + 187, y0 = parseFloat(s.c.style.top) + 40;
-        tl.to(s.c, { keyframes: [{ x: CH[0] - x0, y: CH[1] - 40 - y0, scale: 0.3, rotation: (i % 2 ? 1 : -1) * 25, duration: 0.55, ease: "power2.in" }, { y: 925 - y0, x: 980 + i * 22 - x0, scale: 0.07, autoAlpha: 0.7, duration: 0.35 }] }, i ? "<0.06" : "<0.2");
+        tl.to(s.c, { keyframes: [{ x: CH[0] - x0, y: CH[1] - 40 - y0, scale: 0.3, rotation: (i % 2 ? 1 : -1) * 25, duration: 0.55, ease: "power2.in" }, { y: 1000 - y0, x: 960 - x0, scale: 0.05, autoAlpha: 0, duration: 0.35 }] }, i ? "<0.06" : "<0.2");
       });
       let top = 392;
       keptS.forEach((s, i) => {
@@ -204,21 +202,22 @@
       tl.to(unused, { y: 40, rotation: 20, autoAlpha: 0, duration: 0.4, stagger: 0.04, ease: "power2.in" }, ">0.4");
       tl.to(unused, { width: 0, paddingLeft: 0, paddingRight: 0, marginRight: 0, borderWidth: 0, duration: 0.4, ease: "power2.inOut" }, ">-0.1");
       L.pop(tl, keepMsg, "<", { from: { y: -10 } });
-      tl.fromTo(s3, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.4 }, "<");
+      tl.fromTo(s3, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "<");
 
       // ================= 4: sin primaria → 0 estímulos escolares (se quedan) =================
       S.step();
       const secX = keptS.find((s) => s.chips.some((c) => c.textContent === "p35"));
+      tl.to(s3, { autoAlpha: 0, y: 30, duration: 0.35 }, ">");
       tl.to(noPrim, { attr: { fill: C.blueD }, opacity: 1, duration: 0.3 }, ">");
       tl.fromTo(badges, { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4, stagger: 0.15, ease: "back.out(3)" }, ">");
       tl.to(secX.chips.filter((c) => /p35|p36/.test(c.textContent)), { background: C.blueL, scale: 1.12, duration: 0.25, yoyo: true, repeat: 3 }, "<");
-      tl.fromTo(s4, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.4 }, "<");
+      tl.fromTo(s4, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "<");
 
       // ================= 5: la máquina entrega la base final =================
       S.step();
       spin(">", 2);
-      tl.to(keepMsg, { autoAlpha: 0, duration: 0.3 }, "<");
-      tl.fromTo(finT, { autoAlpha: 0, y: -16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(1.6)" }, ">-0.6");
+      tl.to([keepMsg, s4], { autoAlpha: 0, duration: 0.3 }, "<");
+      tl.fromTo(finT, { autoAlpha: 0, y: -16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(1.6)" }, ">");
       tl.to(keptS.map((s) => s.c), { background: "#F3ECF6", borderColor: C.plum, duration: 0.5, stagger: 0.08 }, "<");
       tl.to(body, { attr: { stroke: C.plum }, duration: 0.5 }, "<");
     },

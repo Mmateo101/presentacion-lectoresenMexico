@@ -23,50 +23,28 @@
       L.h("div", { class: "h-title", style: { position: "absolute", left: 0, right: 0, top: "16px", textAlign: "center", fontSize: "32px", color: C.blueD } }, boxE, "Índice de acceso en la escuela (p36a–d)");
       gsap.set([boxH, boxE], { autoAlpha: 0 });
 
-      // ---- Entrada: las variables construidas, enumeradas en post-its ----
-      const POST = [
-        ["lee", "¿Leyó libros en los últimos 12 meses? (p3_1)"],
-        ["libros", "Libros leídos en 12 meses, solo lectores (p4)"],
-        ["ind_hogar", "Índice de acceso en el hogar, 0 a 4 (p34a–d)"],
-        ["ind_escuela", "Índice de acceso en la escuela, 0 a 4 (p36a–d)"],
-        ["libros_casa", "Libros en casa en la infancia (p34d, p34d1)"],
-        ["escolaridad", "Nivel de escolaridad agrupado (nivel)"],
-        ["edad", "Edad de la persona"],
-        ["año", "Año de la encuesta, 2019–2024"],
-      ];
-      const PCOL = ["#FBE7A1", "#FBE7A1", C.amberL, C.blueL, C.amberL, "#D7E8C8", "#F3D9E6", "#F3D9E6"];
-      const posts = POST.map(([n, d], i) => {
-        const p = L.h("div", { class: "abs", style: { left: 150 + (i % 4) * 410 + "px", top: 200 + Math.floor(i / 4) * 380 + "px", width: "360px", height: "330px", background: PCOL[i], boxShadow: "6px 10px 18px rgba(80,60,30,.22)", padding: "34px 30px 24px", borderRadius: "2px 2px 18px 2px" } }, el);
-        L.h("div", { style: { position: "absolute", left: "50%", top: "-16px", width: "120px", height: "34px", marginLeft: "-60px", background: "rgba(255,255,255,.55)", border: "1px solid rgba(0,0,0,.06)", transform: "rotate(-3deg)" } }, p);
-        L.h("div", { class: "h-title", style: { fontSize: "64px", color: C.plum, lineHeight: 1 } }, p, String(i + 1));
-        L.h("div", { class: "hand", style: { fontSize: "50px", fontWeight: 700, margin: "12px 0 8px", lineHeight: 1 } }, p, n);
-        L.h("div", { style: { fontSize: "25px", lineHeight: 1.25, color: C.ink } }, p, d);
-        p._rot = ((i * 47) % 9) - 4;
-        return p;
-      });
-      posts.forEach((p, i) => tl.fromTo(p, { autoAlpha: 0, scale: 1.6, rotation: p._rot * 3, y: -40 }, { autoAlpha: 1, scale: 1, rotation: p._rot, y: 0, duration: 0.45, ease: "back.out(1.6)" }, 0.4 + i * 0.22));
-
-      // ---- Paso 1: los post-its se apilan en la esquina; ocho tarjetas caen ----
-      S.step();
-      tl.to(posts, { x: (i, t) => 1700 - parseFloat(t.style.left) - 180, y: (i, t) => 100 - parseFloat(t.style.top), scale: 0.18, rotation: (i) => (i % 2 ? 6 : -6), duration: 0.8, ease: "power3.inOut", stagger: 0.05 }, ">");
-      tl.to(posts, { autoAlpha: 0, duration: 0.3 }, ">-0.1");
-      tl.addLabel("cards", ">-0.2");
+      // ---- Entrada: las 8 preguntas que forman los índices, enumeradas en post-its ----
+      const CODES = ["p34a", "p34b", "p34c", "p34d", "p36a", "p36b", "p36c", "p36d"];
       const cw = 320, ch = 104;
       const cards = qs.map(([g, t], i) => {
-        const c = L.h("div", { class: "card", style: { left: "0px", top: "0px", width: cw + "px", height: ch + "px", padding: "0", fontSize: "25px", lineHeight: 1.2, transformStyle: "preserve-3d", background: "transparent", border: "none", boxShadow: "none" } }, el);
-        const f = L.h("div", { style: { position: "absolute", inset: 0, background: "#fffdf8", border: `2.5px solid ${C.ink}`, borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "10px 16px", backfaceVisibility: "hidden", boxShadow: "4px 5px 0 rgba(43,42,51,.1)", borderLeft: `10px solid ${g === "h" ? C.amberM : C.blueM}` } }, c, t);
+        const c = L.h("div", { class: "card", style: { left: "0px", top: "0px", width: cw + "px", height: ch + "px", padding: "0", fontSize: "23px", lineHeight: 1.15, transformStyle: "preserve-3d", background: "transparent", border: "none", boxShadow: "none" } }, el);
+        const f = L.h("div", { style: { position: "absolute", inset: 0, background: g === "h" ? "#FBE3BF" : "#D7E7F4", borderRadius: "2px 2px 16px 2px", display: "flex", alignItems: "center", gap: "12px", padding: "10px 14px", backfaceVisibility: "hidden", boxShadow: "4px 7px 12px rgba(80,60,30,.22)" } }, c);
+        L.h("div", { style: { position: "absolute", left: "50%", top: "-10px", width: "70px", height: "20px", marginLeft: "-35px", background: "rgba(255,255,255,.6)", transform: "rotate(-3deg)" } }, f);
+        L.h("div", { class: "h-title", style: { flex: "none", width: "46px", height: "46px", borderRadius: "50%", background: C.plum, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "26px" } }, f, String(i + 1));
+        L.h("div", {}, f, `${t}<div style="font-size:18px;font-weight:800;color:${g === "h" ? C.amberD : C.blueD};margin-top:3px">${CODES[i]}</div>`);
         const b = L.h("div", { style: { position: "absolute", inset: 0, background: g === "h" ? C.amberM : C.blueM, border: `2.5px solid ${C.ink}`, borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--f-head)", fontWeight: 700, fontSize: "50px", color: "#fff", backfaceVisibility: "hidden", transform: "rotateY(180deg)" } }, c, "Sí");
         const sx = 170 + (i % 4) * 400, sy = 300 + Math.floor(i / 4) * 230 + (i % 2) * 30;
         const k = g === "h" ? i : i - 4;
         const bx = (g === "h" ? 230 : 1000) + 20 + (k % 2) * 330, by = 180 + 74 + Math.floor(k / 2) * 120;
-        c._s = { sx, sy, rot: ((i * 37) % 21) - 10 };
+        c._s = { sx, sy, rot: ((i * 37) % 13) - 6 };
         c._b = { bx, by };
         gsap.set(c, { x: sx, y: sy, rotation: c._s.rot, transformPerspective: 1000 });
         return c;
       });
-      cards.forEach((c, i) => tl.fromTo(c, { y: -260, autoAlpha: 0, rotation: c._s.rot * 3 }, { y: c._s.sy, autoAlpha: 1, rotation: c._s.rot, duration: 0.8, ease: "bounce.out" }, `cards+=${(i * 0.12).toFixed(2)}`));
+      // se pegan uno por uno, como post-its
+      cards.forEach((c, i) => tl.fromTo(c, { autoAlpha: 0, scale: 1.5, rotation: c._s.rot * 3 }, { autoAlpha: 1, scale: 1, rotation: c._s.rot, duration: 0.4, ease: "back.out(1.6)" }, 0.4 + i * 0.18));
 
-      // ---- Paso 2: se separan en dos cajas; Eduardo y Héctor ----
+      // ---- Paso 1: se separan en dos cajas; Eduardo y Héctor ----
       S.step();
       const csvg = L.svg(el);
       const edu = person(csvg, { who: "eduardo", age: "child", shirt: C.amberM, style: "curly", x: 120, y: 500, s: 0.95 });
