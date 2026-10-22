@@ -99,9 +99,10 @@
       P.ax = axis(g, x, { orient: "bottom", at: ih, ticks: o.xTicks, title: o.xTitle, titleOff: 72 });
       P.ay = axis(g, y, { orient: "left", at: 0, labels: o.rows.map((r) => [r.label, r.label]), size: 26 });
       P.rows = o.rows.map((r, i) => {
-        const col = Array.isArray(o.color) ? o.color[i] : o.color;
+        const wcol = Array.isArray(o.color) ? o.color[i] : o.color;
+        const col = o.lineColor || wcol;
         const rg = L.s("g", { transform: `translate(0,${y(r.label)})` }, g);
-        const wash = L.s("rect", { x: x(r.li) - 10, y: -22, width: x(r.ls) - x(r.li) + 20, height: 44, rx: 22, fill: col, opacity: 0.18 }, rg);
+        const wash = L.s("rect", { x: x(r.li) - 14, y: -24, width: x(r.ls) - x(r.li) + 28, height: 48, rx: 24, fill: wcol, opacity: o.lineColor ? 0.6 : 0.18 }, rg);
         const armL = L.s("line", { x1: x(r.p), x2: x(r.li), y1: 0, y2: 0, stroke: col, "stroke-width": 5, "stroke-linecap": "round" }, rg);
         const armR = L.s("line", { x1: x(r.p), x2: x(r.ls), y1: 0, y2: 0, stroke: col, "stroke-width": 5, "stroke-linecap": "round" }, rg);
         const capL = L.s("line", { x1: x(r.li), x2: x(r.li), y1: -16, y2: 16, stroke: col, "stroke-width": 5, "stroke-linecap": "round" }, rg);
