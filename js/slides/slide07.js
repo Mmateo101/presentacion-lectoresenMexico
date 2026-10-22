@@ -9,7 +9,7 @@
     notes: "En el hogar la desigualdad es mucho mayor: la distribución es casi plana, con un 29% sin ningún estímulo.",
     build(el, S) {
       const tl = S.tl;
-      const head = L.head(el, "Cómo construimos los índices de acceso");
+      const head = L.head(el, "Variables construidas: los índices de acceso");
       L.pop(tl, head, 0, { from: { y: -20 } });
 
       const hogar = ["lo llevaban a bibliotecas o librerías", "veía leer a sus padres", "le leían", "había libros en casa"];

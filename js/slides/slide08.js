@@ -67,33 +67,7 @@
       tl.fromTo(s2, { x: 0 }, { x: 6, duration: 0.05, repeat: 3, yoyo: true }, ">");
       L.write(tl, n2, { pos: ">0.2", dur: 1.4 });
 
-      // ================= Escena 3: diferencias vs. valor frontera =================
-      S.step();
-      const s3 = L.h("div", { class: "layer" }, el);
-      const sv3 = L.svg(s3);
-      const dItems = (arr) => arr.map((d) => ({ comp: d.comp, dif: d.dif, frontera: d.frontera }));
-      const yT = [-0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35];
-      const dH = Charts.diffs(sv3, { x: 70, y: 150, w: 890, h: 760, items: dItems(D.pruebasNiveles.hogar), yDomain: [-0.08, 0.36], yTicks: yT, title: "Índice de estímulos en el hogar", yTitle: "Diferencia de proporciones" });
-      const dE = Charts.diffs(sv3, { x: 970, y: 150, w: 890, h: 760, items: dItems(D.pruebasNiveles.escuela), yDomain: [-0.08, 0.36], yTicks: yT, title: "Índice de estímulos en la escuela", yTitle: "Diferencia de proporciones" });
-      dH.title.setAttribute("fill", C.amberD);
-      dE.title.setAttribute("fill", C.blueD);
-      const circ = (P, ox, oy) => {
-        const it = P.items[0];
-        return L.s("path", { d: L.handCircle(ox + P.m.l + it.cx - 30, oy + P.m.t + it.cy, 95, 50), fill: "none", stroke: C.plum, "stroke-width": 5, "stroke-linecap": "round" }, sv3);
-      };
-      const cH = circ(dH, 70, 150), cE = circ(dE, 970, 150);
-      const n3 = L.h("div", { class: "abs hand", style: { left: "0", width: "1920px", top: "975px", textAlign: "center", fontSize: "42px", color: C.plum } }, s3, "El hogar marca la diferencia desde el primer estímulo; la escuela, solo cuando el acceso es alto.");
-      gsap.set([s3, n3, cH, cE], { autoAlpha: 0 });
-      sceneSwap(tl, s2, s3);
-      dH.bandsIn(tl, ">");
-      dE.bandsIn(tl, "<0.3");
-      dH.pointsIn(tl, ">0.2");
-      dE.pointsIn(tl, "<0.2");
-      tl.set([cH, cE], { autoAlpha: 1 }, ">0.3");
-      L.draw(tl, [cH, cE], "<", { duration: 0.9, stagger: 0.3 });
-      L.write(tl, n3, { pos: ">", dur: 1.8 });
-
-      // ================= Escena 4: ¿la escuela compensa? =================
+      // ================= Escena 3: ¿la escuela compensa? =================
       S.step();
       const s4 = L.h("div", { class: "layer" }, el);
       const t4 = L.h("div", { class: "abs h-title", style: { left: "420px", width: "1400px", top: "180px", fontSize: "40px", lineHeight: 1.2 } }, s4, "Escuela alta – escuela baja, entre quienes tuvieron acceso bajo en casa");
@@ -103,7 +77,7 @@
       const hec4 = person(sv4, { who: "hector", age: "adult", shirt: C.blueM, pants: "#4F5866", x: 200, y: 900, s: 1.2 });
       const m4 = L.h("div", { class: "abs h-title", style: { left: "420px", width: "1400px", top: "880px", fontSize: "50px", fontStyle: "italic", color: C.plum, textAlign: "center" } }, s4, "La escuela sí ayuda… pero compensa solo una parte.");
       gsap.set([s4, t4, v4, m4, hec4.g], { autoAlpha: 0 });
-      sceneSwap(tl, s3, s4);
+      sceneSwap(tl, s2, s4);
       L.write(tl, t4, { pos: ">-0.2", dur: 1.2 });
       hi.play(tl, ">");
       tl.fromTo(v4, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, "<0.8");

@@ -145,6 +145,7 @@
       const n = this.runs.length;
       const frac = (this.idx + (r.last ? this.k / r.last : 1)) / n;
       gsap.to(ribbonFill, { scaleY: frac, duration: 0.6, ease: "power2.out", overwrite: true });
+      document.getElementById("pageno").textContent = `${this.idx + 1} / ${n}`;
       notesEl.querySelector(".meta").textContent = `Diapositiva ${this.idx + 1} de ${n} · paso ${this.k} de ${r.last}`;
       notesEl.querySelector(".txt").textContent = r.def.notes || "";
       try { history.replaceState(null, "", `#${this.idx + 1}.${this.k}`); } catch (e) { /* file:// */ }

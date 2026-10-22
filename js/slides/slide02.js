@@ -323,12 +323,12 @@
       const like = L.text(mx, "Como Héctor y Eduardo, millones de mexicanos crecieron con estímulos desiguales para la lectura.",
         { left: "110px", top: "70px", width: "1700px", fontSize: "50px", lineHeight: 1.15 }, "h-title");
       const cardStyle = (top) => ({ left: "1120px", top: top + "px", width: "690px" });
-      const c1 = L.h("div", { class: "card", style: cardStyle(300) }, mx,
+      const c1 = L.h("div", { class: "card", style: cardStyle(240) }, mx,
         `<span class="big" style="color:${C.plum}">${L.num(41.7, "pct1")}</span> de los adultos alfabetos leyó al menos un libro en el último año<span class="src">MOLEC 2019–2024</span>`);
-      const c2 = L.h("div", { class: "card", style: cardStyle(540) }, mx,
+      const c2 = L.h("div", { class: "card", style: cardStyle(460) }, mx,
         `Quienes leen, leen en promedio <span class="big" style="color:${C.plum}">${L.num(3.5, "d1")}</span> libros al año (mediana: ${L.num(2)})`);
-      const c3 = L.h("div", { class: "card", style: Object.assign(cardStyle(730), { paddingRight: "200px" }) }, mx,
-        `La población que lee algún material bajó de ${L.num(84.2, "pct1")} (2015) a ${L.num(69.6, "pct1", 84.2)} (2024)<span class="src">INEGI, 2024</span>`);
+      const c3 = L.h("div", { class: "card", style: Object.assign(cardStyle(640), { paddingRight: "190px", fontSize: "27px" }) }, mx,
+        `La población alfabeta de 18 años y más que leyó algún material (libros, revistas, periódicos, historietas o páginas de internet) bajó de ${L.num(84.2, "pct1")} (2015) a ${L.num(69.6, "pct1", 84.2)} (2024)<span class="src">INEGI, MOLEC 2024</span>`);
       const spark = L.s("svg", { width: 150, height: 110, viewBox: "0 0 150 110", style: "position:absolute;right:28px;top:40px" }, c3);
       L.s("line", { x1: 8, x2: 142, y1: 100, y2: 100, stroke: C.ink2, "stroke-width": 2 }, spark);
       const fall = L.s("path", { d: "M14,18 C50,26 70,40 92,58 S126,80 136,86", fill: "none", stroke: C.ink, "stroke-width": 4, "stroke-linecap": "round", filter: "url(#ink)" }, spark);

@@ -135,3 +135,10 @@ svg.full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
   position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
   font: 28px var(--f-hand); color: var(--ink-2); background: var(--paper-2); z-index: 10000;
 }
+
+/* ---------- Número de diapositiva (esquina inferior izquierda) ---------- */
+#pageno {
+  position: absolute; left: 34px; bottom: 22px; z-index: 900; pointer-events: none;
+  font-family: var(--f-head); font-style: italic; font-weight: 600; font-size: 26px; color: var(--ink-2);
+  padding: 4px 14px; border-radius: 20px; background: rgba(251, 248, 241, .78);
+}
