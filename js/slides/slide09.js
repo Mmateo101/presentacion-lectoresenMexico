@@ -46,41 +46,51 @@
         L.pop(tl, a.lab, "<", { from: { y: 10 } });
       });
 
-      // ================= Primaria y secundaria =================
-      S.step();
-      const same = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "1000px", textAlign: "center", fontSize: "44px", color: C.ink } }, el,
-        "La proporción de lectores entre primaria y secundaria es igual (sin diferencia significativa, p = 0.14)");
-      gsap.set(same, { autoAlpha: 0 });
-      tl.to(arrows[0].arw.g, { scale: 1.12, transformOrigin: "50% 50%", duration: 0.3, yoyo: true, repeat: 3 }, ">");
-      tl.to(arrows[0].lab, { color: C.ink, scale: 1.12, duration: 0.3, yoyo: true, repeat: 1 }, "<");
-      L.write(tl, same, { pos: ">", dur: 1.6 });
-
       // ================= Superior vs. primaria: intervalo de confianza =================
       S.step();
-      // 1 · se van las flechas y el texto
-      tl.to([ar, same, ...arrows.map((a) => a.lab)], { autoAlpha: 0, duration: 0.4 }, ">");
+      // 1 · se van las flechas
+      tl.to([ar, ...arrows.map((a) => a.lab)], { autoAlpha: 0, duration: 0.4 }, ">");
       // 2 · primaria a la izquierda, las otras tres a la derecha
       const piece = (i) => [bars.bars[i], bars.labels[i], bars.ax.tks[i]];
-      const L0 = 380, R0 = 1620; // centros finales de primaria (a la izquierda) y superior (a la derecha)
+      const L0 = 560, R0 = 1360; // centros finales de primaria (a la izquierda) y superior (a la derecha)
       tl.to(piece(0), { x: L0 - cx(0), duration: 0.7, ease: "power3.inOut" }, ">");
-      tl.to([1, 2, 3].flatMap(piece), { x: R0 - cx(3), duration: 0.7, ease: "power3.inOut" }, ">0.1");
+      tl.to([1, 2, 3].flatMap(piece), { x: R0 - cx(3), duration: 0.7, ease: "power3.inOut" }, "<0.1");
       // 3 · fuera secundaria y media superior; entre las dos queda un "vs"
-      tl.to([1, 2].flatMap(piece), { autoAlpha: 0, duration: 0.35 }, "<0.1");
-      const vs = L.s("text", { x: (L0 + R0) / 2, y: g0y + 470, "text-anchor": "middle", "font-family": "Fraunces", "font-style": "italic", "font-weight": 700, "font-size": 96, fill: P.d }, sv, "vs");
+      tl.to([1, 2].flatMap(piece), { autoAlpha: 0, duration: 0.35 }, "<0.15");
+      const vs = L.s("text", { x: (L0 + R0) / 2 - 130 - 110, y: 0, "text-anchor": "middle", "font-family": "Fraunces", "font-style": "italic", "font-weight": 700, "font-size": 96, fill: P.d }, bars.g, "vs");
       gsap.set(vs, { autoAlpha: 0 });
-      tl.fromTo(vs, { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, ">0.1");
-      // 4 · la gráfica sube y se hace chica para dejar lugar al intervalo
-      tl.to(sv, { scale: 0.58, transformOrigin: "50% 0%", y: 10, duration: 0.9, ease: "power3.inOut" }, ">0.3");
-      const t3 = L.h("div", { class: "abs h-title", style: { left: "200px", top: "612px", fontSize: "36px" } }, el, "Superior – Primaria o menos · IC 96% [0.369, 0.422]");
-      const sv2 = L.svg(el);
+      // 4 · el eje X sube (se comprime el eje Y) y las barras se ensanchan para dejar lugar al intervalo
+      const ih = bars.ih, bw = bars.x.bandwidth(), vals = D.escolaridad.map((e) => e.pct);
+      const K = 0.46, WB = 1.55, h = ih * K, yy = (v) => h * (1 - v / 80);
+      const v = { duration: 1.0, ease: "power3.inOut" };
+      tl.addLabel("squeeze", ">0.1");
+      tl.to(bars.ay.line, Object.assign({ scaleY: K, svgOrigin: "-14 0" }, v), "squeeze");
+      bars.ay.tks.forEach((t, i) => { const tv = [0, 20, 40, 60, 80][i]; tl.to(t, Object.assign({ y: yy(tv) - ih * (1 - tv / 80) }, v), "squeeze"); });
+      if (bars.ay.tt) tl.to(bars.ay.tt, Object.assign({ attr: { transform: `translate(-84,${h / 2}) rotate(-90)` } }, v), "squeeze");
+      tl.to(bars.ax.g, Object.assign({ y: h - ih }, v), "squeeze");
+      bars.bars.forEach((b, i) => {
+        const c = bars.x(cats[i]) + bw / 2, w = bw * WB;
+        tl.to(b, Object.assign({ attr: { x: c - w / 2, width: w, y: yy(vals[i]), height: h - yy(vals[i]) } }, v), "squeeze");
+        tl.to(bars.labels[i], Object.assign({ attr: { y: yy(vals[i]) - 12 } }, v), "squeeze");
+      });
+      vs.setAttribute("y", h * 0.62);
+      tl.fromTo(vs, { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, ">-0.3");
+      // 5 · el intervalo, centrado
       const [li, ls] = D.icSuperiorPrimaria;
-      const hi = Charts.hinterval(sv2, { x: 130, y: 660, w: 1140, h: 290, xDomain: [0.34, 0.45], xTicks: [0.34, 0.36, 0.38, 0.4, 0.42, 0.44], fmt: (v) => v.toFixed(2), li, ls, color: P.a, wash: P.l, xTitle: "Diferencia de proporciones", yLabel: "Diferencia" });
-      const l3 = L.h("div", { class: "abs hand", style: { left: "1320px", top: "720px", width: "520px", fontSize: "44px", color: P.a, lineHeight: 1.1 } }, el, `${L.ins(1)}Entre 37 y 42 puntos más lectores con estudios superiores`);
-      gsap.set([t3, l3, sv2], { autoAlpha: 0 });
-      tl.set(sv2, { autoAlpha: 1 }, ">-0.1");
-      L.write(tl, t3, { pos: "<", dur: 1.2 });
-      hi.play(tl, "<0.4");
-      L.write(tl, l3, { pos: ">", dur: 1.4 });
+      const mid = (li + ls) / 2;
+      const t3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "598px", textAlign: "center", fontSize: "40px" } }, el, "Diferencia entre primaria o menos y superior");
+      const t3b = L.h("div", { class: "abs", style: { left: 0, width: "1920px", top: "650px", textAlign: "center", fontSize: "30px", fontWeight: 800, color: P.a } }, el, `IC 96% [${li.toFixed(3)}, ${ls.toFixed(3)}]`);
+      const sv2 = L.svg(el);
+      const hi = Charts.hinterval(sv2, { x: 280, y: 680, w: 1360, h: 270, m: { l: 70, r: 70, t: 30, b: 100 }, xDomain: [0.34, 0.45], xTicks: [0.34, 0.36, 0.38, 0.4, 0.42, 0.44], fmt: (v) => v.toFixed(2), li, ls, point: mid, color: P.a, wash: P.l, xTitle: "Diferencia de proporciones", liLabel: li.toFixed(3), lsLabel: ls.toFixed(3) });
+      const midLab = Charts.T(hi.g, hi.x(mid), hi.cy - 30, `diferencia ≈ ${mid.toFixed(3)}`, { "text-anchor": "middle", "font-weight": 800, "font-size": 26, fill: C.ink });
+      const l3 = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "985px", textAlign: "center", fontSize: "46px", color: P.a } }, el, `${L.ins(1)}Entre 37 y 42 puntos más lectores con estudios superiores`);
+      gsap.set([t3, t3b, l3, sv2, midLab], { autoAlpha: 0 });
+      L.write(tl, t3, { pos: ">0.1", dur: 1.0 });
+      L.pop(tl, t3b, ">", { from: { y: 8 } });
+      tl.set(sv2, { autoAlpha: 1 }, "<");
+      hi.play(tl, "<0.2");
+      tl.fromTo(midLab, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.1");
+      L.write(tl, l3, { pos: ">0.2", dur: 1.4 });
     },
   });
 })();
