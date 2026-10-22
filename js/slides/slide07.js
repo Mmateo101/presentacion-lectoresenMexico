@@ -5,7 +5,7 @@
   const D = window.DATA;
 
   Deck.add({
-    transition: "watercolor",
+    transition: "pageTurn",
     notes: "En el hogar la desigualdad es mucho mayor: la distribución es casi plana, con un 29% sin ningún estímulo.",
     build(el, S) {
       const tl = S.tl;
@@ -23,7 +23,34 @@
       L.h("div", { class: "h-title", style: { position: "absolute", left: 0, right: 0, top: "16px", textAlign: "center", fontSize: "32px", color: C.blueD } }, boxE, "Índice de acceso en la escuela (p36a–d)");
       gsap.set([boxH, boxE], { autoAlpha: 0 });
 
-      // ---- Paso 1 (entrada): ocho tarjetas caen ----
+      // ---- Entrada: las variables construidas, enumeradas en post-its ----
+      const POST = [
+        ["lee", "¿Leyó libros en los últimos 12 meses? (p3_1)"],
+        ["libros", "Libros leídos en 12 meses, solo lectores (p4)"],
+        ["ind_hogar", "Índice de acceso en el hogar, 0 a 4 (p34a–d)"],
+        ["ind_escuela", "Índice de acceso en la escuela, 0 a 4 (p36a–d)"],
+        ["libros_casa", "Libros en casa en la infancia (p34d, p34d1)"],
+        ["escolaridad", "Nivel de escolaridad agrupado (nivel)"],
+        ["edad", "Edad de la persona"],
+        ["año", "Año de la encuesta, 2019–2024"],
+      ];
+      const PCOL = ["#FBE7A1", "#FBE7A1", C.amberL, C.blueL, C.amberL, "#D7E8C8", "#F3D9E6", "#F3D9E6"];
+      const posts = POST.map(([n, d], i) => {
+        const p = L.h("div", { class: "abs", style: { left: 150 + (i % 4) * 410 + "px", top: 200 + Math.floor(i / 4) * 380 + "px", width: "360px", height: "330px", background: PCOL[i], boxShadow: "6px 10px 18px rgba(80,60,30,.22)", padding: "34px 30px 24px", borderRadius: "2px 2px 18px 2px" } }, el);
+        L.h("div", { style: { position: "absolute", left: "50%", top: "-16px", width: "120px", height: "34px", marginLeft: "-60px", background: "rgba(255,255,255,.55)", border: "1px solid rgba(0,0,0,.06)", transform: "rotate(-3deg)" } }, p);
+        L.h("div", { class: "h-title", style: { fontSize: "64px", color: C.plum, lineHeight: 1 } }, p, String(i + 1));
+        L.h("div", { class: "hand", style: { fontSize: "50px", fontWeight: 700, margin: "12px 0 8px", lineHeight: 1 } }, p, n);
+        L.h("div", { style: { fontSize: "25px", lineHeight: 1.25, color: C.ink } }, p, d);
+        p._rot = ((i * 47) % 9) - 4;
+        return p;
+      });
+      posts.forEach((p, i) => tl.fromTo(p, { autoAlpha: 0, scale: 1.6, rotation: p._rot * 3, y: -40 }, { autoAlpha: 1, scale: 1, rotation: p._rot, y: 0, duration: 0.45, ease: "back.out(1.6)" }, 0.4 + i * 0.22));
+
+      // ---- Paso 1: los post-its se apilan en la esquina; ocho tarjetas caen ----
+      S.step();
+      tl.to(posts, { x: (i, t) => 1700 - parseFloat(t.style.left) - 180, y: (i, t) => 100 - parseFloat(t.style.top), scale: 0.18, rotation: (i) => (i % 2 ? 6 : -6), duration: 0.8, ease: "power3.inOut", stagger: 0.05 }, ">");
+      tl.to(posts, { autoAlpha: 0, duration: 0.3 }, ">-0.1");
+      tl.addLabel("cards", ">-0.2");
       const cw = 320, ch = 104;
       const cards = qs.map(([g, t], i) => {
         const c = L.h("div", { class: "card", style: { left: "0px", top: "0px", width: cw + "px", height: ch + "px", padding: "0", fontSize: "25px", lineHeight: 1.2, transformStyle: "preserve-3d", background: "transparent", border: "none", boxShadow: "none" } }, el);
@@ -37,7 +64,7 @@
         gsap.set(c, { x: sx, y: sy, rotation: c._s.rot, transformPerspective: 1000 });
         return c;
       });
-      cards.forEach((c, i) => tl.fromTo(c, { y: -260, autoAlpha: 0, rotation: c._s.rot * 3 }, { y: c._s.sy, autoAlpha: 1, rotation: c._s.rot, duration: 0.8, ease: "bounce.out" }, 0.3 + i * 0.12));
+      cards.forEach((c, i) => tl.fromTo(c, { y: -260, autoAlpha: 0, rotation: c._s.rot * 3 }, { y: c._s.sy, autoAlpha: 1, rotation: c._s.rot, duration: 0.8, ease: "bounce.out" }, `cards+=${(i * 0.12).toFixed(2)}`));
 
       // ---- Paso 2: se separan en dos cajas; Eduardo y Héctor ----
       S.step();
