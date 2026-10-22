@@ -89,7 +89,6 @@ window.DATA = {
     { cat: "76–100", n: 215, media: 4.89, mediana: 3, sd: 6.95, q1: 2, q3: 5 },
     { cat: "Más de 100", n: 342, media: 7.29, mediana: 4, sd: 10.72, q1: 2, q3: 8 },
   ],
-  varianzaMas100: { n: 335, gl: 334, s2: 116.91, li: 100.32, ls: 137.93, s: 10.81, sLi: 10.01, sLs: 11.74 },
 
   // 6.6 Ji-cuadrada hogar × escuela (filas: hogar 0–4; columnas: escuela 0–4)
   contingencia: [
@@ -105,6 +104,4 @@ window.DATA = {
   chi: { x2: 2414.77, gl: 16, frontera: 27.14, minEsperada: 184.8 },
   destacados: { h0e0: 33.4, h4e0: 2.2, h4e4: 75.0, h0e4: 21.2 },
 
-  // Homogeneidad entre años (opcional)
-  anios: { x2: 2.26, gl: 5, frontera: 11.64, p: 0.81, pct: [42.2, 41.4, 42.3, 42.4, 40.6, 41.1] },
 };

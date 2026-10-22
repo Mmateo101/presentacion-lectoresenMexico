@@ -1,4 +1,4 @@
-/* Diapositiva 10 · Varianza de los libros leídos */
+/* Diapositiva 10 · Libros en casa y cuántos libros se leen */
 (function () {
   const { C } = L;
   const D = window.DATA;
@@ -34,11 +34,11 @@
   Deck.add({
     accent: L.RES[4].a,
     transition: "pageTurn",
-    notes: "Para las medias nos apoyamos en el Teorema del Límite Central; el intervalo de la varianza no tiene ese respaldo.",
+    notes: "Para la diferencia de medias nos apoyamos en el Teorema del Límite Central (más de 1,400 lectores por grupo).",
     build(el, S) {
       const tl = S.tl;
       L.kicker(el, "Resultado 5");
-      const head = L.head(el, "Varianza de los libros leídos");
+      const head = L.head(el, "Libros en casa y cuántos libros se leen");
       L.pop(tl, head, 0, { from: { y: -20 } });
 
       // ================= Paso 1: diferencia de medias =================
@@ -90,44 +90,6 @@
         prev = r.sd;
       });
       tl.to(sdBox, { scale: 1.08, duration: 0.25, yoyo: true, repeat: 1 }, ">");
-
-      // ================= Paso 3: IC de la varianza → desviación estándar =================
-      S.step();
-      const s3 = L.h("div", { class: "layer" }, el);
-      const v = D.varianzaMas100;
-      const t3a = L.h("div", { class: "abs h-title", style: { left: "110px", top: "160px", width: "1700px", fontSize: "36px" } }, s3, "Varianza muestral 116.91, IC 96% [100.32, 137.93] (χ² con 334 gl, n = 335)");
-      const t3b = L.h("div", { class: "abs h-title", style: { left: "110px", top: "160px", width: "1700px", fontSize: "36px" } }, s3, "s = 10.81, IC [10.01, 11.74] libros");
-      const grp = L.h("div", { class: "abs", style: { left: "110px", top: "215px", fontSize: "26px", color: C.ink2, fontWeight: 700 } }, s3, "Libros en casa: Más de 100");
-      const sv3 = L.svg(s3);
-      const hv = Charts.hinterval(sv3, { x: 110, y: 260, w: 1700, h: 330, xDomain: [80, 155], xTicks: [80, 100, 120, 140], fmt: (x) => x.toFixed(0), li: v.li, ls: v.ls, ref: v.s2, refColor: C.crimson, color: P.a, wash: P.l, xTitle: "Varianza", yLabel: "Varianza" });
-      const hs = Charts.hinterval(sv3, { x: 110, y: 260, w: 1700, h: 330, xDomain: [9.2, 12.6], xTicks: [9.5, 10, 10.5, 11, 11.5, 12, 12.5], fmt: (x) => x.toFixed(1), li: v.sLi, ls: v.sLs, ref: v.s, refColor: C.crimson, color: P.a, wash: P.l, xTitle: "Desviación estándar", yLabel: "Desv. est." });
-      // las piezas de la varianza se deslizan a las posiciones de la desviación estándar
-      const morphTo = (a, b) => ({ x1: +b.getAttribute("x1"), x2: +b.getAttribute("x2") });
-      gsap.set([s3, t3a, t3b, grp, hs.frame, hs.ax.g, hs.yl, hs.arm, hs.c1, hs.c2, hs.wash, hs.ref], { autoAlpha: 0 });
-      tl.to(s2, { autoAlpha: 0, x: -100, duration: 0.6, ease: "power2.in" }, ">");
-      tl.set(s3, { autoAlpha: 1 }, ">");
-      L.write(tl, t3a, { pos: ">", dur: 1.4 });
-      L.pop(tl, grp, "<", { from: { y: 8 } });
-      hv.play(tl, "<0.4");
-      tl.addLabel("morph", ">0.8");
-      tl.to(t3a, { autoAlpha: 0, y: -20, duration: 0.4 }, "morph");
-      tl.fromTo(t3b, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5 }, "morph+=0.3");
-      tl.to([hv.ax.g, hv.yl], { autoAlpha: 0, duration: 0.4 }, "morph");
-      tl.fromTo([hs.ax.g, hs.yl], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, "morph+=0.4");
-      tl.to(hv.arm, { attr: morphTo(hv.arm, hs.arm), duration: 1, ease: "power3.inOut" }, "morph");
-      tl.to(hv.c1, { attr: morphTo(hv.c1, hs.c1), duration: 1, ease: "power3.inOut" }, "morph");
-      tl.to(hv.c2, { attr: morphTo(hv.c2, hs.c2), duration: 1, ease: "power3.inOut" }, "morph");
-      tl.to(hv.ref, { attr: morphTo(hv.ref, hs.ref), duration: 1, ease: "power3.inOut" }, "morph");
-      tl.to(hv.wash, { attr: { x: +hs.wash.getAttribute("x"), width: +hs.wash.getAttribute("width") }, duration: 1, ease: "power3.inOut" }, "morph");
-      tl.to(hv.lLab, { autoAlpha: 0, duration: 0.3 }, "morph");
-
-      // ================= Paso 4: mensaje y advertencia =================
-      S.step();
-      const msg = L.h("div", { class: "abs h-title", style: { left: "160px", width: "1600px", top: "690px", textAlign: "center", fontSize: "46px", fontStyle: "italic", color: P.a, lineHeight: 1.25 } }, s3, `${L.ins(8)}Crecer con muchos libros no hace que todos lean igual: en ese grupo conviven lectores ocasionales y lectores muy intensos.`);
-      const tag = L.h("div", { class: "tag", style: { left: "360px", width: "1200px", top: "900px", textAlign: "center", color: C.crimson, borderColor: C.crimson, fontSize: "36px" } }, s3, "⚠ Este intervalo supone normalidad; los datos están muy sesgados, así que lo interpretamos con cautela.");
-      gsap.set([msg, tag], { autoAlpha: 0 });
-      L.write(tl, msg, { pos: ">", dur: 2.4 });
-      tl.fromTo(tag, { autoAlpha: 0, rotation: -4, y: 30 }, { autoAlpha: 1, rotation: -1, y: 0, duration: 0.6, ease: "back.out(2)" }, ">0.2");
     },
   });
 })();

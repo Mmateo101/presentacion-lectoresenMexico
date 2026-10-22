@@ -50,7 +50,7 @@
 
   Deck.add({
     transition: "pageTurn",
-    notes: "Supuestos: n·p ≥ 5 en todos los grupos; frecuencias esperadas ≥ 5; para medias usamos el Teorema del Límite Central porque el número de libros está muy sesgado (sesgo ≈ 7.3). Herramientas: α = 0.04; IC de proporciones (z), diferencia de medias (t de Welch) y varianza (χ²); pruebas z de diferencia de proporciones y ji-cuadrada; R (Quarto / R Markdown).",
+    notes: "Supuestos: n·p ≥ 5 en todos los grupos; frecuencias esperadas ≥ 5; para medias usamos el Teorema del Límite Central porque el número de libros está muy sesgado (sesgo ≈ 7.3). Herramientas: α = 0.04; IC de proporciones (z) y diferencia de medias (t de Welch); pruebas z de diferencia de proporciones y ji-cuadrada; R (Quarto / R Markdown).",
     build(el, S) {
       const tl = S.tl;
       const head = L.head(el, "Objetivos y metodología");

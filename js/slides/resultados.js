@@ -3,7 +3,7 @@
   const { C } = L;
   const ITEMS = [
     "Proporción de lectores según el índice de acceso",
-    "Prueba de independencia: hogar y escuela",
+    "Independencia entre índice hogar y escuela",
     "Diferencia de proporciones: solo escuela vs. solo hogar",
     "Escolaridad: primaria vs. secundaria",
     "Libros en casa y cuántos libros se leen",
