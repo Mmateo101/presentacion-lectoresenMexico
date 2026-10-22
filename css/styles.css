@@ -110,7 +110,7 @@ svg.full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
 #ribbon .track { position: absolute; inset: 0 0 34px 0; background: rgba(122, 78, 140, .10); }
 #ribbon .fill {
   position: absolute; left: 0; right: 0; top: 0; height: 100%;
-  background: linear-gradient(180deg, #8d5fa0, var(--plum));
+  background: var(--accent, var(--plum)); transition: background .6s;
   transform-origin: 50% 0; transform: scaleY(0);
 }
 #ribbon svg { position: absolute; left: 0; bottom: 0; }
@@ -139,17 +139,17 @@ svg.full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
 /* ---------- Número de diapositiva (esquina inferior izquierda) ---------- */
 #pageno {
   position: absolute; left: 34px; bottom: 22px; z-index: 900; pointer-events: none;
-  font-family: var(--f-head); font-style: italic; font-weight: 600; font-size: 26px; color: var(--ink-2);
+  font-family: var(--f-head); font-style: italic; font-weight: 600; font-size: 26px; color: var(--pageno, var(--ink-2)); transition: color .6s;
   padding: 4px 14px; border-radius: 20px; background: rgba(251, 248, 241, .78);
 }
 
 /* ---------- Resultados: rótulo e insights numerados ---------- */
 .kicker {
   position: absolute; left: 110px; top: 18px; z-index: 5;
-  font-family: var(--f-body); font-weight: 800; font-size: 22px; letter-spacing: .22em; text-transform: uppercase; color: var(--plum);
+  font-family: var(--f-body); font-weight: 800; font-size: 22px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent, var(--plum));
 }
 .ins {
   display: inline-flex; align-items: center; justify-content: center; vertical-align: .08em;
   width: 1.2em; height: 1.2em; margin-right: .35em; border-radius: 50%;
-  background: var(--plum); color: #fff; font-family: var(--f-head); font-style: normal; font-weight: 700; font-size: .78em; line-height: 1;
+  background: var(--accent, var(--plum)); color: #fff; font-family: var(--f-head); font-style: normal; font-weight: 700; font-size: .78em; line-height: 1;
 }

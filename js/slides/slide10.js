@@ -29,7 +29,10 @@
     return { g, books, num, lab };
   }
 
+  const P = L.RES[4]; // color de este resultado
+
   Deck.add({
+    accent: L.RES[4].a,
     transition: "pageTurn",
     notes: "Para las medias nos apoyamos en el Teorema del Límite Central; el intervalo de la varianza no tiene ese respaldo.",
     build(el, S) {
@@ -47,7 +50,7 @@
       const h1 = Charts.hinterval(sv1, { x: 110, y: 300, w: 1080, h: 380, xDomain: [-0.1, 1.5], xTicks: [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4], fmt: (v) => v.toFixed(1), li: m.li, ls: m.ls, zero: 0, color: C.amberD, wash: C.amberL, xTitle: "Diferencia de medias de libros leídos", yLabel: "Diferencia" });
       const stA = stack(sv1, 1420, 800, m.alto, C.amberD, "Alto");
       const stB = stack(sv1, 1680, 800, m.bajo, C.amberL, "Bajo");
-      const msg1 = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "900px", textAlign: "center", fontSize: "48px", fontStyle: "italic", color: C.plum } }, s1, `${L.ins(9)}La diferencia existe, pero es menor a un libro al año.`);
+      const msg1 = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "900px", textAlign: "center", fontSize: "48px", fontStyle: "italic", color: P.a } }, s1, `${L.ins(7)}La diferencia existe, pero es menor a un libro al año.`);
       gsap.set([s1, t1, ic1, msg1, stA.num, stB.num, stA.lab, stB.lab], { autoAlpha: 0 });
       S.step();
       tl.set(s1, { autoAlpha: 1 }, ">");
@@ -96,8 +99,8 @@
       const t3b = L.h("div", { class: "abs h-title", style: { left: "110px", top: "160px", width: "1700px", fontSize: "36px" } }, s3, "s = 10.81, IC [10.01, 11.74] libros");
       const grp = L.h("div", { class: "abs", style: { left: "110px", top: "215px", fontSize: "26px", color: C.ink2, fontWeight: 700 } }, s3, "Libros en casa: Más de 100");
       const sv3 = L.svg(s3);
-      const hv = Charts.hinterval(sv3, { x: 110, y: 260, w: 1700, h: 330, xDomain: [80, 155], xTicks: [80, 100, 120, 140], fmt: (x) => x.toFixed(0), li: v.li, ls: v.ls, ref: v.s2, refColor: C.crimson, color: C.plum, wash: C.plumL, xTitle: "Varianza", yLabel: "Varianza" });
-      const hs = Charts.hinterval(sv3, { x: 110, y: 260, w: 1700, h: 330, xDomain: [9.2, 12.6], xTicks: [9.5, 10, 10.5, 11, 11.5, 12, 12.5], fmt: (x) => x.toFixed(1), li: v.sLi, ls: v.sLs, ref: v.s, refColor: C.crimson, color: C.plum, wash: C.plumL, xTitle: "Desviación estándar", yLabel: "Desv. est." });
+      const hv = Charts.hinterval(sv3, { x: 110, y: 260, w: 1700, h: 330, xDomain: [80, 155], xTicks: [80, 100, 120, 140], fmt: (x) => x.toFixed(0), li: v.li, ls: v.ls, ref: v.s2, refColor: C.crimson, color: P.a, wash: P.l, xTitle: "Varianza", yLabel: "Varianza" });
+      const hs = Charts.hinterval(sv3, { x: 110, y: 260, w: 1700, h: 330, xDomain: [9.2, 12.6], xTicks: [9.5, 10, 10.5, 11, 11.5, 12, 12.5], fmt: (x) => x.toFixed(1), li: v.sLi, ls: v.sLs, ref: v.s, refColor: C.crimson, color: P.a, wash: P.l, xTitle: "Desviación estándar", yLabel: "Desv. est." });
       // las piezas de la varianza se deslizan a las posiciones de la desviación estándar
       const morphTo = (a, b) => ({ x1: +b.getAttribute("x1"), x2: +b.getAttribute("x2") });
       gsap.set([s3, t3a, t3b, grp, hs.frame, hs.ax.g, hs.yl, hs.arm, hs.c1, hs.c2, hs.wash, hs.ref], { autoAlpha: 0 });
@@ -120,7 +123,7 @@
 
       // ================= Paso 4: mensaje y advertencia =================
       S.step();
-      const msg = L.h("div", { class: "abs h-title", style: { left: "160px", width: "1600px", top: "690px", textAlign: "center", fontSize: "46px", fontStyle: "italic", color: C.plum, lineHeight: 1.25 } }, s3, `${L.ins(10)}Crecer con muchos libros no hace que todos lean igual: en ese grupo conviven lectores ocasionales y lectores muy intensos.`);
+      const msg = L.h("div", { class: "abs h-title", style: { left: "160px", width: "1600px", top: "690px", textAlign: "center", fontSize: "46px", fontStyle: "italic", color: P.a, lineHeight: 1.25 } }, s3, `${L.ins(8)}Crecer con muchos libros no hace que todos lean igual: en ese grupo conviven lectores ocasionales y lectores muy intensos.`);
       const tag = L.h("div", { class: "tag", style: { left: "360px", width: "1200px", top: "900px", textAlign: "center", color: C.crimson, borderColor: C.crimson, fontSize: "36px" } }, s3, "⚠ Este intervalo supone normalidad; los datos están muy sesgados, así que lo interpretamos con cautela.");
       gsap.set([msg, tag], { autoAlpha: 0 });
       L.write(tl, msg, { pos: ">", dur: 2.4 });

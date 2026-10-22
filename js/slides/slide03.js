@@ -45,6 +45,8 @@
       const lockAt = (o) => 1.6 + titleT.indexOf(o) * 0.11;
       tiles.forEach((o) => tl.to(o.t, { letters: { seq: o.seq }, duration: o.isT && !o.space ? lockAt(o) - 0.4 : 2.4 + rb() * 1.0, ease: "none" }, 0.4));
       tl.fromTo(tiles.filter((o, i) => i % 2).map((o) => o.t), { rotationX: 0 }, { rotationX: 360, duration: 0.5, ease: "power1.inOut", stagger: { each: 0.004, from: "random" } }, 0.5);
+      // las fichas vibran mientras cambian (repeat impar → terminan donde empezaron)
+      tl.to(tiles.map((o) => o.t), { x: () => (rb() - 0.5) * 6, y: () => (rb() - 0.5) * 6, duration: 0.07, repeat: 23, yoyo: true, ease: "none" }, 0.3);
       // pa · pa · pa: las letras del título se fijan una por una y crecen
       titleT.forEach((o, k) => {
         const at = 1.6 + k * 0.11;
@@ -56,14 +58,33 @@
       tl.to(others.map((o) => o.t), { autoAlpha: 0, scale: 0.4, rotationX: 90, duration: 0.45, stagger: { each: 0.0012, from: "random" } }, tEnd);
       tl.to(titleT.map((o) => o.t), { y: -(TROW * TH) + 18, scale: 0.9, duration: 0.9, ease: "power3.inOut", stagger: { each: 0.015, from: "center" } }, tEnd + 0.5);
 
-      // ---- La pregunta general aparece en el centro ----
-      const q = L.h("div", { class: "abs h-title", style: { left: "170px", width: "1580px", top: "330px", fontSize: "64px", textAlign: "center", lineHeight: 1.2 } }, el,
-        `¿Cómo se relaciona la desigualdad en el <span class="acc" style="display:inline-block;line-height:1">acceso</span> a la lectura durante la infancia con los hábitos de lectura de libros en la edad adulta?`);
-      gsap.set(q, { autoAlpha: 0 });
-      L.write(tl, q, { pos: tEnd + 1.2, dur: 3.0 });
-      const acc = q.querySelector(".acc");
-      const mark = L.marker(acc, C.plum);
-      const ph = board; // el tablero (con el título) se retira cuando la pregunta sube
+      // ---- La pregunta general aparece en el centro (dos renglones largos) ----
+      // "acceso" y "hábitos de lectura" van en fichas que se pueden encender como las del título
+      const q = L.h("div", { class: "abs h-title", style: { left: "80px", width: "1760px", top: "390px", fontSize: "52px", textAlign: "center", lineHeight: 1.45 } }, el);
+      const QTXT = [["¿Cómo se relaciona la desigualdad en el "], ["acceso", "acc"], [" a la lectura durante la infancia con los "], ["hábitos de lectura", "hab"], [" de libros en la edad adulta?"]];
+      const qChars = [], tileSets = { acc: [], hab: [] };
+      QTXT.forEach(([txt, key]) => {
+        txt.split(/(\s+)/).forEach((w) => {
+          if (!w) return;
+          if (/^\s+$/.test(w)) { q.appendChild(document.createTextNode(" ")); return; }
+          const word = L.h("span", { class: "word" }, q);
+          [...w].forEach((ch) => {
+            const sp = L.h("span", { class: "ch", style: key ? { borderRadius: "8px", lineHeight: 1.1 } : {} }, word, ch);
+            qChars.push(sp);
+            if (key) tileSets[key].push(sp);
+          });
+        });
+      });
+      // enciende / apaga un grupo de fichas moradas
+      const tilesOn = (key, pos) => tileSets[key].forEach((t, i) => {
+        tl.to(t, { backgroundColor: C.plum, color: "#fff", paddingLeft: 6, paddingRight: 6, marginLeft: 1, marginRight: 1, scale: 1.35, duration: 0.1, ease: "power2.out" }, i ? `<0.08` : pos);
+        tl.to(t, { scale: 1, duration: 0.2, ease: "back.out(3)" }, "<0.1");
+      });
+      const tilesOff = (key, pos) => tl.to(tileSets[key], { backgroundColor: "rgba(122,78,140,0)", color: C.ink, paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0, duration: 0.4, stagger: 0.03 }, pos);
+      gsap.set(tileSets.acc.concat(tileSets.hab), { backgroundColor: "rgba(122,78,140,0)", paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 });
+      gsap.set(qChars, { opacity: 0 });
+      tl.to(qChars, { opacity: 1, duration: 0.01, stagger: 0.022 }, tEnd + 1.2);
+      tilesOn("acc", ">0.2");
 
       // ---- Nube de palabras (estilo "welcome"): preguntas cortas, tamaños y tipografías mezcladas ----
       const cloud = L.h("div", { class: "layer" }, el);
@@ -127,13 +148,10 @@
       // flotación suave de cada palabra
       S.ambient(() => words.map((o, i) => gsap.fromTo(o.inner, { y: -3 }, { y: 3, duration: 2 + (i % 5) * 0.4, repeat: -1, yoyo: true, ease: "sine.inOut", delay: (i % 7) * 0.2 })));
 
-      // ---- Paso 2: la pregunta sube y "acceso" crece; aparece la nube ----
+      // ---- Paso 2: la pregunta sube debajo del título; aparece la nube ----
       gsap.set([cloud, centerEls.h, centerEls.e], { autoAlpha: 0 });
       S.step();
-      tl.to(ph, { autoAlpha: 0, duration: 0.4 }, ">");
-      tl.to(q, { y: -280, scale: 0.55, transformOrigin: "50% 0%", duration: 1.0, ease: "power3.inOut" }, "<");
-      tl.to(acc, { fontSize: "2.2em", color: C.plum, duration: 0.8, ease: "back.out(1.6)" }, "<0.5");
-      tl.to(mark, { scaleX: 1, duration: 0.6, ease: "power2.out" }, ">-0.2");
+      tl.to(q, { top: 108, fontSize: "44px", lineHeight: 1.4, duration: 0.9, ease: "power3.inOut" }, ">");
       tl.set(cloud, { autoAlpha: 1 }, "<");
       tl.fromTo(all.map((o) => o.w), { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)", stagger: { each: 0.03, from: "random" } }, "<");
 
@@ -147,11 +165,14 @@
 
       // ---- Paso 4: la nube se disuelve; las dos preguntas específicas ----
       S.step();
-      const qa = L.h("div", { class: "abs h-title", style: { left: "120px", width: "800px", top: "330px", fontSize: "46px", lineHeight: 1.2 } }, el, "a) ¿Cómo se relaciona con la decisión de leer o no leer libros?");
-      const qb = L.h("div", { class: "abs h-title", style: { left: "1000px", width: "800px", top: "330px", fontSize: "46px", lineHeight: 1.2 } }, el, "b) ¿Cómo se relaciona con la cantidad de libros leídos?");
+      const qa = L.h("div", { class: "abs h-title", style: { left: "120px", width: "800px", top: "330px", fontSize: "46px", lineHeight: 1.2 } }, el, `a) ¿Cómo se relaciona con la decisión de <span style="color:${C.plum}">leer o no leer libros</span>?`);
+      const qb = L.h("div", { class: "abs h-title", style: { left: "1000px", width: "800px", top: "330px", fontSize: "46px", lineHeight: 1.2 } }, el, `b) ¿Cómo se relaciona con la <span style="color:${C.plum}">cantidad de libros</span> leídos?`);
       gsap.set([qa, qb], { autoAlpha: 0 });
       tl.to(cloud, { autoAlpha: 0, scale: 1.08, filter: "blur(6px)", duration: 0.9, ease: "power2.in" }, ">");
-      L.write(tl, qa, { pos: ">-0.1", dur: 1.6 });
+      // "acceso" vuelve a la normalidad y ahora se encienden los hábitos de lectura
+      tilesOff("acc", "<0.3");
+      tilesOn("hab", ">");
+      L.write(tl, qa, { pos: ">0.1", dur: 1.6 });
       L.write(tl, qb, { pos: ">0.1", dur: 1.6 });
 
       // ---- Paso 5: cada pregunta define su variable ----
@@ -167,7 +188,7 @@
       const st = L.s("svg", { width: 800, height: 260, viewBox: "0 0 800 260", style: "position:absolute;left:0;top:0" }, B);
       L.s("line", { x1: 250, x2: 550, y1: 250, y2: 250, stroke: C.ink, "stroke-width": 4, "stroke-linecap": "round" }, st);
       const stack = [];
-      const cols = [C.blueM, C.amberM, C.plum, C.blueL, C.amberD, "#9DBF9A", C.blueD, C.amberL, C.crimson, C.plumL];
+      const cols = ["#4E2E5B", C.plum, "#A983BA", C.plumL, "#5E3A6E", "#8D5FA0", "#C4A6D2", "#6A4179", "#9B72AD", "#D9C6E2"];
       for (let i = 0; i < 10; i++) {
         const w = 170 + ((i * 37) % 50);
         stack.push(L.s("rect", { x: 400 - w / 2 + ((i * 23) % 16) - 8, y: 226 - i * 24, width: w, height: 22, rx: 4, fill: cols[i], stroke: C.ink, "stroke-width": 3 }, st));

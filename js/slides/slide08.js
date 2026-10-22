@@ -1,22 +1,15 @@
-/* Diapositiva 8 · Prueba de diferencia entre solo escuela y solo hogar (3 pasos centrados que suben) */
+/* Resultado 3 · Prueba de diferencia entre solo escuela y solo hogar.
+   Cada paso se presenta centrado; al terminar se guarda en un rectángulo a todo lo ancho, arriba. */
 (function () {
   const { C } = L;
   const D = window.DATA;
-  const BW = 1600, BH = 700;           // tamaño de cada bloque de paso
-  const ACTIVE = { x: 160, y: 300 };   // dónde se ve el paso activo
-  const SUM = 0.3;                     // escala del paso ya terminado (arriba)
-
-  /* Bloque de un paso: div con su propio SVG de 1600×700 */
-  function block(el, title) {
-    const b = L.h("div", { class: "abs", style: { left: 0, top: 0, width: BW + "px", height: BH + "px", transformOrigin: "0 0" } }, el);
-    const lab = L.h("div", { class: "abs h-title", style: { left: 0, width: BW + "px", top: "0px", textAlign: "center", fontSize: "44px", color: C.plum } }, b, title);
-    const svg = L.s("svg", { width: BW, height: BH, viewBox: `0 0 ${BW} ${BH}`, style: "position:absolute;left:0;top:0;overflow:visible" }, b);
-    gsap.set(b, { x: ACTIVE.x, y: ACTIVE.y });
-    return { b, lab, svg };
-  }
-  const tx = (svg, x, y, t, a = {}) => L.s("text", Object.assign({ x, y, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 30, fill: C.ink }, a), svg, t);
+  const P = L.RES[2];                     // color de este resultado
+  const READ = P.a;                       // color de "leen" (distinto de azul y naranja)
+  const RECT = { x: 110, w: 1700, h: 122, gap: 14, top: 118 };
+  const rectY = (i) => RECT.top + i * (RECT.h + RECT.gap);
 
   Deck.add({
+    accent: P.a,
     transition: "pageTurn",
     notes: "Grupos mutuamente excluyentes: solo escuela (hogar = 0, escuela ≥ 1; n = 1,977) y solo hogar (escuela = 0, hogar ≥ 1; n = 500). H₀: p_hogar = p_escuela; α = 0.04. Diferencia 19.4 puntos, IC 96% [14.3, 24.6], z ≈ 8.41, p < 2.2×10⁻¹⁶.",
     build(el, S) {
@@ -24,50 +17,63 @@
       L.kicker(el, "Resultado 3");
       const head = L.head(el, "Prueba de diferencia entre solo escuela y solo hogar");
       L.pop(tl, head, 0, { from: { y: -20 } });
-      const moveUp = (blk, slot) => tl.to(blk.b, { x: 200 + slot * 540, y: 120, scale: SUM, duration: 0.9, ease: "power3.inOut" }, ">");
+      const svg = L.svg(el);
+      const T = (x, y, t, a = {}) => L.s("text", Object.assign({ x, y, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 30, fill: C.ink }, a), svg, t);
 
-      // =============== Paso 1 · Separar la población ===============
-      const P1 = block(el, "Paso 1 · Separar la población");
-      gsap.set(P1.b, { y: 220 });
-      const sv = P1.svg;
-      const GX = 300, GY = 150, CW = 200, CH = 100, PER = 20;
-      const grid = L.s("g", {}, sv);
+      /* Rectángulo-resumen de un paso: marco del color del resultado y etiqueta a la izquierda */
+      const rects = [];
+      const mkRect = (i, label) => {
+        const y = rectY(i);
+        const box = L.s("rect", { x: RECT.x, y, width: RECT.w, height: RECT.h, rx: 18, fill: P.l, "fill-opacity": 0.35, stroke: P.a, "stroke-width": 4 }, svg);
+        const lab = L.h("div", { class: "abs h-title", style: { left: RECT.x + 30 + "px", top: y + "px", height: RECT.h + "px", width: "580px", display: "flex", alignItems: "center", fontSize: "31px", color: P.d, lineHeight: 1.1 } }, el, label);
+        gsap.set([box, lab], { autoAlpha: 0 });
+        rects.push({ box, lab });
+        return { box, lab, y };
+      };
+      const showRect = (r, pos) => {
+        tl.fromTo(r.box, { autoAlpha: 0, scaleX: 0.15, transformOrigin: "0% 50%" }, { autoAlpha: 1, scaleX: 1, duration: 0.55, ease: "power3.out" }, pos);
+        tl.fromTo(r.lab, { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
+      };
+
+      // =============== Paso 1 · Separar las poblaciones (centrado) ===============
+      const t1 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "140px", textAlign: "center", fontSize: "44px", color: P.a } }, el, "Paso 1 · Separar las poblaciones");
+      const GX = 460, GY = 270, CW = 200, CH = 100, PER = 20;
+      const grid = L.s("g", {}, svg);
       for (let k = 0; k <= 5; k++) {
         L.s("line", { x1: GX, x2: GX + 5 * CW, y1: GY + k * CH, y2: GY + k * CH, stroke: "#D8CDB8", "stroke-width": 2 }, grid);
         L.s("line", { x1: GX + k * CW, x2: GX + k * CW, y1: GY, y2: GY + 5 * CH, stroke: "#D8CDB8", "stroke-width": 2 }, grid);
       }
+      const gt = (x, y, t, a) => L.s("text", Object.assign({ x, y, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 26 }, a), grid, t);
       for (let k = 0; k < 5; k++) {
-        tx(grid, GX + k * CW + CW / 2, GY - 14, String(k), { fill: C.blueD, "font-size": 26 });
-        tx(grid, GX - 24, GY + k * CH + CH / 2 + 9, String(k), { fill: C.amberD, "font-size": 26 });
+        gt(GX + k * CW + CW / 2, GY - 14, String(k), { fill: C.blueD });
+        gt(GX - 24, GY + k * CH + CH / 2 + 9, String(k), { fill: C.amberD });
       }
-      tx(grid, GX + 2.5 * CW, GY - 48, "Escuela", { fill: C.blueD, "font-size": 28 });
-      tx(grid, GX - 70, GY + 2.5 * CH, "Hogar", { fill: C.amberD, "font-size": 28, transform: `rotate(-90 ${GX - 70} ${GY + 2.5 * CH})` });
+      gt(GX + 2.5 * CW, GY - 48, "Escuela", { fill: C.blueD, "font-size": 28 });
+      gt(GX - 70, GY + 2.5 * CH, "Hogar", { fill: C.amberD, "font-size": 28, transform: `rotate(-90 ${GX - 70} ${GY + 2.5 * CH})` });
       const dots = [];
       D.contingencia.forEach((row, i) => row.forEach((n, j) => {
-        const m = Math.round(n / PER);
-        for (let k = 0; k < m; k++) {
-          const c = L.s("circle", { cx: 0, cy: 0, r: 5.2, fill: C.ink2 }, sv);
+        for (let k = 0; k < Math.round(n / PER); k++) {
+          const c = L.s("circle", { cx: 0, cy: 0, r: 5.2, fill: C.ink2 }, svg);
           const d = { c, i, j, gx: GX + j * CW + 13 + (k % 14) * 13.2, gy: GY + i * CH + 12 + Math.floor(k / 14) * 13.2 };
           gsap.set(c, { x: d.gx, y: d.gy });
           dots.push(d);
         }
       }));
-      const esc = dots.filter((d) => d.i === 0 && d.j >= 1);
-      const hog = dots.filter((d) => d.j === 0 && d.i >= 1);
+      const esc = dots.filter((d) => d.i === 0 && d.j >= 1), hog = dots.filter((d) => d.j === 0 && d.i >= 1);
       const rest = dots.filter((d) => !esc.includes(d) && !hog.includes(d));
-      const lay = (arr, x0, y0, cols) => arr.forEach((d, k) => { d.tx = x0 + (k % cols) * 26; d.ty = y0 + Math.floor(k / cols) * 26; });
-      lay(esc, 120, 230, 14);
-      lay(hog, 1220, 230, 7);
-      const gE = L.h("div", { class: "abs", style: { left: "60px", top: "120px", width: "560px", textAlign: "center" } }, P1.b,
+      const lay = (arr, x0, y0, cols, sp) => arr.forEach((d, k) => { d.tx = x0 + (k % cols) * sp; d.ty = y0 + Math.floor(k / cols) * sp; });
+      lay(esc, 330, 420, 14, 26);
+      lay(hog, 1400, 420, 7, 26);
+      const gE = L.h("div", { class: "abs", style: { left: "230px", top: "300px", width: "560px", textAlign: "center" } }, el,
         `<div class="h-title" style="font-size:42px;color:${C.blueD}">Solo escuela</div><div style="font-size:30px;font-weight:800">hogar = 0 · escuela ≥ 1</div>`);
-      const gH = L.h("div", { class: "abs", style: { left: "1050px", top: "120px", width: "540px", textAlign: "center" } }, P1.b,
+      const gH = L.h("div", { class: "abs", style: { left: "1200px", top: "300px", width: "560px", textAlign: "center" } }, el,
         `<div class="h-title" style="font-size:42px;color:${C.amberD}">Solo hogar</div><div style="font-size:30px;font-weight:800">escuela = 0 · hogar ≥ 1</div>`);
-      gsap.set([P1.lab, grid, gE, gH], { autoAlpha: 0 });
+      gsap.set([t1, grid, gE, gH], { autoAlpha: 0 });
       gsap.set(dots.map((d) => d.c), { autoAlpha: 0 });
-      // entrada: la población en la tabla; luego se separa
-      L.pop(tl, P1.lab, ">", { from: { y: -10 } });
+      L.pop(tl, t1, ">", { from: { y: -10 } });
       tl.fromTo(grid, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, "<0.2");
       tl.fromTo(dots.map((d) => d.c), { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.25, stagger: { amount: 0.9, from: "random" } }, "<");
+      // se separan
       S.step();
       tl.to(esc.map((d) => d.c), { attr: { fill: C.blueM }, duration: 0.3 }, ">");
       tl.to(hog.map((d) => d.c), { attr: { fill: C.amberM }, duration: 0.3 }, "<0.15");
@@ -80,78 +86,95 @@
 
       // =============== Paso 2 · Proporciones ===============
       S.step();
-      moveUp(P1, 0);
-      const P2 = block(el, "Paso 2 · Proporciones");
-      const sv2 = P2.svg;
-      const dE = [], dH = [];
+      const R1 = mkRect(0, "Paso 1 · Separar las poblaciones");
+      // los puntitos se guardan en el rectángulo, lado a lado
+      const rx0 = 720, ry0 = R1.y + 24;
+      esc.forEach((d, k) => { d.rx = rx0 + (k % 33) * 13; d.ry = ry0 + Math.floor(k / 33) * 13; });
+      hog.forEach((d, k) => { d.rx = 1220 + (k % 9) * 13; d.ry = ry0 + Math.floor(k / 9) * 13; });
+      const rE = L.h("div", { class: "abs", style: { left: "720px", top: R1.y + 70 + "px", fontSize: "24px", fontWeight: 800, color: C.blueD } }, el, "Solo escuela · hogar = 0, escuela ≥ 1");
+      const rH = L.h("div", { class: "abs", style: { left: "1220px", top: R1.y + 70 + "px", fontSize: "24px", fontWeight: 800, color: C.amberD } }, el, "Solo hogar · escuela = 0, hogar ≥ 1");
+      gsap.set([rE, rH], { autoAlpha: 0 });
+      tl.to([t1, gE, gH], { autoAlpha: 0, duration: 0.3 }, ">");
+      showRect(R1, "<");
+      tl.to(esc.map((d) => d.c), { x: (k) => esc[k].rx, y: (k) => esc[k].ry, scale: 0.9, duration: 0.8, ease: "power3.inOut", stagger: 0.003 }, "<");
+      tl.to(hog.map((d) => d.c), { x: (k) => hog[k].rx, y: (k) => hog[k].ry, scale: 0.9, duration: 0.8, ease: "power3.inOut", stagger: 0.01 }, "<");
+      tl.fromTo([rE, rH], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, ">-0.2");
+      // el paso 2, centrado debajo: el porcentaje arriba de los puntitos; los que leen en otro color
+      const t2 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "275px", textAlign: "center", fontSize: "44px", color: P.a } }, el, "Paso 2 · Proporciones");
       const nE = esc.length, nH = hog.length;
-      const rE = Math.round(nE * D.soloEscuela.p), rH = Math.round(nH * D.soloHogar.p);
-      for (let k = 0; k < nE; k++) dE.push(L.s("circle", { cx: 120 + (k % 14) * 26, cy: 130 + Math.floor(k / 14) * 26, r: 8.3, fill: C.band }, sv2));
-      for (let k = 0; k < nH; k++) dH.push(L.s("circle", { cx: 1220 + (k % 7) * 26, cy: 130 + Math.floor(k / 7) * 26, r: 8.3, fill: C.band }, sv2));
-      const pE = L.h("div", { class: "abs", style: { left: "60px", top: "330px", width: "560px", textAlign: "center" } }, P2.b,
-        `<div class="h-title" style="font-size:96px;color:${C.blueD};line-height:1">${L.num(27.0, "pct1")}</div><div style="font-size:30px;font-weight:700;color:${C.ink2}">533 de 1,977 leen</div>`);
-      const pH = L.h("div", { class: "abs", style: { left: "1050px", top: "330px", width: "540px", textAlign: "center" } }, P2.b,
-        `<div class="h-title" style="font-size:96px;color:${C.amberD};line-height:1">${L.num(46.4, "pct1")}</div><div style="font-size:30px;font-weight:700;color:${C.ink2}">232 de 500 leen</div>`);
-      const key = L.h("div", { class: "abs", style: { left: "600px", top: "200px", width: "400px", textAlign: "center", fontSize: "30px", fontWeight: 700 } }, P2.b,
-        `<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${C.ink};margin-right:8px"></span>lee<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${C.band};border:2px solid ${C.ink2};margin-right:8px"></span>no lee`);
-      gsap.set([P2.b], { autoAlpha: 0 });
-      gsap.set([pE, pH, key], { autoAlpha: 0 });
-      tl.fromTo(P2.b, { autoAlpha: 0, y: ACTIVE.y + 80 }, { autoAlpha: 1, y: ACTIVE.y, duration: 0.6, ease: "power3.out" }, ">-0.3");
-      tl.fromTo([...dE, ...dH], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.25, stagger: 0.004 }, ">-0.2");
-      L.pop(tl, key, "<", { from: { y: 10 } });
-      tl.to(dE.slice(0, rE), { attr: { fill: C.blueD }, duration: 0.25, stagger: 0.015 }, ">");
-      tl.to(dH.slice(0, rH), { attr: { fill: C.amberD }, duration: 0.25, stagger: 0.04 }, "<");
+      const kE = Math.round(nE * D.soloEscuela.p), kH = Math.round(nH * D.soloHogar.p);
+      const dE = esc.map((_, k) => L.s("circle", { cx: 330 + (k % 14) * 26, cy: 560 + Math.floor(k / 14) * 26, r: 8.3, fill: C.blueL }, svg));
+      const dH = hog.map((_, k) => L.s("circle", { cx: 1430 + (k % 7) * 26, cy: 560 + Math.floor(k / 7) * 26, r: 8.3, fill: C.amberL }, svg));
+      const pE = L.h("div", { class: "abs", style: { left: "230px", top: "360px", width: "560px", textAlign: "center" } }, el,
+        `<div style="font-size:30px;font-weight:800;color:${C.blueD}">Solo escuela</div><div class="h-title" style="font-size:84px;color:${READ};line-height:1.05">${L.num(27.0, "pct1")} <span style="font-size:36px">leen</span></div><div style="font-size:24px;font-weight:700;color:${C.ink2}">533 de 1,977</div>`);
+      const pH = L.h("div", { class: "abs", style: { left: "1230px", top: "360px", width: "560px", textAlign: "center" } }, el,
+        `<div style="font-size:30px;font-weight:800;color:${C.amberD}">Solo hogar</div><div class="h-title" style="font-size:84px;color:${READ};line-height:1.05">${L.num(46.4, "pct1")} <span style="font-size:36px">leen</span></div><div style="font-size:24px;font-weight:700;color:${C.ink2}">232 de 500</div>`);
+      gsap.set([t2, pE, pH, ...dE, ...dH], { autoAlpha: 0 });
+      L.pop(tl, t2, ">0.1", { from: { y: -10 } });
+      tl.fromTo([...dE, ...dH], { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.25, stagger: 0.003 }, ">-0.1");
+      tl.to(dE.slice(0, kE), { attr: { fill: READ }, duration: 0.25, stagger: 0.012 }, ">");
+      tl.to(dH.slice(0, kH), { attr: { fill: READ }, duration: 0.25, stagger: 0.035 }, "<");
       tl.fromTo([pE, pH], { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.2 }, ">-0.3");
       L.counts(tl, pE, "<", 1.2);
       L.counts(tl, pH, "<0.2", 1.2);
 
       // =============== Paso 3 · Prueba de hipótesis ===============
       S.step();
-      moveUp(P2, 1);
-      const P3 = block(el, "Paso 3 · Prueba de hipótesis");
-      const sub = L.h("div", { class: "abs h-title", style: { left: 0, width: BW + "px", top: "70px", textAlign: "center", fontSize: "50px" } }, P3.b,
-        `<span style="color:${C.amberD}">46.4%</span> − <span style="color:${C.blueD}">27.0%</span> = <span style="color:${C.plum}">19.4 puntos</span>`);
-      const sv3 = P3.svg;
-      // distribución normal estándar con la región de rechazo (α = 0.04, dos colas)
-      const PX = 200, PY = 170, PW = 1200, PHt = 330;
+      const R2 = mkRect(1, "Paso 2 · Proporciones");
+      const sum2 = L.h("div", { class: "abs", style: { left: "720px", top: R2.y + "px", height: RECT.h + "px", display: "flex", alignItems: "center", gap: "70px" } }, el,
+        `<div><span style="font-size:26px;font-weight:800;color:${C.blueD}">Solo escuela</span> <span class="h-title" style="font-size:54px;color:${READ}">27.0%</span></div><div><span style="font-size:26px;font-weight:800;color:${C.amberD}">Solo hogar</span> <span class="h-title" style="font-size:54px;color:${READ}">46.4%</span></div>`);
+      gsap.set(sum2, { autoAlpha: 0 });
+      tl.to([t2, pE, pH, ...dE, ...dH], { autoAlpha: 0, duration: 0.35 }, ">");
+      showRect(R2, "<0.1");
+      tl.fromTo(sum2, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
+      const t3 = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "410px", textAlign: "center", fontSize: "44px", color: P.a } }, el, "Paso 3 · Prueba de hipótesis");
+      const sub = L.h("div", { class: "abs h-title", style: { left: 0, width: "1920px", top: "470px", textAlign: "center", fontSize: "46px" } }, el,
+        `<span style="color:${C.amberD}">46.4%</span> − <span style="color:${C.blueD}">27.0%</span> = <span style="color:${P.a}">19.4 puntos</span>`);
+      const PX = 360, PY = 600, PW = 1200, PHt = 330;
       const x = d3.scaleLinear().domain([-4, 10]).range([PX, PX + PW]);
       const y = d3.scaleLinear().domain([0, 0.42]).range([PY + PHt, PY]);
       const phi = (z) => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
-      const zs = d3.range(-4, 10.001, 0.05);
-      const axis = L.s("line", { x1: PX, x2: PX + PW, y1: PY + PHt, y2: PY + PHt, stroke: C.ink, "stroke-width": 2.5 }, sv3);
-      const ticks = [-4, -2, 0, 2, 4, 6, 8, 10].map((v) => {
-        const g = L.s("g", {}, sv3);
-        L.s("line", { x1: x(v), x2: x(v), y1: PY + PHt, y2: PY + PHt + 9, stroke: C.ink, "stroke-width": 2 }, g);
-        tx(g, x(v), PY + PHt + 38, String(v).replace("-", "−"), { "font-size": 24, "font-weight": 600 });
-        return g;
+      const gph = L.s("g", {}, svg);
+      const axis = L.s("line", { x1: PX, x2: PX + PW, y1: PY + PHt, y2: PY + PHt, stroke: C.ink, "stroke-width": 2.5 }, gph);
+      [-4, -2, 0, 2, 4, 6, 8, 10].forEach((v) => {
+        L.s("line", { x1: x(v), x2: x(v), y1: PY + PHt, y2: PY + PHt + 9, stroke: C.ink, "stroke-width": 2 }, gph);
+        L.s("text", { x: x(v), y: PY + PHt + 38, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 600, "font-size": 24, fill: C.ink }, gph, String(v).replace("-", "−"));
       });
-      const zt = tx(sv3, x(3), PY + PHt + 76, "z", { "font-size": 26, fill: C.ink2, "font-style": "italic" });
-      const curve = L.s("path", { d: d3.line()(zs.map((z) => [x(z), y(phi(z))])), fill: "none", stroke: C.plum, "stroke-width": 4.5 }, sv3);
+      const curve = L.s("path", { d: d3.line()(d3.range(-4, 10.001, 0.05).map((z) => [x(z), y(phi(z))])), fill: "none", stroke: P.a, "stroke-width": 4.5 }, gph);
       const tail = (a, b) => `M${x(a)},${y(0)} ` + d3.range(a, b + 0.001, 0.05).map((z) => `L${x(z)},${y(phi(z))}`).join(" ") + ` L${x(b)},${y(0)} Z`;
-      const rejL = L.s("path", { d: tail(-4, -2.054), fill: C.crimson, opacity: 0.35 }, sv3);
-      const rejR = L.s("path", { d: tail(2.054, 10), fill: C.crimson, opacity: 0.35 }, sv3);
-      const fL = L.s("line", { x1: x(-2.054), x2: x(-2.054), y1: PY + 20, y2: PY + PHt, stroke: C.crimson, "stroke-width": 3.5, "stroke-dasharray": "12 8" }, sv3);
-      const fR = L.s("line", { x1: x(2.054), x2: x(2.054), y1: PY + 20, y2: PY + PHt, stroke: C.crimson, "stroke-width": 3.5, "stroke-dasharray": "12 8" }, sv3);
-      const fLab = tx(sv3, x(2.054) + 14, PY + 50, "Valor frontera = ±2.054", { "text-anchor": "start", fill: C.crimson, "font-size": 26 });
-      const rLab = tx(sv3, x(5.4), PY + PHt - 22, "Región de rechazo", { fill: C.crimson, "font-size": 26 });
-      const obs = L.s("line", { x1: x(8.41), x2: x(8.41), y1: PY, y2: PY + PHt, stroke: C.ink, "stroke-width": 6 }, sv3);
-      const oLab = tx(sv3, x(8.41), PY - 14, "z = 8.41", { "font-size": 32 });
-      const stamp = L.h("div", { class: "stamp", style: { left: "1110px", top: "245px", fontSize: "36px", transform: "rotate(-4deg)" } }, P3.b, "Se rechaza H₀");
-      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: BW + "px", top: "640px", textAlign: "center", fontSize: "42px", color: C.amberD } }, P3.b, `${L.ins(5)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
-      gsap.set([P3.b, sub, rejL, rejR, fL, fR, fLab, rLab, obs, oLab, stamp, ins, zt, ...ticks], { autoAlpha: 0 });
-      tl.fromTo(P3.b, { autoAlpha: 0, y: ACTIVE.y + 80 }, { autoAlpha: 1, y: ACTIVE.y, duration: 0.6, ease: "power3.out" }, ">-0.3");
-      // restamos las proporciones
+      const rej = [L.s("path", { d: tail(-4, -2.054), fill: C.crimson, opacity: 0.35 }, gph), L.s("path", { d: tail(2.054, 10), fill: C.crimson, opacity: 0.35 }, gph)];
+      const fr = [-2.054, 2.054].map((v) => L.s("line", { x1: x(v), x2: x(v), y1: PY + 20, y2: PY + PHt, stroke: C.crimson, "stroke-width": 3.5, "stroke-dasharray": "12 8" }, gph));
+      const fLab = L.s("text", { x: x(2.054) + 14, y: PY + 50, "font-family": "Nunito", "font-weight": 800, "font-size": 26, fill: C.crimson }, gph, "Valor frontera = ±2.054");
+      const rLab = L.s("text", { x: x(5.4), y: PY + PHt - 22, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 26, fill: C.crimson }, gph, "Región de rechazo");
+      const obs = L.s("line", { x1: x(8.41), x2: x(8.41), y1: PY, y2: PY + PHt, stroke: C.ink, "stroke-width": 6 }, gph);
+      const oLab = L.s("text", { x: x(8.41), y: PY - 14, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 32, fill: C.ink }, gph, "z = 8.41");
+      gsap.set([t3, sub, gph], { autoAlpha: 0 });
+      L.pop(tl, t3, ">0.1", { from: { y: -10 } });
       tl.fromTo(sub, { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, ">-0.1");
-      L.draw(tl, axis, ">0.2", { duration: 0.6 });
-      tl.fromTo(ticks, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, stagger: 0.05 }, "<0.2");
-      tl.fromTo(zt, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, "<");
-      L.draw(tl, curve, ">-0.2", { duration: 1.1 });
-      tl.fromTo([fL, fR], { autoAlpha: 0, scaleY: 0, transformOrigin: "50% 100%" }, { autoAlpha: 1, scaleY: 1, duration: 0.5 }, ">");
-      tl.fromTo([rejL, rejR], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, "<0.2");
+      tl.set(gph, { autoAlpha: 1 }, ">");
+      L.draw(tl, axis, "<", { duration: 0.5 });
+      L.draw(tl, curve, ">-0.1", { duration: 1.0 });
+      tl.fromTo(fr, { autoAlpha: 0, scaleY: 0, transformOrigin: "50% 100%" }, { autoAlpha: 1, scaleY: 1, duration: 0.5 }, ">");
+      tl.fromTo(rej, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, "<0.2");
       tl.fromTo([fLab, rLab], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, "<");
       tl.fromTo(obs, { x: x(0) - x(8.41), autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 1.0, ease: "power4.out" }, ">0.3");
       tl.fromTo(oLab, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, ">-0.3");
-      tl.fromTo(stamp, { autoAlpha: 0, scale: 2.2, rotation: -14 }, { autoAlpha: 1, scale: 1, rotation: -4, duration: 0.45, ease: "power4.in" }, ">0.2");
+
+      // =============== Paso 3 guardado + Conclusión ===============
+      S.step();
+      const R3 = mkRect(2, "Paso 3 · Prueba de hipótesis");
+      const sum3 = L.h("div", { class: "abs h-title", style: { left: "720px", top: R3.y + "px", height: RECT.h + "px", display: "flex", alignItems: "center", fontSize: "40px" } }, el,
+        `19.4 puntos &nbsp;·&nbsp; z = 8.41 &gt; 2.054 &nbsp;·&nbsp; p &lt; 2.2×10⁻¹⁶`);
+      const R4 = mkRect(3, "Conclusión");
+      const sum4 = L.h("div", { class: "abs", style: { left: "720px", top: R4.y + "px", height: RECT.h + "px", display: "flex", alignItems: "center", gap: "34px" } }, el,
+        `<span class="stamp" style="position:static;font-size:34px;transform:rotate(-3deg)">Se rechaza H₀</span><span class="h-title" style="font-size:40px;color:${P.d}">El hogar tiene más impacto que la escuela</span>`);
+      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: "1920px", top: "700px", textAlign: "center", fontSize: "46px", color: P.d } }, el, `${L.ins(3)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
+      gsap.set([sum3, sum4, ins], { autoAlpha: 0 });
+      tl.to([t3, sub, gph], { autoAlpha: 0, duration: 0.35 }, ">");
+      showRect(R3, "<0.1");
+      tl.fromTo(sum3, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.4 }, ">-0.2");
+      showRect(R4, ">0.3");
+      tl.fromTo(sum4, { autoAlpha: 0, scale: 1.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power4.in" }, ">-0.1");
       L.write(tl, ins, { pos: ">0.3", dur: 1.4 });
     },
   });

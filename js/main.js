@@ -73,10 +73,10 @@
       this.update();
     },
 
-    playSeg() {
+    playSeg(startAt) {
       const r = this.runs[this.idx];
       if (this.k >= r.last) return false;
-      const a = r.B[this.k], b = r.B[this.k + 1];
+      const a = startAt != null ? startAt : r.B[this.k], b = r.B[this.k + 1];
       this.k++;
       r.tl.seek(a, true);
       this.anim = r.tl.tweenFromTo(a, b, { ease: "none" });
@@ -133,7 +133,7 @@
         gsap.set([from.el, to.el], { clearProps: "transform,opacity,visibility,zIndex,clipPath,filter" });
         this.idx = j;
         this.k = 0;
-        this.playSeg();
+        this.playSeg(tr.entranceFrom); // la transición puede haber adelantado la entrada
       };
       tr.tl.eventCallback("onComplete", finish);
       this.busy = { tl: tr.tl, finish };
@@ -146,6 +146,9 @@
       const frac = (this.idx + (r.last ? this.k / r.last : 1)) / n;
       gsap.to(ribbonFill, { scaleY: frac, duration: 0.6, ease: "power2.out", overwrite: true });
       document.getElementById("pageno").textContent = `${this.idx + 1} / ${n}`;
+      // color del resultado: cinta, número de hoja, rótulos e insights
+      stage.style.setProperty("--accent", r.def.accent || "#7A4E8C");
+      stage.style.setProperty("--pageno", r.def.accent || "#6B6875");
       notesEl.querySelector(".meta").textContent = `Diapositiva ${this.idx + 1} de ${n} · paso ${this.k} de ${r.last}`;
       notesEl.querySelector(".txt").textContent = r.def.notes || "";
       try { history.replaceState(null, "", `#${this.idx + 1}.${this.k}`); } catch (e) { /* file:// */ }

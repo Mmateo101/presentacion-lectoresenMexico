@@ -8,7 +8,7 @@
     "Escolaridad: primaria vs. secundaria",
     "Libros en casa y cuántos libros se leen",
   ];
-  const COLS = [C.amberM, C.plum, C.blueM, "#7FA77A", C.amberD];
+  const COLS = L.RES.map((r) => r.a); // mismos colores que cada resultado
 
   Deck.add({
     transition: "pageTurn",

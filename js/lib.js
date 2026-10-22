@@ -50,8 +50,18 @@
     },
   });
 
+  // un color por resultado (portada de resultados, rótulos, cinta y número de hoja)
+  const RES = [
+    { a: "#7A4E8C", l: "#D9C6E2", m: "#A983BA", d: "#4E2E5B" }, // 1 morado
+    { a: "#4F8A5B", l: "#CFE3D2", m: "#86B58F", d: "#2F5E3A" }, // 2 verde
+    { a: "#B5507A", l: "#F0CFDC", m: "#D488A8", d: "#7A2E50" }, // 3 rosa
+    { a: "#2E7D86", l: "#C7E3E5", m: "#6FB0B7", d: "#1D545A" }, // 4 verde azulado
+    { a: "#4B5AA8", l: "#D3D8F0", m: "#8C97CF", d: "#2E3870" }, // 5 índigo
+  ];
+
   const L = {
     C,
+    RES,
     rng(seed = 1) {
       let s = seed >>> 0 || 1;
       return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);

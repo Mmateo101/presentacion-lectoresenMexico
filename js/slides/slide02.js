@@ -298,7 +298,7 @@
       const mx = L.h("div", { class: "layer" }, el);
       const msvg = L.svg(mx);
       const MX = window.MEXICO;
-      const ms = 0.98, mx0 = 70, my0 = 300;
+      const ms = 0.98, mx0 = 470, my0 = 300; // México al centro
       const defs = L.s("defs", {}, msvg);
       const sym = L.s("symbol", { id: "s2person", viewBox: "-10 -22 20 24", overflow: "visible" }, defs);
       L.s("circle", { cx: 0, cy: -15.5, r: 5 }, sym);
@@ -322,21 +322,14 @@
 
       const like = L.text(mx, "Como Héctor y Eduardo, millones de mexicanos crecieron con estímulos desiguales para la lectura.",
         { left: "110px", top: "70px", width: "1700px", fontSize: "50px", lineHeight: 1.15 }, "h-title");
-      const cardStyle = (top) => ({ left: "1120px", top: top + "px", width: "690px" });
-      const c1 = L.h("div", { class: "card", style: cardStyle(240) }, mx,
+      const cardStyle = (left) => ({ left: left + "px", top: "430px", width: "400px", fontSize: "29px" });
+      const c1 = L.h("div", { class: "card", style: cardStyle(40) }, mx,
         `<span class="big" style="color:${C.plum}">${L.num(41.7, "pct1")}</span> de los adultos alfabetos leyó al menos un libro en el último año<span class="src">MOLEC 2019–2024</span>`);
-      const c2 = L.h("div", { class: "card", style: cardStyle(460) }, mx,
+      const c2 = L.h("div", { class: "card", style: cardStyle(1470) }, mx,
         `Quienes leen, leen en promedio <span class="big" style="color:${C.plum}">${L.num(3.5, "d1")}</span> libros al año (mediana: ${L.num(2)})`);
-      const c3 = L.h("div", { class: "card", style: Object.assign(cardStyle(640), { paddingRight: "190px", fontSize: "27px" }) }, mx,
-        `La población alfabeta de 18 años y más que leyó algún material (libros, revistas, periódicos, historietas o páginas de internet) bajó de ${L.num(84.2, "pct1")} (2015) a ${L.num(69.6, "pct1", 84.2)} (2024)<span class="src">INEGI, MOLEC 2024</span>`);
-      const spark = L.s("svg", { width: 150, height: 110, viewBox: "0 0 150 110", style: "position:absolute;right:28px;top:40px" }, c3);
-      L.s("line", { x1: 8, x2: 142, y1: 100, y2: 100, stroke: C.ink2, "stroke-width": 2 }, spark);
-      const fall = L.s("path", { d: "M14,18 C50,26 70,40 92,58 S126,80 136,86", fill: "none", stroke: C.ink, "stroke-width": 4, "stroke-linecap": "round", filter: "url(#ink)" }, spark);
-      const d1 = L.s("circle", { cx: 14, cy: 18, r: 6, fill: C.plum }, spark);
-      const d2 = L.s("circle", { cx: 136, cy: 86, r: 6, fill: C.crimson }, spark);
       const closing = L.text(mx, "¿Cómo afecta esta desigualdad a nuestros hábitos de lectura?",
         { left: "0", width: "1920px", top: "975px", textAlign: "center", fontSize: "48px", color: C.plum, fontStyle: "italic" }, "h-title");
-      gsap.set([mx, like, c1, c2, c3, closing], { autoAlpha: 0 });
+      gsap.set([mx, like, c1, c2, closing], { autoAlpha: 0 });
       gsap.set(crowd, { autoAlpha: 0 });
       {
         const t = gsap.timeline();
@@ -374,19 +367,41 @@
       S.step();
       {
         const t = gsap.timeline();
-        L.pop(t, c3, 0, { from: { x: 60, y: 0, rotation: 2 }, to: { x: 0, rotation: 0 } });
-        gsap.set(d2, { autoAlpha: 0 });
-        L.counts(t, c3, 0.3, 1.8);
-        L.draw(t, fall, 0.3, { duration: 1.6, ease: "power1.in" });
-        t.fromTo(d2, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, transformOrigin: "50% 50%", duration: 0.3 }, ">");
-        tl.add(t);
-      }
-      S.step();
-      {
-        const t = gsap.timeline();
         L.write(t, closing, { pos: 0, dur: 1.8 });
         tl.add(t);
       }
+    },
+
+    /* ---------- Transición 2 → 3: la hoja se dobla y detrás aparecen las letras vibrando ---------- */
+    out(from, to, fx, ctx) {
+      const tl = gsap.timeline();
+      const LEAD = 1.6; // segundos de la entrada de la diapositiva 3 que ya corren durante el doblez
+      const mk = (clip) => {
+        const c = from.cloneNode(true);
+        c.removeAttribute("id");
+        c.classList.add("on");
+        Object.assign(c.style, { position: "absolute", left: 0, top: 0, visibility: "visible", opacity: 1, clipPath: clip, transform: "none" });
+        return c;
+      };
+      const sheet = L.h("div", { style: { position: "absolute", inset: 0, transformStyle: "preserve-3d", perspective: "2600px" } }, fx);
+      const bottom = mk("inset(50% 0% 0% 0%)");
+      sheet.appendChild(bottom);
+      const shade = L.h("div", { style: { position: "absolute", left: 0, top: "540px", width: "1920px", height: "540px", background: "linear-gradient(180deg, rgba(60,40,20,.45), rgba(60,40,20,0) 70%)", opacity: 0 } }, sheet);
+      const flap = L.h("div", { style: { position: "absolute", inset: 0, transformStyle: "preserve-3d", transformOrigin: "50% 50%" } }, sheet);
+      const top = mk("inset(0% 0% 50% 0%)");
+      top.style.backfaceVisibility = "hidden";
+      flap.appendChild(top);
+      L.h("div", { style: { position: "absolute", left: 0, top: 0, width: "1920px", height: "540px", background: "#F4EEE1 var(--grain)", transform: "rotateX(180deg)", backfaceVisibility: "hidden", boxShadow: "inset 0 -30px 60px rgba(120,90,50,.18)" } }, flap);
+      gsap.set(from, { autoAlpha: 0 });
+      gsap.set(to, { zIndex: 1 });
+      // 1 · la mitad de arriba se dobla sobre la de abajo
+      tl.to(flap, { rotationX: -180, duration: 1.1, ease: "power2.inOut" }, 0.1)
+        .to(shade, { keyframes: [{ opacity: 1, duration: 0.55 }, { opacity: 0.3, duration: 0.55 }] }, 0.1)
+      // 2 · la hoja doblada se va volando, girando como papel
+        .to(sheet, { y: 900, x: 380, rotation: 14, scale: 0.55, autoAlpha: 0, transformOrigin: "50% 75%", duration: 1.0, ease: "power2.in" }, 1.15);
+      // mientras tanto, detrás ya aparecen y vibran las letras de la diapositiva 3
+      tl.add(ctx.to.tl.tweenFromTo(0, LEAD, { ease: "none" }), 0.4);
+      return { tl, entranceFrom: LEAD, cleanup() { sheet.remove(); } };
     },
   });
 })();

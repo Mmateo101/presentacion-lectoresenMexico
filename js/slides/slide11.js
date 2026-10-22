@@ -11,7 +11,10 @@
     return Math.exp(Math.log(x) + lf);
   }
 
+  const PAL = L.RES[1]; // color de este resultado
+
   Deck.add({
+    accent: L.RES[1].a,
     transition: "watercolor",
     notes: "Con n = 10,384 el valor p tiende a cero incluso con diferencias moderadas: la prueba indica dependencia, no qué tan fuerte es.",
     build(el, S) {
@@ -31,7 +34,7 @@
       const lines = L.s("path", { d: `M${X0},${Y0} H${X0 + HW + 6 * CW} M${X0 + HW},${Y0 - 60} V${Y0 + 6 * CH} M${X0},${Y0 + 5 * CH} H${X0 + HW + 6 * CW} M${X0 + HW + 5 * CW},${Y0 - 60} V${Y0 + 6 * CH}`, stroke: C.ink, "stroke-width": 2.5, fill: "none" }, tab);
       const max = 1390;
       const heat = d3.scaleSqrt().domain([0, max]).range([0, 1]);
-      const col = (v) => d3.interpolateRgb("#FBF3E6", "#4E2E5B")(heat(v));
+      const col = (v) => d3.interpolateRgb("#FBF3E6", PAL.d)(heat(v));
       const cells = [];
       for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) {
         const inner = i < 5 && j < 5;
@@ -75,7 +78,7 @@
       const ax = Charts.axis(g, x, { orient: "bottom", at: ih, ticks: [1, 10, 100, 1000], fmt: (v) => String(v), title: "χ² (escala logarítmica)", titleOff: 66 });
       const ay = Charts.axis(g, y, { orient: "left", at: 0, ticks: [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2], fmt: (v) => v.toFixed(1), title: "Densidad", titleOff: 70 });
       const pts = d3.range(0, 401).map((i) => { const xv = 0.5 * Math.pow(10000, i / 400); return [x(xv), y(chiLogDensity(xv, 16))]; });
-      const curve = L.s("path", { d: d3.line()(pts), fill: "none", stroke: C.plum, "stroke-width": 4 }, g);
+      const curve = L.s("path", { d: d3.line()(pts), fill: "none", stroke: PAL.a, "stroke-width": 4 }, g);
       const fr = D.chi.frontera;
       const rej = pts.filter(([px]) => px >= x(fr));
       const area = L.s("path", { d: `M${x(fr)},${ih} L${x(fr)},${y(chiLogDensity(fr, 16))} ` + rej.map((p) => `L${p[0]},${p[1]}`).join(" ") + ` L${iw},${ih} Z`, fill: C.crimson, opacity: 0.28 }, g);
@@ -100,12 +103,12 @@
       // ================= Paso 4: celdas destacadas =================
       S.step();
       const c00 = cells.find((c) => c.i === 0 && c.j === 0), c40 = cells.find((c) => c.i === 4 && c.j === 0);
-      const ring = (c) => L.s("rect", { x: c.x - 2, y: c.y - 2, width: CW + 4, height: CH + 4, rx: 12, fill: "none", stroke: C.plum, "stroke-width": 6 }, tab);
+      const ring = (c) => L.s("rect", { x: c.x - 2, y: c.y - 2, width: CW + 4, height: CH + 4, rx: 12, fill: "none", stroke: PAL.a, "stroke-width": 6 }, tab);
       const r00 = ring(c00), r40 = ring(c40);
       const hl = L.h("div", { class: "abs", style: { left: "90px", top: "800px", width: "880px", fontSize: "27px", lineHeight: 1.3 } }, el);
-      const hl1 = L.h("div", {}, hl, `<span style="display:inline-block;width:16px;height:16px;border:4px solid ${C.plum};border-radius:4px;margin-right:10px"></span>De quienes no tuvieron ningún estímulo en casa, <b>33.4%</b> tampoco tuvo ninguno en la escuela.`);
-      const hl2 = L.h("div", { style: { marginTop: "10px" } }, hl, `<span style="display:inline-block;width:16px;height:16px;border:4px solid ${C.plum};border-radius:4px;margin-right:10px"></span>De quienes tuvieron los cuatro en casa, solo <b>2.2%</b>.`);
-      const concl = L.h("div", { class: "abs h-title", style: { left: "1000px", width: "860px", top: "945px", fontSize: "36px", fontStyle: "italic", color: C.plum, lineHeight: 1.2 } }, el, `${L.ins(3)}La escuela tiende a reforzar el acceso que ya existía en el hogar.`);
+      const hl1 = L.h("div", {}, hl, `<span style="display:inline-block;width:16px;height:16px;border:4px solid ${PAL.a};border-radius:4px;margin-right:10px"></span>De quienes no tuvieron ningún estímulo en casa, <b>33.4%</b> tampoco tuvo ninguno en la escuela.`);
+      const hl2 = L.h("div", { style: { marginTop: "10px" } }, hl, `<span style="display:inline-block;width:16px;height:16px;border:4px solid ${PAL.a};border-radius:4px;margin-right:10px"></span>De quienes tuvieron los cuatro en casa, solo <b>2.2%</b>.`);
+      const concl = L.h("div", { class: "abs h-title", style: { left: "1000px", width: "860px", top: "945px", fontSize: "36px", fontStyle: "italic", color: PAL.a, lineHeight: 1.2 } }, el, `${L.ins(1)}La escuela tiende a reforzar el acceso que ya existía en el hogar.`);
       gsap.set([r00, r40, hl, concl], { autoAlpha: 0 });
       tl.set(hl, { autoAlpha: 1 }, ">");
       tl.fromTo(r00, { autoAlpha: 0, scale: 1.4, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">");
@@ -125,14 +128,14 @@
       const yax = Charts.axis(YP.g, yx, { orient: "bottom", at: YP.ih, labels: D.general.anios.map((a) => [a, String(a)]) });
       const yay = Charts.axis(YP.g, yy, { orient: "left", at: 0, ticks: [0, 20, 40, 60], title: "% de lectores", titleOff: 66 });
       const lp = D.anios.pct.map((p, i) => [yx(D.general.anios[i]), yy(p)]);
-      const yline = L.s("path", { d: d3.line()(lp), fill: "none", stroke: C.plum, "stroke-width": 4.5 }, YP.g);
+      const yline = L.s("path", { d: d3.line()(lp), fill: "none", stroke: PAL.a, "stroke-width": 4.5 }, YP.g);
       const ydots = lp.map(([px, py], i) => {
         const gg = L.s("g", {}, YP.g);
-        L.s("circle", { cx: px, cy: py, r: 9, fill: C.plum, stroke: "#fff", "stroke-width": 2.5 }, gg);
+        L.s("circle", { cx: px, cy: py, r: 9, fill: PAL.a, stroke: "#fff", "stroke-width": 2.5 }, gg);
         L.s("text", { x: px, y: py - 20, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 23, fill: C.ink }, gg, D.anios.pct[i].toFixed(1));
         return gg;
       });
-      const ytext = L.h("div", { class: "abs", style: { left: "1010px", top: "720px", width: "840px", fontSize: "28px", fontWeight: 600, lineHeight: 1.3 } }, el, `${L.ins(4)}Homogeneidad entre años: χ² = 2.26 &lt; 11.64, p = 0.81 → la proporción de lectores fue estable de 2019 a 2024.`);
+      const ytext = L.h("div", { class: "abs", style: { left: "1010px", top: "720px", width: "840px", fontSize: "28px", fontWeight: 600, lineHeight: 1.3 } }, el, `${L.ins(2)}Homogeneidad entre años: χ² = 2.26 &lt; 11.64, p = 0.81 → la proporción de lectores fue estable de 2019 a 2024.`);
       gsap.set([ysv, ytext], { autoAlpha: 0 });
       tl.to([csv, stamp, hyp], { autoAlpha: 0, y: -30, duration: 0.6, ease: "power2.in" }, ">");
       tl.set(ysv, { autoAlpha: 1 }, ">");
