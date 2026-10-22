@@ -15,7 +15,7 @@
     notes: "Todas las pruebas z entre niveles rechazan H₀ con α = 0.04 (valor frontera z = ±2.054).",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el);
+      L.kicker(el, "Resultado 1");
       const head = L.head(el, "El acceso en el hogar se asocia más con leer que el de la escuela");
       L.pop(tl, head, 0, { from: { y: -20 } });
 
@@ -27,7 +27,7 @@
       const iE = Charts.intervals(sv1, { x: 980, y: 150, w: 870, h: 760, rows: toRows(D.niveles.escuela), xDomain: [0.2, 0.7], xTicks: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7], color: [C.blueL, C.blueM, C.blueD], lineColor: C.ink, title: "Acceso en la escuela", xTitle: "Proporción de lectores" });
       iH.title.setAttribute("fill", C.amberD);
       iE.title.setAttribute("fill", C.blueD);
-      const n1 = L.h("div", { class: "abs hand", style: { left: "0", width: "1920px", top: "975px", textAlign: "center", fontSize: "42px", color: C.plum } }, s1, `${L.ins(2)}Los intervalos no se traslapan: cada nivel es distinto en la población`);
+      const n1 = L.h("div", { class: "abs hand", style: { left: "0", width: "1920px", top: "975px", textAlign: "center", fontSize: "42px", color: C.plum } }, s1, `${L.ins(1)}Los intervalos no se traslapan: cada nivel es distinto en la población`);
       gsap.set([s1, n1], { autoAlpha: 0 });
       S.step();
       tl.set(s1, { autoAlpha: 1 }, ">");
@@ -43,7 +43,7 @@
       const sv4 = L.svg(s4);
       const hi = Charts.hinterval(sv4, { x: 420, y: 360, w: 1380, h: 400, xDomain: [-0.01, 0.13], xTicks: [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12], fmt: (v) => v.toFixed(2), li: D.compensacion.li, ls: D.compensacion.ls, point: D.compensacion.dif, zero: 0, color: C.blueD, wash: C.blueL, xTitle: "Diferencia de proporciones" });
       const hec4 = person(sv4, { who: "hector", age: "adult", shirt: C.blueM, pants: "#4F5866", x: 200, y: 900, s: 1.2 });
-      const m4 = L.h("div", { class: "abs h-title", style: { left: "420px", width: "1400px", top: "880px", fontSize: "50px", fontStyle: "italic", color: C.plum, textAlign: "center" } }, s4, `${L.ins(3)}La escuela sí ayuda… pero compensa solo una parte.`);
+      const m4 = L.h("div", { class: "abs h-title", style: { left: "420px", width: "1400px", top: "880px", fontSize: "50px", fontStyle: "italic", color: C.plum, textAlign: "center" } }, s4, `${L.ins(2)}La escuela sí ayuda… pero compensa solo una parte.`);
       gsap.set([s4, t4, v4, m4, hec4.g], { autoAlpha: 0 });
       sceneSwap(tl, s1, s4);
       L.write(tl, t4, { pos: ">-0.2", dur: 1.2 });

@@ -16,7 +16,7 @@
     notes: "Con n = 10,384 el valor p tiende a cero incluso con diferencias moderadas: la prueba indica dependencia, no qué tan fuerte es.",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el);
+      L.kicker(el, "Resultado 2");
       const head = L.head(el, "Homogeneidad: ¿el hogar y la escuela van de la mano?", "Prueba ji-cuadrada de independencia");
       L.pop(tl, head, 0, { from: { y: -20 } });
 
@@ -105,7 +105,7 @@
       const hl = L.h("div", { class: "abs", style: { left: "90px", top: "800px", width: "880px", fontSize: "27px", lineHeight: 1.3 } }, el);
       const hl1 = L.h("div", {}, hl, `<span style="display:inline-block;width:16px;height:16px;border:4px solid ${C.plum};border-radius:4px;margin-right:10px"></span>De quienes no tuvieron ningún estímulo en casa, <b>33.4%</b> tampoco tuvo ninguno en la escuela.`);
       const hl2 = L.h("div", { style: { marginTop: "10px" } }, hl, `<span style="display:inline-block;width:16px;height:16px;border:4px solid ${C.plum};border-radius:4px;margin-right:10px"></span>De quienes tuvieron los cuatro en casa, solo <b>2.2%</b>.`);
-      const concl = L.h("div", { class: "abs h-title", style: { left: "1000px", width: "860px", top: "945px", fontSize: "36px", fontStyle: "italic", color: C.plum, lineHeight: 1.2 } }, el, `${L.ins(9)}La escuela tiende a reforzar el acceso que ya existía en el hogar.`);
+      const concl = L.h("div", { class: "abs h-title", style: { left: "1000px", width: "860px", top: "945px", fontSize: "36px", fontStyle: "italic", color: C.plum, lineHeight: 1.2 } }, el, `${L.ins(3)}La escuela tiende a reforzar el acceso que ya existía en el hogar.`);
       gsap.set([r00, r40, hl, concl], { autoAlpha: 0 });
       tl.set(hl, { autoAlpha: 1 }, ">");
       tl.fromTo(r00, { autoAlpha: 0, scale: 1.4, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.4 }, ">");
@@ -132,7 +132,7 @@
         L.s("text", { x: px, y: py - 20, "text-anchor": "middle", "font-family": "Nunito", "font-weight": 800, "font-size": 23, fill: C.ink }, gg, D.anios.pct[i].toFixed(1));
         return gg;
       });
-      const ytext = L.h("div", { class: "abs", style: { left: "1010px", top: "720px", width: "840px", fontSize: "28px", fontWeight: 600, lineHeight: 1.3 } }, el, `${L.ins(10)}Homogeneidad entre años: χ² = 2.26 &lt; 11.64, p = 0.81 → la proporción de lectores fue estable de 2019 a 2024.`);
+      const ytext = L.h("div", { class: "abs", style: { left: "1010px", top: "720px", width: "840px", fontSize: "28px", fontWeight: 600, lineHeight: 1.3 } }, el, `${L.ins(4)}Homogeneidad entre años: χ² = 2.26 &lt; 11.64, p = 0.81 → la proporción de lectores fue estable de 2019 a 2024.`);
       gsap.set([ysv, ytext], { autoAlpha: 0 });
       tl.to([csv, stamp, hyp], { autoAlpha: 0, y: -30, duration: 0.6, ease: "power2.in" }, ">");
       tl.set(ysv, { autoAlpha: 1 }, ">");

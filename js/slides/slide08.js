@@ -21,7 +21,7 @@
     notes: "Grupos mutuamente excluyentes: solo escuela (hogar = 0, escuela ≥ 1; n = 1,977) y solo hogar (escuela = 0, hogar ≥ 1; n = 500). H₀: p_hogar = p_escuela; α = 0.04. Diferencia 19.4 puntos, IC 96% [14.3, 24.6], z ≈ 8.41, p < 2.2×10⁻¹⁶.",
     build(el, S) {
       const tl = S.tl;
-      L.kicker(el);
+      L.kicker(el, "Resultado 3");
       const head = L.head(el, "Prueba de diferencia entre solo escuela y solo hogar");
       L.pop(tl, head, 0, { from: { y: -20 } });
       const moveUp = (blk, slot) => tl.to(blk.b, { x: 200 + slot * 540, y: 120, scale: SUM, duration: 0.9, ease: "power3.inOut" }, ">");
@@ -137,7 +137,7 @@
       const obs = L.s("line", { x1: x(8.41), x2: x(8.41), y1: PY, y2: PY + PHt, stroke: C.ink, "stroke-width": 6 }, sv3);
       const oLab = tx(sv3, x(8.41), PY - 14, "z = 8.41", { "font-size": 32 });
       const stamp = L.h("div", { class: "stamp", style: { left: "1110px", top: "245px", fontSize: "36px", transform: "rotate(-4deg)" } }, P3.b, "Se rechaza H₀");
-      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: BW + "px", top: "640px", textAlign: "center", fontSize: "42px", color: C.amberD } }, P3.b, `${L.ins(1)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
+      const ins = L.h("div", { class: "abs hand", style: { left: 0, width: BW + "px", top: "640px", textAlign: "center", fontSize: "42px", color: C.amberD } }, P3.b, `${L.ins(5)}Quienes solo tuvieron estímulos en casa leen 1.7 veces más`);
       gsap.set([P3.b, sub, rejL, rejR, fL, fR, fLab, rLab, obs, oLab, stamp, ins, zt, ...ticks], { autoAlpha: 0 });
       tl.fromTo(P3.b, { autoAlpha: 0, y: ACTIVE.y + 80 }, { autoAlpha: 1, y: ACTIVE.y, duration: 0.6, ease: "power3.out" }, ">-0.3");
       // restamos las proporciones
