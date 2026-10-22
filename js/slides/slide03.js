@@ -4,19 +4,15 @@
 
   // Formas de cuantificar el acceso a los libros, agrupadas por dónde ocurre
   const HOGAR = [
-    "¿Cuántos libros había en casa?", "¿Sus padres leían?", "¿Le leían cuentos?", "¿Lo llevaban a bibliotecas?",
-    "¿Lo llevaban a librerías?", "¿Había dinero para comprar libros?", "¿Cuánto ganaba su familia?", "¿Tenían internet?",
-    "¿Leía libros digitales?", "¿Tenía tiempo libre para leer?", "¿Le regalaban libros?", "¿Había un lugar tranquilo para leer?",
-    "¿Qué estudiaron sus padres?", "¿Había una biblioteca cerca?", "¿Había una librería cerca?",
+    "¿Libros en casa?", "¿Padres lectores?", "¿Le leían?", "¿Cuentos?", "¿Bibliotecas?", "¿Librerías?", "¿Dinero?",
+    "¿Ingreso?", "¿Internet?", "¿E-books?", "¿Tiempo libre?", "¿Libros de regalo?", "¿Un librero?", "¿Revistas?",
+    "¿Periódicos?", "¿Celular?", "¿Hermanos lectores?", "¿Rincón para leer?", "¿Biblioteca cerca?", "¿Leer juntos?",
   ];
   const ESCUELA = [
-    "¿Sus maestros lo motivaban a leer?", "¿Le pedían leer otros libros?", "¿Comentaban lo leído?", "¿Lo animaban a ir a bibliotecas?",
-    "¿Había biblioteca escolar?", "¿Leían en voz alta en clase?", "¿Había club de lectura?", "¿Asistió a la primaria?",
-    "¿Escuela pública o privada?", "¿Cuántos alumnos por salón?", "¿Había libros además de los de texto?", "¿Hasta qué grado estudió?",
-    "¿Había ferias del libro?", "¿Tenían hora de lectura?",
+    "¿Maestros?", "¿Biblioteca escolar?", "¿Lecturas en clase?", "¿Comentar lo leído?", "¿Club de lectura?", "¿Hora de lectura?",
+    "¿Ferias del libro?", "¿Primaria?", "¿Libros de texto?", "¿Pública o privada?", "¿Grupos grandes?", "¿Tareas de lectura?",
+    "¿Préstamo de libros?", "¿Visitas a bibliotecas?", "¿Concursos?", "¿Leer en voz alta?", "¿Motivación?", "¿Grado escolar?",
   ];
-  const CEN = { h: [495, 655], e: [1435, 655] };
-  const RINGS = [{ n: 5, rx: 245, ry: 150 }, { n: 10, rx: 340, ry: 300 }];
 
   Deck.add({
     transition: "watercolor",
@@ -46,94 +42,94 @@
 
       const ph = L.h("div", { class: "page-head", style: { fontSize: "30px", color: C.ink2, fontWeight: 600 } }, el, "Pregunta de investigación");
 
-      // ---- Paso 1: la pregunta general, con "acceso" enorme ----
-      const q = L.h("div", { class: "abs h-title", style: { left: "170px", width: "1580px", top: "250px", fontSize: "62px", textAlign: "center", lineHeight: 1.22 } }, el,
-        `¿Cómo se relaciona la desigualdad en el <span class="acc" style="font-size:2.1em;color:${C.plum};font-weight:700;line-height:1">acceso</span> a la lectura durante la infancia con los hábitos de lectura de libros en la edad adulta?`);
+      // ---- Paso 1: la pregunta general ----
+      const q = L.h("div", { class: "abs h-title", style: { left: "170px", width: "1580px", top: "330px", fontSize: "64px", textAlign: "center", lineHeight: 1.2 } }, el,
+        `¿Cómo se relaciona la desigualdad en el <span class="acc" style="display:inline-block;line-height:1">acceso</span> a la lectura durante la infancia con los hábitos de lectura de libros en la edad adulta?`);
       gsap.set(q, { autoAlpha: 0 });
       S.step();
-      L.write(tl, q, { pos: ">", dur: 3.2 });
+      L.write(tl, q, { pos: ">", dur: 3.0 });
       const acc = q.querySelector(".acc");
       const mark = L.marker(acc, C.plum);
-      tl.to(mark, { scaleX: 1, duration: 0.7, ease: "power2.out" }, ">-0.2");
-      tl.fromTo(acc, { scale: 1 }, { scale: 1.08, duration: 0.35, yoyo: true, repeat: 1, ease: "power1.inOut" }, "<0.3");
 
-      // ---- Nube de preguntas (paso 2) que luego orbita hogar y escuela (paso 3) ----
+      // ---- Nube de palabras (estilo "welcome"): preguntas cortas, tamaños y tipografías mezcladas ----
       const cloud = L.h("div", { class: "layer" }, el);
-      const tones = [C.ink, C.ink2, C.blueD, C.amberD, C.plum, C.ink];
-      const rr = L.rng(17);
-      // posiciones dispersas de la nube (rejilla con ruido para no encimarse)
-      const cells = [];
-      for (let row = 0; row < 8; row++) for (let col = 0; col < 4; col++) cells.push([300 + col * 440 + (row % 2 ? 60 : -60) + (rr() - 0.5) * 40, 325 + row * 88 + (rr() - 0.5) * 16]);
-      cells.sort(() => rr() - 0.5);
-      const slots = (key, n) => {
-        const out = [];
-        let k = 0;
-        RINGS.forEach((ring, ri) => {
-          for (let i = 0; i < ring.n && k < n; i++, k++) {
-            const a0 = (i / ring.n) * Math.PI * 2 + (ri ? 0.35 : 0) + (key === "e" ? 0.5 : 0);
-            out.push({ ring, a0, dir: ri ? 1 : -1 });
+      const FONTS = ["var(--f-head)", "var(--f-body)", "var(--f-hand)", "var(--f-head)", "var(--f-body)"];
+      const SIZES = [66, 36, 50, 28, 58, 34, 44, 26, 62, 40, 30, 52, 28, 42, 34, 46];
+      const mixTones = [C.blueD, C.amberD, C.plum, C.ink, C.blueM, C.amberM, "#5E8C5A", C.crimson, C.ink2];
+      const hTones = [C.amberD, C.amberM, "#8A4E16", "#C97B3A", C.crimson, "#A0522D"];
+      const eTones = [C.blueD, C.blueM, "#24476B", "#4A7FB0", C.plum, "#3D6E8F"];
+      const words = [];
+      [["h", HOGAR], ["e", ESCUELA]].forEach(([key, list]) => list.forEach((t, i) => {
+        const k = words.length;
+        const w = L.h("div", { class: "abs", style: { left: 0, top: 0, whiteSpace: "nowrap", lineHeight: 1 } }, cloud);
+        const inner = L.h("div", { style: { fontFamily: FONTS[k % FONTS.length], fontSize: SIZES[(k * 7) % SIZES.length] + "px", fontWeight: k % 3 ? 700 : 600, color: mixTones[k % mixTones.length], padding: "2px 6px" } }, w, t);
+        words.push({ w, inner, key, i, tone: (key === "h" ? hTones : eTones)[i % 6] });
+      }));
+      // palabras centrales enormes
+      const bigs = { h: "Hogar", e: "Escuela" };
+      const centerEls = {};
+      Object.entries(bigs).forEach(([key, t]) => {
+        const w = L.h("div", { class: "abs h-title", style: { left: 0, top: 0, whiteSpace: "nowrap", lineHeight: 0.95, fontSize: key === "h" ? "180px" : "160px", fontWeight: 700, color: key === "h" ? C.amberD : C.blueD, padding: "0 10px" } }, cloud, t);
+        centerEls[key] = w;
+      });
+      // medidas reales (el escenario está sin escalar dentro de la diapositiva)
+      const size = (e) => [e.offsetWidth, e.offsetHeight];
+      words.forEach((o) => { [o.bw, o.bh] = size(o.w); });
+
+      /* Acomodo en espiral sin encimar (como d3-cloud, con cajas) */
+      function pack(items, cx, cy, box, fixed = []) {
+        const placed = fixed.slice();
+        const hit = (a) => placed.some((b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
+        const inside = (a) => a.x >= box[0] && a.y >= box[1] && a.x + a.w <= box[2] && a.y + a.h <= box[3];
+        const asp = (box[2] - box[0]) / (box[3] - box[1]);
+        const out = new Map();
+        items.forEach((o, n) => {
+          let t = n * 0.9, r = { w: o.bw, h: o.bh };
+          for (let it = 0; it < 6000; it++, t += 0.12) {
+            const rad = 3.2 * t;
+            r.x = cx + rad * Math.cos(t) * Math.sqrt(asp) - o.bw / 2;
+            r.y = cy + rad * Math.sin(t) / Math.sqrt(asp) - o.bh / 2;
+            if (inside(r) && !hit(r)) break;
           }
+          placed.push({ ...r });
+          out.set(o, [r.x + o.bw / 2, r.y + o.bh / 2]);
         });
         return out;
-      };
-      const items = [];
-      [["h", HOGAR], ["e", ESCUELA]].forEach(([key, list]) => {
-        const sl = slots(key, list.length);
-        list.forEach((t, i) => {
-          const w = L.h("div", { class: "abs", style: { left: 0, top: 0, whiteSpace: "nowrap" } }, cloud);
-          const inner = L.h("div", { style: { fontSize: 24 + ((i * 7) % 6) + "px", fontWeight: 700, color: tones[(i + (key === "e" ? 3 : 0)) % tones.length] } }, w, t);
-          const [cx, cy] = cells[items.length];
-          const s = sl[i];
-          const [ox, oy] = CEN[key];
-          const tx = ox + s.ring.rx * Math.cos(s.a0), ty = oy + s.ring.ry * Math.sin(s.a0);
-          gsap.set(w, { x: cx, y: cy, xPercent: -50, yPercent: -50 });
-          items.push({ w, inner, key, cx, cy, tx, ty, s, ox, oy });
-        });
+      }
+      const bySize = (a, b) => b.bw * b.bh - a.bw * a.bh;
+      const all = [...words].sort(bySize);
+      const mixed = pack(all, 960, 650, [70, 300, 1850, 1015]);
+      const CEN = { h: [490, 650], e: [1430, 650] };
+      const BOX = { h: [55, 290, 935, 1020], e: [985, 290, 1865, 1020] };
+      const split = new Map();
+      ["h", "e"].forEach((key) => {
+        const [cw, ch] = size(centerEls[key]);
+        const [cx, cy] = CEN[key];
+        gsap.set(centerEls[key], { x: cx, y: cy, xPercent: -50, yPercent: -50 });
+        const fixed = [{ x: cx - cw / 2, y: cy - ch / 2, w: cw, h: ch }];
+        pack(words.filter((o) => o.key === key).sort(bySize), cx, cy, BOX[key], fixed).forEach((v, k) => split.set(k, v));
       });
-      // centros de los grupos
-      const nodes = ["h", "e"].map((key) => {
-        const [x, y] = CEN[key];
-        const n = L.h("div", { class: "abs h-title", style: { left: x - 95 + "px", top: y - 95 + "px", width: "190px", height: "190px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "46px", color: key === "h" ? C.amberD : C.blueD, background: key === "h" ? "rgba(246,211,168,.75)" : "rgba(191,215,234,.8)", border: `4px solid ${key === "h" ? C.amberD : C.blueD}`, boxShadow: "0 10px 30px rgba(120,90,50,.15)" } }, cloud, key === "h" ? "Hogar" : "Escuela");
-        cloud.insertBefore(n, cloud.firstChild);
-        const halo = L.h("div", { class: "abs", style: { left: x - 470 + "px", top: y - 360 + "px", width: "940px", height: "720px", borderRadius: "50%", background: key === "h" ? C.amberL : C.blueL, opacity: 0.3, filter: "url(#wc2)" } }, cloud);
-        cloud.insertBefore(halo, cloud.firstChild);
-        return { n, halo };
-      });
-      // órbita: el timeline controla cuánto orbitan (0 en la nube, 1 ya agrupadas)
-      const orbit = { v: 0 };
-      S.ambient(() => {
-        const ph0 = { a: 0 };
-        return gsap.to(ph0, {
-          a: Math.PI * 2, duration: 140, repeat: -1, ease: "none",
-          onUpdate() {
-            items.forEach((it) => {
-              const a = it.s.a0 + ph0.a * it.s.dir;
-              const dx = (it.ox + it.s.ring.rx * Math.cos(a)) - it.tx, dy = (it.oy + it.s.ring.ry * Math.sin(a)) - it.ty;
-              gsap.set(it.inner, { x: (dx * orbit.v) / 0.8, y: (dy * orbit.v) / 0.8 }); // compensa la escala del contenedor
-            });
-          },
-        });
-      });
+      words.forEach((o) => { o.m = mixed.get(o); o.s = split.get(o); gsap.set(o.w, { x: o.m[0], y: o.m[1], xPercent: -50, yPercent: -50 }); });
+      // flotación suave de cada palabra
+      S.ambient(() => words.map((o, i) => gsap.fromTo(o.inner, { y: -3 }, { y: 3, duration: 2 + (i % 5) * 0.4, repeat: -1, yoyo: true, ease: "sine.inOut", delay: (i % 7) * 0.2 })));
 
-      gsap.set([cloud, ...nodes.map((n) => n.n), ...nodes.map((n) => n.halo)], { autoAlpha: 0 });
+      // ---- Paso 2: la pregunta sube y "acceso" crece; aparece la nube ----
+      gsap.set([cloud, centerEls.h, centerEls.e], { autoAlpha: 0 });
       S.step();
-      tl.to(ph, { autoAlpha: 0, duration: 0.5 }, ">");
-      tl.to(q, { y: -200, scale: 0.52, transformOrigin: "50% 0%", duration: 1.1, ease: "power3.inOut" }, "<");
-      tl.set(cloud, { autoAlpha: 1 }, "<0.4");
-      items.forEach((it, i) => {
-        const fromX = it.cx < 960 ? -800 : 800;
-        tl.fromTo(it.w, { autoAlpha: 0, x: it.cx + fromX, y: it.cy + (i % 3 - 1) * 140, rotation: i % 2 ? 9 : -9 }, { autoAlpha: 1, x: it.cx, y: it.cy, rotation: 0, duration: 1.3, ease: "power3.out" }, i ? "<0.05" : "<0.2");
-      });
+      tl.to(ph, { autoAlpha: 0, duration: 0.4 }, ">");
+      tl.to(q, { y: -280, scale: 0.55, transformOrigin: "50% 0%", duration: 1.0, ease: "power3.inOut" }, "<");
+      tl.to(acc, { fontSize: "2.2em", color: C.plum, duration: 0.8, ease: "back.out(1.6)" }, "<0.5");
+      tl.to(mark, { scaleX: 1, duration: 0.6, ease: "power2.out" }, ">-0.2");
+      tl.set(cloud, { autoAlpha: 1 }, "<");
+      tl.fromTo(all.map((o) => o.w), { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)", stagger: { each: 0.03, from: "random" } }, "<");
 
-      // ---- Paso 3: se separan en dos nubes que orbitan Hogar y Escuela ----
+      // ---- Paso 3: se separa rápido en dos nubes: Hogar y Escuela ----
       S.step();
-      tl.fromTo(nodes.map((n) => n.halo), { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 0.3, scale: 1, duration: 1.2, ease: "power2.out" }, ">");
-      tl.fromTo(nodes.map((n) => n.n), { autoAlpha: 0, scale: 0.2 }, { autoAlpha: 1, scale: 1, duration: 0.8, ease: "back.out(2)" }, "<0.2");
-      items.forEach((it, i) => {
-        tl.to(it.w, { x: it.tx, y: it.ty, scale: 0.8, duration: 1.4, ease: "power3.inOut" }, i ? "<0.03" : "<0.3");
-        tl.to(it.inner, { color: it.key === "h" ? (i % 2 ? C.amberD : "#8A4E16") : (i % 2 ? C.blueD : "#24476B"), duration: 0.6 }, "<0.4");
+      tl.fromTo([centerEls.h, centerEls.e], { autoAlpha: 0, scale: 0.2 }, { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, ">");
+      words.forEach((o, i) => {
+        tl.to(o.w, { x: o.s[0], y: o.s[1], duration: 0.7, ease: "power3.inOut" }, i ? "<0.008" : "<0.05");
+        tl.to(o.inner, { color: o.tone, duration: 0.4 }, "<");
       });
-      tl.to(orbit, { v: 1, duration: 1.5, ease: "power1.inOut" }, ">-0.4");
 
       // ---- Paso 4: la nube se disuelve; las dos preguntas específicas ----
       S.step();
