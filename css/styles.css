@@ -1,0 +1,137 @@
+:root {
+  --paper: #FBF8F1;
+  --paper-2: #F4EEE1;
+  --ink: #2B2A33;
+  --ink-2: #6B6875;
+  --blue-l: #BFD7EA; --blue-m: #6FA3CF; --blue-d: #2F5D8A;
+  --amber-l: #F6D3A8; --amber-m: #E59A4F; --amber-d: #B5651D;
+  --plum: #7A4E8C;
+  --crimson: #B23A48;
+  --band: #E4E0D8;
+  --f-head: "Fraunces", "EB Garamond", Georgia, serif;
+  --f-body: "Nunito", "Segoe UI", sans-serif;
+  --f-hand: "Caveat", "Comic Sans MS", cursive;
+  --f-script: "Pinyon Script", cursive;
+  --grain: none;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-family: var(--f-body);
+}
+
+#viewport {
+  position: fixed; inset: 0;
+  background: var(--paper-2) var(--grain);
+  overflow: hidden;
+}
+#stage {
+  position: absolute; left: 50%; top: 50%;
+  width: 1920px; height: 1080px;
+  transform-origin: 0 0;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px rgba(43, 42, 51, .06), 0 20px 60px rgba(60, 40, 20, .12);
+}
+#slides { position: absolute; inset: 0; perspective: 3200px; perspective-origin: 50% 50%; }
+
+/* ---------- Página ---------- */
+.slide {
+  position: absolute; inset: 0;
+  visibility: hidden;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image: var(--grain);
+  transform-origin: 0 50%;
+  backface-visibility: hidden;
+}
+.slide.on { visibility: visible; }
+.slide::after {          /* bordes de hoja: viñeta suave */
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 50;
+  box-shadow: inset 0 0 90px rgba(176, 150, 110, .22), inset 0 0 14px rgba(150, 120, 80, .18);
+}
+.slide.spread::before {   /* lomo del libro */
+  opacity: var(--spine, 1);
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 140px; margin-left: -70px;
+  z-index: 49; pointer-events: none;
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(120, 90, 60, .10) 38%, rgba(70, 50, 30, .28) 50%, rgba(120, 90, 60, .10) 62%, rgba(0,0,0,0) 100%);
+}
+.layer { position: absolute; inset: 0; }
+.abs { position: absolute; }
+svg { overflow: visible; }
+svg.full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+
+/* ---------- Tipografía ---------- */
+.h-title { font-family: var(--f-head); font-weight: 600; letter-spacing: -.005em; line-height: 1.12; }
+.page-head {
+  position: absolute; left: 110px; right: 110px; top: 54px;
+  font-family: var(--f-head); font-weight: 600; font-size: 50px; line-height: 1.1; color: var(--ink);
+}
+.page-sub { font-family: var(--f-body); font-size: 28px; color: var(--ink-2); font-weight: 600; }
+.hand { font-family: var(--f-hand); color: var(--ink); }
+.body { font-family: var(--f-body); font-size: 30px; line-height: 1.35; }
+.muted { color: var(--ink-2); }
+.word { display: inline-block; white-space: nowrap; }
+.ch { display: inline-block; position: relative; white-space: pre; }
+.ch .cal {
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  font-family: var(--f-script); font-weight: 400; opacity: 0; pointer-events: none; white-space: pre;
+}
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- Tarjetas ---------- */
+.card {
+  position: absolute; background: #fffdf8; border-radius: 18px;
+  border: 2.5px solid var(--ink);
+  box-shadow: 6px 8px 0 rgba(43, 42, 51, .10), 0 10px 30px rgba(120, 90, 50, .10);
+  padding: 26px 30px; font-size: 30px; line-height: 1.32;
+}
+.card .src { display: block; margin-top: 8px; font-size: 21px; color: var(--ink-2); font-style: italic; }
+.card .big { font-family: var(--f-head); font-weight: 700; font-size: 58px; line-height: 1; display: inline-block; }
+.tag {
+  position: absolute; font-family: var(--f-hand); font-size: 34px; padding: 6px 18px 8px;
+  background: #fffdf8; border: 2px solid var(--ink); border-radius: 10px 4px 12px 6px;
+  box-shadow: 3px 4px 0 rgba(43, 42, 51, .12);
+}
+.stamp {
+  position: absolute; font-family: var(--f-head); font-weight: 700; color: var(--crimson);
+  border: 5px double var(--crimson); border-radius: 12px; padding: 12px 26px;
+  background: rgba(251, 248, 241, .85); letter-spacing: .01em;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Cinta de progreso (marcapáginas) ---------- */
+#ribbon {
+  position: absolute; right: 26px; top: 0; width: 18px; height: 1080px; z-index: 900; pointer-events: none;
+}
+#ribbon .track { position: absolute; inset: 0 0 34px 0; background: rgba(122, 78, 140, .10); }
+#ribbon .fill {
+  position: absolute; left: 0; right: 0; top: 0; height: 100%;
+  background: linear-gradient(180deg, #8d5fa0, var(--plum));
+  transform-origin: 50% 0; transform: scaleY(0);
+}
+#ribbon svg { position: absolute; left: 0; bottom: 0; }
+
+/* ---------- Capa de efectos de transición ---------- */
+#fx { position: absolute; inset: 0; pointer-events: none; z-index: 800; perspective: 3200px; }
+#fx .fx-page { position: absolute; transform-style: preserve-3d; }
+#fx .face { position: absolute; inset: 0; backface-visibility: hidden; overflow: hidden; }
+
+/* ---------- Notas del presentador ---------- */
+#notes {
+  position: fixed; left: 18px; bottom: 18px; width: min(560px, 46vw);
+  background: rgba(251, 248, 241, .97); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 14px; padding: 14px 18px 16px;
+  font: 17px/1.45 var(--f-body); z-index: 9999; display: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+}
+#notes.show { display: block; }
+#notes .meta { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; letter-spacing: .04em; text-transform: uppercase; }
+
+#loading {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  font: 28px var(--f-hand); color: var(--ink-2); background: var(--paper-2); z-index: 10000;
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Desigualdad en el acceso a la lectura · Equipo 7</title>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="loading">Abriendo el libro…</div>
+
+  <div id="viewport">
+    <div id="stage">
+      <div id="slides"></div>
+      <div id="fx"></div>
+      <div id="ribbon">
+        <div class="track"><div class="fill"></div></div>
+        <svg width="18" height="36" viewBox="0 0 18 36"><path d="M0 0H18V36L9 26L0 36Z" fill="#7A4E8C"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="notes"><div class="meta"></div><div class="txt"></div></div>
+
+  <!-- Filtros SVG compartidos: acuarela, tinta y papel -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="wc1" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="3" seed="3" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="46" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="2.2" result="b"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="2" seed="11" result="g"/>
+        <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.15" result="ga"/>
+        <feComposite in="b" in2="ga" operator="in"/>
+      </filter>
+      <filter id="wc2" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="3" seed="17" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="1.6" result="b"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="5" result="g"/>
+        <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.8 1.1" result="ga"/>
+        <feComposite in="b" in2="ga" operator="in"/>
+      </filter>
+      <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="2" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="inkspread" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" seed="8" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="1.2"/>
+      </filter>
+      <filter id="calink" x="-10%" y="-30%" width="120%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap id="calinkDisp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur id="calinkBlur" in="d" stdDeviation="0"/>
+      </filter>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="6" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="10" stroke="#B23A48" stroke-width="2" opacity=".35"/>
+      </pattern>
+    </defs>
+  </svg>
+
+  <script src="js/vendor/gsap.js"></script>
+  <script src="js/vendor/CustomEase.min.js"></script>
+  <script src="js/vendor/MotionPathPlugin.min.js"></script>
+  <script src="js/vendor/d3.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/mexico.js"></script>
+  <script src="js/lib.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/charts/charts.js"></script>
+  <script src="js/transitions.js"></script>
+  <script src="js/slides/slide01.js"></script>
+  <script src="js/slides/slide02.js"></script>
+  <script src="js/slides/slide03.js"></script>
+  <script src="js/slides/slide04.js"></script>
+  <script src="js/slides/slide05.js"></script>
+  <script src="js/slides/slide06.js"></script>
+  <script src="js/slides/slide07.js"></script>
+  <script src="js/slides/slide08.js"></script>
+  <script src="js/slides/slide09.js"></script>
+  <script src="js/slides/slide10.js"></script>
+  <script src="js/slides/slide11.js"></script>
+  <script src="js/slides/slide12.js"></script>
+  <script src="js/slides/slide13.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
