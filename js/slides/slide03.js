@@ -20,36 +20,50 @@
     build(el, S) {
       const tl = S.tl;
 
-      // ---- Fondo: libros abiertos y letras que flotan (muy tenue) ----
-      const bg = L.svg(el, { style: "opacity:.16" });
-      const r = L.rng(5);
-      const floaters = [];
-      for (let i = 0; i < 12; i++) {
-        const b = L.book(bg, { x: 0, y: 0, w: 70 + r() * 40, h: 44 + r() * 20, color: [C.blueM, C.amberM, C.plum][i % 3], open: true });
-        gsap.set(b, { x: r() * 1800, y: r() * 1000, rotation: (r() - 0.5) * 30 });
-        floaters.push(b);
+      // ---- Entrada: un tablero de letras que giran (como los de las estaciones) ----
+      const COLS = 32, ROWS = 15, TW = 60, TH = 72;
+      const TITLE = "PREGUNTA DE INVESTIGACIÓN";
+      const ABC = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ¿?";
+      const board = L.h("div", { class: "layer", style: { perspective: "900px" } }, el);
+      const rb = L.rng(31);
+      const TROW = 7, TCOL = Math.floor((COLS - TITLE.length) / 2);
+      const tiles = [];
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const isT = r === TROW && c >= TCOL && c < TCOL + TITLE.length;
+        const fin = isT ? TITLE[c - TCOL] : ABC[Math.floor(rb() * ABC.length)];
+        let seq = "";
+        const n = 10 + Math.floor(rb() * 10) + (isT ? (c - TCOL) * 2 : 0);
+        for (let k = 0; k < n; k++) seq += ABC[Math.floor(rb() * ABC.length)];
+        seq += fin;
+        const t = L.h("div", { class: "abs", style: { left: c * TW + 2 + "px", top: r * TH + 3 + "px", width: TW - 4 + "px", height: TH - 6 + "px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--f-head)", fontWeight: 700, fontSize: "40px", color: C.ink2, background: "#FFFDF8", border: "1.5px solid #E4DCCB", borderRadius: "8px", boxShadow: "inset 0 -30px 0 rgba(43,42,51,.03)" } }, board, seq[0]);
+        tiles.push({ t, seq, isT, space: isT && fin === " ", d: Math.hypot(c - COLS / 2, (r - ROWS / 2) * 1.4) });
       }
-      "aábcdeéfghiíjklmnñoópqrstuúvwxyz¿?".split("").forEach((ch, i) => {
-        if (i % 2) return;
-        const t = L.s("text", { "font-family": "Fraunces, serif", "font-size": 40 + r() * 50, fill: C.ink }, bg, ch);
-        gsap.set(t, { x: r() * 1850, y: 60 + r() * 1000, rotation: (r() - 0.5) * 40 });
-        floaters.push(t);
+      const titleT = tiles.filter((o) => o.isT && !o.space), others = tiles.filter((o) => !o.isT || o.space);
+      tl.fromTo(tiles.map((o) => o.t), { autoAlpha: 0, scale: 0.3 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)", stagger: { each: 0.0016, from: "center", grid: [ROWS, COLS] } }, 0.1);
+      // todas las letras cambian sin parar
+      // las del título terminan justo cuando se fijan (1.6 s + 0.11 s por letra)
+      const lockAt = (o) => 1.6 + titleT.indexOf(o) * 0.11;
+      tiles.forEach((o) => tl.to(o.t, { letters: { seq: o.seq }, duration: o.isT && !o.space ? lockAt(o) - 0.4 : 2.4 + rb() * 1.0, ease: "none" }, 0.4));
+      tl.fromTo(tiles.filter((o, i) => i % 2).map((o) => o.t), { rotationX: 0 }, { rotationX: 360, duration: 0.5, ease: "power1.inOut", stagger: { each: 0.004, from: "random" } }, 0.5);
+      // pa · pa · pa: las letras del título se fijan una por una y crecen
+      titleT.forEach((o, k) => {
+        const at = 1.6 + k * 0.11;
+        tl.to(o.t, { scale: 1.55, background: C.plum, color: "#fff", borderColor: C.plum, zIndex: 3, duration: 0.12, ease: "power2.out" }, at);
+        tl.to(o.t, { scale: 1.15, duration: 0.25, ease: "back.out(3)" }, at + 0.12);
       });
-      S.ambient(() => floaters.map((f, i) => gsap.to(f, {
-        x: `+=${(i % 2 ? 1 : -1) * (40 + (i * 13) % 60)}`, y: `-=${50 + (i * 17) % 70}`, rotation: `+=${(i % 3 - 1) * 12}`,
-        duration: 9 + (i % 5) * 2, repeat: -1, yoyo: true, ease: "sine.inOut",
-      })));
+      const tEnd = 1.6 + titleT.length * 0.11 + 0.4;
+      // el resto del tablero se apaga y el título sube
+      tl.to(others.map((o) => o.t), { autoAlpha: 0, scale: 0.4, rotationX: 90, duration: 0.45, stagger: { each: 0.0012, from: "random" } }, tEnd);
+      tl.to(titleT.map((o) => o.t), { y: -(TROW * TH) + 18, scale: 0.9, duration: 0.9, ease: "power3.inOut", stagger: { each: 0.015, from: "center" } }, tEnd + 0.5);
 
-      const ph = L.h("div", { class: "page-head", style: { fontSize: "30px", color: C.ink2, fontWeight: 600 } }, el, "Pregunta de investigación");
-
-      // ---- Paso 1: la pregunta general ----
+      // ---- La pregunta general aparece en el centro ----
       const q = L.h("div", { class: "abs h-title", style: { left: "170px", width: "1580px", top: "330px", fontSize: "64px", textAlign: "center", lineHeight: 1.2 } }, el,
         `¿Cómo se relaciona la desigualdad en el <span class="acc" style="display:inline-block;line-height:1">acceso</span> a la lectura durante la infancia con los hábitos de lectura de libros en la edad adulta?`);
       gsap.set(q, { autoAlpha: 0 });
-      S.step();
-      L.write(tl, q, { pos: ">", dur: 3.0 });
+      L.write(tl, q, { pos: tEnd + 1.2, dur: 3.0 });
       const acc = q.querySelector(".acc");
       const mark = L.marker(acc, C.plum);
+      const ph = board; // el tablero (con el título) se retira cuando la pregunta sube
 
       // ---- Nube de palabras (estilo "welcome"): preguntas cortas, tamaños y tipografías mezcladas ----
       const cloud = L.h("div", { class: "layer" }, el);

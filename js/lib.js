@@ -26,6 +26,13 @@
     render(r, d) { if (d._cf) d._ct.textContent = d._cf(d._ca + (d._cb - d._ca) * r); },
   });
 
+  /* Letras que giran: muestra la secuencia seq (texto) según el avance; termina en la última */
+  gsap.registerPlugin({
+    name: "letters",
+    init(target, v) { this._lt = target; this._ls = String(v.seq); },
+    render(r, d) { if (d._ls) d._lt.textContent = d._ls[Math.min(d._ls.length - 1, Math.floor(r * d._ls.length))]; },
+  });
+
   /* Plugin para el atributo "d" interpolando números (misma estructura de comandos). */
   gsap.registerPlugin({
     name: "morphD",
