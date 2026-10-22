@@ -34,6 +34,7 @@
     notes: "Para las medias nos apoyamos en el Teorema del Límite Central; el intervalo de la varianza no tiene ese respaldo.",
     build(el, S) {
       const tl = S.tl;
+      L.kicker(el);
       const head = L.head(el, "Varianza de los libros leídos");
       L.pop(tl, head, 0, { from: { y: -20 } });
 
@@ -46,7 +47,7 @@
       const h1 = Charts.hinterval(sv1, { x: 110, y: 300, w: 1080, h: 380, xDomain: [-0.1, 1.5], xTicks: [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4], fmt: (v) => v.toFixed(1), li: m.li, ls: m.ls, zero: 0, color: C.amberD, wash: C.amberL, xTitle: "Diferencia de medias de libros leídos", yLabel: "Diferencia" });
       const stA = stack(sv1, 1420, 800, m.alto, C.amberD, "Alto");
       const stB = stack(sv1, 1680, 800, m.bajo, C.amberL, "Bajo");
-      const msg1 = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "900px", textAlign: "center", fontSize: "48px", fontStyle: "italic", color: C.plum } }, s1, "La diferencia existe, pero es menor a un libro al año.");
+      const msg1 = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "900px", textAlign: "center", fontSize: "48px", fontStyle: "italic", color: C.plum } }, s1, `${L.ins(7)}La diferencia existe, pero es menor a un libro al año.`);
       gsap.set([s1, t1, ic1, msg1, stA.num, stB.num, stA.lab, stB.lab], { autoAlpha: 0 });
       S.step();
       tl.set(s1, { autoAlpha: 1 }, ">");
@@ -119,7 +120,7 @@
 
       // ================= Paso 4: mensaje y advertencia =================
       S.step();
-      const msg = L.h("div", { class: "abs h-title", style: { left: "160px", width: "1600px", top: "690px", textAlign: "center", fontSize: "46px", fontStyle: "italic", color: C.plum, lineHeight: 1.25 } }, s3, "Crecer con muchos libros no hace que todos lean igual: en ese grupo conviven lectores ocasionales y lectores muy intensos.");
+      const msg = L.h("div", { class: "abs h-title", style: { left: "160px", width: "1600px", top: "690px", textAlign: "center", fontSize: "46px", fontStyle: "italic", color: C.plum, lineHeight: 1.25 } }, s3, `${L.ins(8)}Crecer con muchos libros no hace que todos lean igual: en ese grupo conviven lectores ocasionales y lectores muy intensos.`);
       const tag = L.h("div", { class: "tag", style: { left: "360px", width: "1200px", top: "900px", textAlign: "center", color: C.crimson, borderColor: C.crimson, fontSize: "36px" } }, s3, "⚠ Este intervalo supone normalidad; los datos están muy sesgados, así que lo interpretamos con cautela.");
       gsap.set([msg, tag], { autoAlpha: 0 });
       L.write(tl, msg, { pos: ">", dur: 2.4 });

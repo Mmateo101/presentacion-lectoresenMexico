@@ -105,7 +105,7 @@
               frag.appendChild(word);
             });
             n.replaceWith(frag);
-          } else if (n.nodeType === 1 && !n.classList.contains("num")) walk(n);
+          } else if (n.nodeType === 1 && !n.classList.contains("num") && !n.classList.contains("ins")) walk(n);
           else if (n.nodeType === 1) chars.push(n);
         });
       };
@@ -286,6 +286,13 @@
         x.stroke();
       }
       document.documentElement.style.setProperty("--grain", `url(${c.toDataURL()})`);
+    },
+
+    /* Insight numerado: círculo morado con el número */
+    ins(n) { return `<span class="ins">${n}</span>`; },
+    /* Rótulo "Resultados" arriba del título de la página */
+    kicker(parent, text = "Resultados") {
+      return L.h("div", { class: "kicker" }, parent, text);
     },
 
     /* Encabezado de página */
