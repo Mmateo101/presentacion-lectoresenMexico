@@ -146,6 +146,7 @@
       const frac = (this.idx + (r.last ? this.k / r.last : 1)) / n;
       gsap.to(ribbonFill, { scaleY: frac, duration: 0.6, ease: "power2.out", overwrite: true });
       document.getElementById("pageno").textContent = `${this.idx + 1} / ${n}`;
+      document.getElementById("fsbtn").classList.toggle("show", this.idx === 0);
       // color del resultado: cinta, número de hoja, rótulos e insights
       stage.style.setProperty("--accent", r.def.accent || "#7A4E8C");
       stage.style.setProperty("--pageno", r.def.accent || "#6B6875");
@@ -165,15 +166,17 @@
     },
   });
 
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+    else document.exitFullscreen && document.exitFullscreen();
+  }
+
   function onKey(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key;
     if (k === " " || k === "ArrowRight" || k === "PageDown" || k === "Enter" || k === "ArrowDown") { e.preventDefault(); Deck.next(); }
     else if (k === "ArrowLeft" || k === "Backspace" || k === "PageUp" || k === "ArrowUp") { e.preventDefault(); Deck.prev(); }
-    else if (k === "f" || k === "F") {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
-      else document.exitFullscreen && document.exitFullscreen();
-    }
+    else if (k === "f" || k === "F") toggleFullscreen();
     else if (k === "r" || k === "R") Deck.replay();
     else if (k === "n" || k === "N") notesEl.classList.toggle("show");
     else if (/^[0-9]$/.test(k)) { const n = k === "0" ? 10 : +k; Deck.goto(n - 1); }
@@ -192,6 +195,11 @@
     Deck.build();
     document.getElementById("loading").remove();
     document.addEventListener("keydown", onKey);
+    const fsbtn = document.getElementById("fsbtn");
+    fsbtn.addEventListener("click", (e) => { e.stopPropagation(); fsbtn.blur(); toggleFullscreen(); });
+    document.addEventListener("fullscreenchange", () => {
+      fsbtn.querySelector("span").textContent = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
+    });
     const m = /^#(\d+)(?:\.(\d+))?/.exec(location.hash);
     if (m) Deck.goto(+m[1] - 1, m[2] != null ? +m[2] : undefined);
     else Deck.show(0);

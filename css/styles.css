@@ -143,6 +143,17 @@ svg.full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
   padding: 4px 14px; border-radius: 20px; background: rgba(251, 248, 241, .78);
 }
 
+/* Botón de pantalla completa (solo en la portada) */
+#fsbtn {
+  position: absolute; right: 70px; top: 28px; z-index: 900;
+  display: none; align-items: center; gap: 12px; cursor: pointer;
+  font-family: var(--f-body); font-weight: 800; font-size: 24px; color: #fff;
+  padding: 12px 24px; border: 0; border-radius: 40px; background: var(--accent, #7A4E8C);
+  box-shadow: 0 8px 20px rgba(60, 30, 70, .25); transition: transform .2s, box-shadow .2s;
+}
+#fsbtn:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(60, 30, 70, .32); }
+#fsbtn.show { display: flex; }
+
 /* ---------- Resultados: rótulo e insights numerados ---------- */
 .kicker {
   position: absolute; left: 110px; top: 18px; z-index: 5;
