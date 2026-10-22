@@ -1,7 +1,6 @@
 /* Diapositiva 12 · Conclusiones: un librero de toda la hoja */
 (function () {
   const { C } = L;
-  const { person, mood, Props } = Chars;
 
   // Las cuatro conclusiones (lenguaje de asociación, con los datos que las respaldan)
   const CONCL = [
@@ -106,44 +105,6 @@
       S.step();
       dropText(panels[3], ">");
       restore(panels[3].zone, ">-0.3");
-
-      // ---- Paso final: Héctor y Eduardo, lectores en la misma biblioteca ----
-      const lib = L.h("div", { class: "layer" }, el);
-      const ls = L.svg(lib);
-      const wash = L.wash(ls, { cx: 960, cy: 520, rx: 900, ry: 420, color: C.plumL, opacity: 0.35, seed: 31, layers: 1 });
-      const shelves = [140, 420, 1280, 1560].map((x, i) => Props.shelf(ls, { x, y: 230, w: 230, h: 470, rows: 5, books: 0.97, seed: 40 + i }));
-      L.s("rect", { x: 0, y: 700, width: 1920, height: 6, fill: C.ink, opacity: 0.6 }, ls);
-      const mkReader = (who, x, shirt, style, pants, flip) => {
-        const g = L.s("g", {}, ls);
-        Props.chair(g, { x: x - 26, y: 700 });
-        const p = person(g, { who, age: "adult", shirt, style, pose: "sit", pants, mood: "smile", x: x - 36, y: 700, s: 1.1 });
-        gsap.set(p.arms[0], { rotation: -62, svgOrigin: p.arms[0]._pivot.join(" ") });
-        gsap.set(p.arms[1], { rotation: -62, svgOrigin: p.arms[1]._pivot.join(" ") });
-        L.book(g, { x: x + 20, y: 452, w: 110, h: 64, color: shirt, open: true });
-        if (flip) gsap.set(g, { scaleX: -1, svgOrigin: `${x} 700` });
-        return { g, p };
-      };
-      const rH = mkReader("hector", 800, C.blueM, "short", "#4F5866", false);
-      const rE = mkReader("eduardo", 1120, C.amberM, "curly", "#5E5148", true);
-      const sp = [[700, 330], [960, 300], [1220, 330]].map(([x, y], i) => {
-        const g = L.s("g", { transform: `translate(${x},${y})` }, ls);
-        L.s("path", { d: "M0,-16 L4,-4 L16,0 L4,4 L0,16 L-4,4 L-16,0 L-4,-4 Z", fill: [C.blueM, C.plum, C.amberM][i], stroke: C.ink, "stroke-width": 1.5 }, g);
-        return g;
-      });
-      const cap = L.h("div", { class: "abs h-title", style: { left: "0", width: "1920px", top: "770px", textAlign: "center", fontSize: "50px", fontStyle: "italic", color: C.plum } }, lib, "La desigualdad en el acceso empieza en casa… y ahí también puede empezar la solución.");
-      const foot = L.h("div", { class: "abs", style: { left: "0", width: "1920px", top: "985px", textAlign: "center", fontSize: "25px", color: C.ink2 } }, lib, "Resultados de asociación con 96% de confianza; no implican causalidad.");
-      gsap.set([lib, cap, foot], { autoAlpha: 0 });
-      tl.to(stage, { autoAlpha: 0, scale: 0.92, y: 40, duration: 0.8, ease: "power2.in" }, ">");
-      tl.set(lib, { autoAlpha: 1 }, ">-0.1");
-      L.bloom(tl, wash, "<", 1.2);
-      tl.fromTo(shelves, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, stagger: 0.1 }, "<0.2");
-      tl.fromTo(rH.g, { autoAlpha: 0, x: -200 }, { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, ">-0.2");
-      tl.fromTo(rE.g, { autoAlpha: 0, x: 200 }, { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" }, "<");
-      mood(tl, rH.p, "big", ">");
-      mood(tl, rE.p, "big", "<");
-      tl.fromTo(sp, { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, rotation: 90, duration: 0.6, stagger: 0.15, ease: "back.out(2)" }, "<");
-      L.write(tl, cap, { pos: ">", dur: 2.4 });
-      L.pop(tl, foot, ">0.2", { from: { y: 8 } });
     },
   });
 })();

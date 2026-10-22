@@ -372,36 +372,44 @@
       }
     },
 
-    /* ---------- Transición 2 → 3: la hoja se dobla y detrás aparecen las letras vibrando ---------- */
+    /* ---------- Transición 2 → 3: la hoja se pasa de derecha a izquierda y detrás aparecen las letras vibrando ---------- */
     out(from, to, fx, ctx) {
       const tl = gsap.timeline();
-      const LEAD = 1.6; // segundos de la entrada de la diapositiva 3 que ya corren durante el doblez
+      const LEAD = 1.6; // segundos de la entrada de la diapositiva 3 que ya corren mientras pasa la hoja
       const mk = (clip) => {
         const c = from.cloneNode(true);
         c.removeAttribute("id");
         c.classList.add("on");
-        Object.assign(c.style, { position: "absolute", left: 0, top: 0, visibility: "visible", opacity: 1, clipPath: clip, transform: "none" });
+        Object.assign(c.style, { position: "absolute", left: 0, top: 0, width: "1920px", height: "1080px", visibility: "visible", opacity: 1, clipPath: clip, transform: "none", backfaceVisibility: "hidden" });
         return c;
       };
-      const sheet = L.h("div", { style: { position: "absolute", inset: 0, transformStyle: "preserve-3d", perspective: "2600px" } }, fx);
-      const bottom = mk("inset(50% 0% 0% 0%)");
-      sheet.appendChild(bottom);
-      const shade = L.h("div", { style: { position: "absolute", left: 0, top: "540px", width: "1920px", height: "540px", background: "linear-gradient(180deg, rgba(60,40,20,.45), rgba(60,40,20,0) 70%)", opacity: 0 } }, sheet);
+      // la hoja completa: mitad izquierda fija + mitad derecha que se dobla sobre ella
+      const sheet = L.h("div", { style: { position: "absolute", inset: 0, transformOrigin: "0% 50%" } }, fx);
+      sheet.appendChild(mk("inset(0% 50% 0% 0%)"));
+      const shadeL = L.h("div", { style: { position: "absolute", left: 0, top: 0, width: "960px", height: "1080px", background: "linear-gradient(270deg, rgba(60,40,20,.4), rgba(60,40,20,0) 80%)", opacity: 0 } }, sheet);
       const flap = L.h("div", { style: { position: "absolute", inset: 0, transformStyle: "preserve-3d", transformOrigin: "50% 50%" } }, sheet);
-      const top = mk("inset(0% 0% 50% 0%)");
-      top.style.backfaceVisibility = "hidden";
-      flap.appendChild(top);
-      L.h("div", { style: { position: "absolute", left: 0, top: 0, width: "1920px", height: "540px", background: "#F4EEE1 var(--grain)", transform: "rotateX(180deg)", backfaceVisibility: "hidden", boxShadow: "inset 0 -30px 60px rgba(120,90,50,.18)" } }, flap);
+      flap.appendChild(mk("inset(0% 0% 0% 50%)"));
+      const curl = L.h("div", { style: { position: "absolute", left: "960px", top: 0, width: "960px", height: "1080px", background: "linear-gradient(90deg, rgba(60,40,20,.25), rgba(60,40,20,0) 40%, rgba(255,255,255,.2))", opacity: 0, backfaceVisibility: "hidden" } }, flap);
+      L.h("div", { style: { position: "absolute", left: "960px", top: 0, width: "960px", height: "1080px", background: "#F4EEE1 var(--grain)", transform: "rotateY(180deg)", backfaceVisibility: "hidden", boxShadow: "inset -40px 0 60px rgba(120,90,50,.2)" } }, flap);
+      // sombra que la hoja proyecta sobre la diapositiva 3
+      const cast = L.h("div", { style: { position: "absolute", left: "960px", top: 0, width: "960px", height: "1080px", background: "linear-gradient(90deg, rgba(60,40,20,.35), rgba(60,40,20,0) 55%)", opacity: 0 } }, fx);
+      fx.insertBefore(cast, sheet);
       gsap.set(from, { autoAlpha: 0 });
       gsap.set(to, { zIndex: 1 });
-      // 1 · la mitad de arriba se dobla sobre la de abajo
-      tl.to(flap, { rotationX: -180, duration: 1.1, ease: "power2.inOut" }, 0.1)
-        .to(shade, { keyframes: [{ opacity: 1, duration: 0.55 }, { opacity: 0.3, duration: 0.55 }] }, 0.1)
-      // 2 · la hoja doblada se va volando, girando como papel
-        .to(sheet, { y: 900, x: 380, rotation: 14, scale: 0.55, autoAlpha: 0, transformOrigin: "50% 75%", duration: 1.0, ease: "power2.in" }, 1.15);
+      gsap.set(flap, { transformPerspective: 3200 });
+      gsap.set(sheet, { transformPerspective: 3200 });
+      // 1 · la mitad derecha da vuelta hacia la izquierda
+      tl.to(flap, { rotationY: -180, duration: 1.2, ease: "power2.inOut" }, 0.05)
+        .to(flap, { keyframes: [{ skewY: -2, duration: 0.6 }, { skewY: 0, duration: 0.6 }], ease: "sine.inOut" }, 0.05)
+        .to(curl, { keyframes: [{ opacity: 1, duration: 0.6 }, { opacity: 0, duration: 0.6 }] }, 0.05)
+        .to(shadeL, { keyframes: [{ opacity: 0.8, duration: 0.6 }, { opacity: 0, duration: 0.4 }] }, 0.25)
+        .fromTo(cast, { opacity: 0.9 }, { opacity: 0, duration: 1.0, ease: "power1.out" }, 0.1)
+      // 2 · la hoja doblada termina de pasar sobre su borde izquierdo
+        .to(sheet, { rotationY: -95, duration: 0.9, ease: "power2.in" }, 1.25)
+        .to(sheet, { autoAlpha: 0, duration: 0.01 }, 2.15);
       // mientras tanto, detrás ya aparecen y vibran las letras de la diapositiva 3
-      tl.add(ctx.to.tl.tweenFromTo(0, LEAD, { ease: "none" }), 0.4);
-      return { tl, entranceFrom: LEAD, cleanup() { sheet.remove(); } };
+      tl.add(ctx.to.tl.tweenFromTo(0, LEAD, { ease: "none" }), 0.3);
+      return { tl, entranceFrom: LEAD, cleanup() { sheet.remove(); cast.remove(); } };
     },
   });
 })();
