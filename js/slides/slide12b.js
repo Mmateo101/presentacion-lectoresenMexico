@@ -210,16 +210,14 @@
         L.s("rect", { x: BW - 40, y: 0, width: 16, height: BH, fill: "rgba(255,255,255,.35)" }, book);
         L.s("rect", { x: 60, y: BH - 12, width: BW - 120, height: 6, fill: "#F2D48A", opacity: 0.8 }, book);
         gsap.set(book, { x: 1940, y: top });
+        // libreta con la fase: viaja pegada al libro
+        const pad = L.h("div", { class: "abs", style: { left: BX + 50 + "px", top: top + 14 + "px", width: BW - 100 + "px", height: BH - 28 + "px", background: "#FFFDF6 var(--grain)", borderRadius: "6px", boxShadow: "0 8px 16px rgba(30,20,10,.3)", transform: `rotate(${i % 2 ? 1 : -1}deg)`, display: "flex", alignItems: "center", gap: "20px", padding: "18px 28px 10px", backgroundImage: "radial-gradient(circle at 50% 4px, #6B6875 0 5px, transparent 6px)", backgroundSize: "34px 14px", backgroundRepeat: "repeat-x" } }, el);
+        L.h("div", { class: "h-title", style: { flex: "none", width: "56px", height: "56px", borderRadius: "50%", background: BOOKS[i], color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px" } }, pad, String(i + 1));
+        L.h("div", { style: { fontSize: "29px", fontWeight: 700, lineHeight: 1.2, color: C.ink } }, pad, txt);
+        gsap.set(pad, { x: 1940 - BX });
         tl.addLabel(`f${i}`, ">");
         tl.to(book, { x: BX, duration: 1.0, ease: "back.out(1.1)" }, `f${i}`);
-        // libreta con la fase
-        const pad = L.h("div", { class: "abs", style: { left: BX + 50 + "px", top: top + 14 + "px", width: BW - 100 + "px", height: BH - 28 + "px", background: "#FFFDF6 var(--grain)", borderRadius: "6px", boxShadow: "0 8px 16px rgba(30,20,10,.3)", transform: `rotate(${i % 2 ? 1 : -1}deg)`, display: "flex", alignItems: "center", gap: "20px", padding: "18px 28px 10px", backgroundImage: "radial-gradient(circle at 50% 4px, #6B6875 0 5px, transparent 6px)", backgroundSize: "34px 14px", backgroundRepeat: "repeat-x" } }, el);
-        const num = L.h("div", { class: "h-title", style: { flex: "none", width: "56px", height: "56px", borderRadius: "50%", background: BOOKS[i], color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "30px" } }, pad, String(i + 1));
-        const tx = L.h("div", { class: "hand", style: { fontSize: "33px", lineHeight: 1.08, color: C.ink } }, pad, txt);
-        gsap.set([pad, num], { autoAlpha: 0 });
-        tl.fromTo(pad, { autoAlpha: 0, y: -50, scale: 1.12 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2)" }, `f${i}+=0.85`);
-        tl.fromTo(num, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, ">-0.1");
-        L.write(tl, tx, { pos: ">", dur: Math.min(2.2, txt.length * 0.025) });
+        tl.to(pad, { x: 0, duration: 1.0, ease: "back.out(1.1)" }, `f${i}`);
         // escena de la izquierda
         const sc = SCENES[i](stage, tl);
         if (prev) tl.to(prev.g, { autoAlpha: 0, y: -20, duration: 0.4 }, `f${i}`);
