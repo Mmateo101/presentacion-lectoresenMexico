@@ -1,4 +1,4 @@
-# Desigualdad en el acceso a la lectura · Presentación interactiva
+# Desigualdad en el acceso a la lectura ·  Presentación interactiva
 
 This is the presentation for Equipo 7's statistical study (MA1001B, Tecnológico de Monterrey). It plays like an illustrated, animated book: animated scenes alternate with slides that build step by step.
 
